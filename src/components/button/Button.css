@@ -1,0 +1,13 @@
+.button {
+  min-width: 24px;
+  min-height: 24px;
+  background-color: blueviolet;
+  border-radius: 6px;
+  padding: 0.35rem;
+  border: none;
+}
+
+.button:hover {
+  cursor: pointer;
+  filter: contrast(85%);
+}
