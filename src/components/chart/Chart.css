@@ -1,0 +1,14 @@
+.chart__container {
+  display: flex;
+  flex-direction: row;
+  max-width: 100%;
+}
+
+@media (min-width: 768px) {
+  .chart__container {
+    justify-content: center;
+    > div {
+      max-width: 50vh;
+    }
+  }
+}
