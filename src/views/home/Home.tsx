@@ -1,4 +1,12 @@
-import { Button, Heading, Section, Span, Toolbar } from "../../components";
+import {
+  Button,
+  ChartComponent,
+  Heading,
+  Section,
+  Span,
+  Toolbar,
+} from "../../components";
+import { workoutData } from "../../data";
 import "./Home.css";
 
 interface WorkingSet {
@@ -159,12 +167,15 @@ export const Home = () => {
             return (
               lastSession?.exercises && (
                 <>
-                  <div className="home__overview__exercise">
+                  <div
+                    className="home__overview__exercise"
+                    key={label + ":" + lastSession.increase}
+                  >
                     <Span text={label} />
-                    {lastSession.exercises?.sets.map((set) => {
+                    {lastSession.exercises?.sets.map((set, index) => {
                       return (
                         <>
-                          <div>
+                          <div key={"prevous-session" + index}>
                             {set.reps} x {set.weight} {unit}
                           </div>
                         </>
@@ -189,10 +200,10 @@ export const Home = () => {
                 <>
                   <div className="home__overview__exercise">
                     <Span text={label} />
-                    {lastSession.exercises?.sets.map((set) => {
+                    {lastSession.exercises?.sets.map((set, index) => {
                       return (
                         <>
-                          <div>
+                          <div key={"exercise" + index}>
                             {set.reps} x {set.weight + lastSession.increase}{" "}
                             {unit}
                           </div>
@@ -208,6 +219,13 @@ export const Home = () => {
         <div className="home_next-session_footer ">
           <Button label="Start now" onClick={() => undefined} />
         </div>
+      </Section>
+
+      <Section>
+        <div className="home__overview__title">
+          <Heading text={"Trends"} />
+        </div>
+        <ChartComponent data={workoutData} />
       </Section>
     </div>
   );
