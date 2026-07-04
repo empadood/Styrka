@@ -146,7 +146,7 @@ export const Home = () => {
         isOpen={showProfile}
         onClose={() => setShowProfile(false)}
       >
-        <Profile userName="Arne" />
+        <Profile />
       </Dialog>
       <Section>
         <div className="home__overview__title">
