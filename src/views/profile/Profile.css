@@ -1,0 +1,11 @@
+.profile__configure {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  padding: 0.5rem;
+}
+
+.profile__configure--gap {
+  display: flex;
+  gap: 0.25rem;
+}

@@ -3,14 +3,13 @@ import { Span } from "../text/Span";
 import "./Toolbar.css";
 type Props = {
   title: string;
+  onShowProfile: () => void;
 };
-export const Toolbar = ({ title }: Props) => {
-  const onClick = () => console.log("hej");
-
+export const Toolbar = ({ title, onShowProfile }: Props) => {
   return (
     <div className="toolbar">
       <Span text={title} />
-      <Button onClick={onClick} showIcon />
+      <Button onClick={onShowProfile} showIcon />
     </div>
   );
 };

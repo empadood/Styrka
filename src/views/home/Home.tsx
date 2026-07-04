@@ -1,3 +1,4 @@
+import { useState } from "react";
 import {
   Button,
   ChartComponent,
@@ -8,6 +9,8 @@ import {
 } from "../../components";
 import { workoutData } from "../../data";
 import "./Home.css";
+import { Dialog } from "../../components/dialog/Dialog";
+import { Profile } from "../profile/Profile";
 
 interface WorkingSet {
   reps: number;
@@ -29,6 +32,7 @@ interface Overview {
 }
 
 export const Home = () => {
+  const [showProfile, setShowProfile] = useState(false);
   const items: Overview[] = [
     {
       label: "Press",
@@ -136,7 +140,14 @@ export const Home = () => {
 
   return (
     <div className="home">
-      <Toolbar title="Hey" />
+      <Toolbar title="Hey" onShowProfile={() => setShowProfile(true)} />
+      <Dialog
+        title="Profile"
+        isOpen={showProfile}
+        onClose={() => setShowProfile(false)}
+      >
+        <Profile userName="Arne" />
+      </Dialog>
       <Section>
         <div className="home__overview__title">
           <Heading text={"Overview"} />

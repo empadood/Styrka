@@ -1,0 +1,31 @@
+.dialog {
+  height: 80vh;
+  width: 500px;
+  border: 2px solid var(--accent-border);
+  border-radius: 8px;
+  background: var(--background);
+  z-index: 10000;
+}
+
+.dialog__content {
+  display: flex;
+  height: 100%;
+  gap: 1rem;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.dialog__toolbar {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
+.dialog__rendered-content {
+  height: 100%;
+  overflow-y: auto;
+}
+
+dialog::backdrop {
+  background-color: rgba(0, 0, 0, 0.5);
+}
