@@ -1,8 +1,9 @@
+import "./Profile.css";
+
 import { Heading, Section } from "../../components";
 import { ExerciseWithWeight } from "../../components/text/ExerciseWithWeight";
 import { INCREMENTATION } from "../../data/incrementation";
 import { EXERCISE } from "../../types";
-import "./Profile.css";
 
 const data = {
   ohp: 50,

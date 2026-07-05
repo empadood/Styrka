@@ -16,8 +16,7 @@
 
 .home__overview__title {
   display: flex;
-  justify-content: center;
-  align-items: center;
+  align-items: flex-start;
   flex-direction: column;
 }
 .home__overview__exercise {

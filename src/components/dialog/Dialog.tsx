@@ -1,7 +1,9 @@
-import { useEffect, useRef, type ReactNode } from "react";
+import "./Dialog.css";
+
+import { type ReactNode,useEffect, useRef } from "react";
+
 import { Button } from "../button/Button";
 import { Heading } from "../text/Heading";
-import "./Dialog.css";
 type Props = {
   onClose: () => void;
   isOpen: boolean;

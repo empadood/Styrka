@@ -1,20 +1,22 @@
+import "./Chart.css";
+
+import { RechartsDevtools } from "@recharts/devtools";
 import {
-  LineChart,
+  CartesianGrid,
+  Legend,
   Line,
+  LineChart,
+  Tooltip,
   XAxis,
   YAxis,
-  CartesianGrid,
-  Tooltip,
-  Legend,
 } from "recharts";
-import { RechartsDevtools } from "@recharts/devtools";
-import "./Chart.css";
 import type { ChartData } from "recharts/types/state/chartDataSlice";
-import { Span } from "../text/Span";
+
 import {
   capitalizeFirstLetter,
   splitAtCapitalLetter,
 } from "../../helpers/string.helper";
+import { Span } from "../text/Span";
 
 type Props = {
   data: ChartData;

@@ -1,6 +1,7 @@
+import "./Button.css";
+
 import { Hamburger } from "../../icons";
 import { Span } from "../text/Span";
-import "./Button.css";
 type Props = {
   onClick: () => void;
   label?: string;

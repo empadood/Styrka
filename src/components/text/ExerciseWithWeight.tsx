@@ -1,7 +1,8 @@
+import "./ExcerciseWithWeight.css";
+
 import { EXERCISE_LABELS, type ExerciseName } from "../../types";
 import { Span } from "./Span";
 import { Weight } from "./Weight";
-import "./ExcerciseWithWeight.css";
 type Props = {
   exercise: ExerciseName;
   weight: number | string;
