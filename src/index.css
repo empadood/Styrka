@@ -28,7 +28,6 @@ body {
   margin: 0;
   box-sizing: border-box;
   font-family: "Roboto", sans-serif;
-  color: var("--text");
 }
 body {
   padding: 0.5rem;
