@@ -10,23 +10,21 @@ import { UpcomingSession } from "../../components/session/UpcomingSession";
 import { workoutData } from "../../data";
 import { items } from "../../data/workout-session";
 import { Profile } from "../profile/Profile";
+import { WorkoutSession } from "../workoutsession/Session";
 
 export const Home = () => {
   const [showProfile, setShowProfile] = useState(false);
+  const [workout, setWorkout] = useState(false);
 
   return (
     <div className="home">
       <Toolbar title="Hey" onShowProfile={() => setShowProfile(true)} />
-      <Dialog
-        title="Profile"
-        isOpen={showProfile}
-        onClose={() => setShowProfile(false)}
-      >
-        <Profile />
-      </Dialog>
+      <UpcomingSession
+        session={items}
+        onStartWorkout={() => setWorkout(true)}
+      />
       <Summary items={items} />
       <PreviousSession session={items} />
-      <UpcomingSession session={items} />
 
       <Section>
         <div className="home__overview__title">
@@ -34,6 +32,21 @@ export const Home = () => {
         </div>
         <ChartComponent data={workoutData} />
       </Section>
+      <Dialog
+        title="Profile"
+        isOpen={showProfile}
+        onClose={() => setShowProfile(false)}
+      >
+        <Profile />
+      </Dialog>
+
+      <Dialog
+        title="Workout"
+        isOpen={workout}
+        onClose={() => setWorkout(false)}
+      >
+        <WorkoutSession items={items} />
+      </Dialog>
     </div>
   );
 };

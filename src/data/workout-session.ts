@@ -1,4 +1,4 @@
-import { EXERCISE, EXERCISE_LABELS } from "../types";
+import { EXERCISE, EXERCISE_LABELS, type ExerciseName } from "../types";
 
 interface WorkingSet {
   reps: number;
@@ -14,14 +14,16 @@ interface Session {
 
 interface Overview {
   label: string;
+  id: ExerciseName;
   value: number;
   unit: "kg";
   lastSession?: Session;
 }
-export type { Overview,Session, WorkingSet };
-export const items: Overview[] = [
+export type { Overview, Session, WorkingSet };
+const items: Overview[] = [
   {
     label: EXERCISE_LABELS[EXERCISE.ohp],
+    id: EXERCISE.ohp,
     unit: "kg",
     value: 56,
     lastSession: {
@@ -31,15 +33,15 @@ export const items: Overview[] = [
         sets: [
           {
             reps: 5,
-            weight: 65,
+            weight: 50,
           },
           {
             reps: 5,
-            weight: 65,
+            weight: 50,
           },
           {
             reps: 5,
-            weight: 65,
+            weight: 50,
           },
         ],
       },
@@ -47,6 +49,7 @@ export const items: Overview[] = [
   },
   {
     label: EXERCISE_LABELS[EXERCISE.squat],
+    id: EXERCISE.squat,
     unit: "kg",
     value: 85,
     lastSession: {
@@ -73,6 +76,7 @@ export const items: Overview[] = [
 
   {
     label: EXERCISE_LABELS[EXERCISE.benchpress],
+    id: EXERCISE.benchpress,
     unit: "kg",
     value: 68,
     lastSession: {
@@ -99,6 +103,7 @@ export const items: Overview[] = [
 
   {
     label: EXERCISE_LABELS[EXERCISE.deadlift],
+    id: EXERCISE.deadlift,
     unit: "kg",
     value: 115,
     lastSession: {
@@ -110,16 +115,21 @@ export const items: Overview[] = [
             reps: 5,
             weight: 115,
           },
-          {
-            reps: 5,
-            weight: 115,
-          },
-          {
-            reps: 5,
-            weight: 115,
-          },
         ],
       },
     },
   },
 ];
+
+const workoutA: ExerciseName[] = [
+  EXERCISE.squat,
+  EXERCISE.deadlift,
+  EXERCISE.ohp,
+];
+const workoutB: ExerciseName[] = [
+  EXERCISE.squat,
+  EXERCISE.deadlift,
+  EXERCISE.benchpress,
+];
+
+export { items, workoutA, workoutB };

@@ -5,8 +5,9 @@ import { Heading } from "../text/Heading";
 import { Span } from "../text/Span";
 type Props = {
   session: Overview[];
+  onStartWorkout: () => void;
 };
-export const UpcomingSession = ({ session }: Props) => {
+export const UpcomingSession = ({ session, onStartWorkout }: Props) => {
   return (
     <Section>
       <div className="home__overview__title">
@@ -23,7 +24,7 @@ export const UpcomingSession = ({ session }: Props) => {
                     return (
                       <>
                         <div key={"exercise" + index}>
-                          {set.reps} x {set.weight + lastSession.increase}{" "}
+                          {set.reps} x {set.weight + lastSession.increase}
                           {unit}
                         </div>
                       </>
@@ -36,7 +37,7 @@ export const UpcomingSession = ({ session }: Props) => {
         })}
       </div>
       <div className="home_next-session_footer ">
-        <Button label="Start now" onClick={() => undefined} />
+        <Button label="Start now" onClick={onStartWorkout} />
       </div>
     </Section>
   );
