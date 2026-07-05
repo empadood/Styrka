@@ -1,4 +1,7 @@
-import { Heading, Span } from "../../components";
+import { Heading, Section } from "../../components";
+import { ExerciseWithWeight } from "../../components/text/ExerciseWithWeight";
+import { INCREMENTATION } from "../../data/incrementation";
+import { EXERCISE } from "../../types";
 import "./Profile.css";
 
 const data = {
@@ -7,33 +10,47 @@ const data = {
   deadlift: 90,
   benchPress: 66,
 };
-const UNIT = "kg";
 
 export const Profile = () => {
   return (
-    <>
-      <Heading text="Current Estimated One Rep Max" />
-      <div className="profile__configure">
-        <div className="profile__configure--gap">
-          <Span text="Overhead Press" />
-          <Span text={data.ohp + UNIT} />
+    <div className="profile__container">
+      <Section>
+        <Heading text="Current Estimated One Rep Max" />
+        <div className="profile__configure">
+          <ExerciseWithWeight
+            exercise={EXERCISE.benchpress}
+            weight={data.benchPress}
+          />
+          <ExerciseWithWeight
+            exercise={EXERCISE.deadlift}
+            weight={data.deadlift}
+          />
+          <ExerciseWithWeight exercise={EXERCISE.ohp} weight={data.ohp} />
+          <ExerciseWithWeight exercise={EXERCISE.squat} weight={data.squat} />
         </div>
+      </Section>
 
-        <div className="profile__configure--gap">
-          <Span text="Squat" />
-          <Span text={data.squat + UNIT} />
+      <Section>
+        <Heading text="Current Incremenation Per Session" />
+        <div className="profile__configure">
+          <ExerciseWithWeight
+            exercise={EXERCISE.benchpress}
+            weight={INCREMENTATION[EXERCISE.benchpress]}
+          />
+          <ExerciseWithWeight
+            exercise={EXERCISE.deadlift}
+            weight={INCREMENTATION[EXERCISE.deadlift]}
+          />
+          <ExerciseWithWeight
+            exercise={EXERCISE.ohp}
+            weight={INCREMENTATION[EXERCISE.ohp]}
+          />
+          <ExerciseWithWeight
+            exercise={EXERCISE.squat}
+            weight={INCREMENTATION[EXERCISE.squat]}
+          />
         </div>
-
-        <div className="profile__configure--gap">
-          <Span text="Deadlift" />
-          <Span text={data.deadlift + UNIT} />
-        </div>
-
-        <div className="profile__configure--gap">
-          <Span text="Bench press" />
-          <Span text={data.benchPress + UNIT} />
-        </div>
-      </div>
-    </>
+      </Section>
+    </div>
   );
 };
