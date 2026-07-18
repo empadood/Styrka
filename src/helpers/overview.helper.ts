@@ -58,4 +58,4 @@ const buildOverviewFromStore = (store: WorkoutStore): Overview[] => {
   });
 };
 
-export { buildOverviewFromStore };
+export { buildOverviewFromStore, findLastLoggedExercises };

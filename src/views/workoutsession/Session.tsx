@@ -29,7 +29,7 @@ const buildInitialExercises = (
     completed: false,
     sets: Array.from({ length: prescription.sets }, () => ({
       targetReps: prescription.reps,
-      reps: prescription.reps,
+      reps: 0,
       weight: workingWeights[prescription.name],
     })),
   }));
@@ -89,7 +89,10 @@ export const WorkoutSession = ({
                 <div className="session__set__inputs">
                   <div>
                     <div className="session--label-gap">
-                      <Span text={"Target reps: " + set.reps} size="small" />
+                      <Span
+                        text={"Target reps: " + set.targetReps}
+                        size="small"
+                      />
                     </div>
                     <Input
                       value={set.reps}

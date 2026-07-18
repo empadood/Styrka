@@ -6,6 +6,7 @@ import { Button } from "../../components";
 import { Input } from "../../components/input/Input";
 import { ExerciseWithWeight } from "../../components/text/ExerciseWithWeight";
 import { Span } from "../../components/text/Span";
+import { Weight } from "../../components/text/Weight";
 import type { ProgressionResult } from "../../helpers/progression.helper";
 import type { ExerciseName } from "../../types";
 
@@ -34,10 +35,6 @@ export const PostWorkout = ({ results, onConfirm }: Props) => {
           />
           {result.completed ? (
             <>
-              <ExerciseWithWeight
-                exercise={result.name}
-                weight={result.previousWeight + increments[result.name]}
-              />
               <div className="postworkout__increment">
                 <Span text="Increment" size="small" />
                 <Input
@@ -50,9 +47,21 @@ export const PostWorkout = ({ results, onConfirm }: Props) => {
                   }
                 />
               </div>
+              <div className="postworkout__next">
+                <Span text="Next session" size="small" />
+                <Weight
+                  weight={
+                    Math.round(
+                      (result.previousWeight + increments[result.name]) * 10,
+                    ) / 10
+                  }
+                />
+              </div>
             </>
           ) : (
-            <Span text="No increase — same weight next time" size="small" />
+            <div className="postworkout__no-increase">
+              <Span text="No increase — same weight next time" size="small" />
+            </div>
           )}
         </div>
       ))}

@@ -8,6 +8,7 @@ import { PreviousSession } from "../../components/session/PreviousSession";
 import { Summary } from "../../components/session/Summary";
 import { UpcomingSession } from "../../components/session/UpcomingSession";
 import { workoutData } from "../../data";
+import { calculateSessionOneRepMax } from "../../helpers/one-rep-max.helper";
 import { buildOverviewFromStore } from "../../helpers/overview.helper";
 import {
   calculateSessionProgression,
@@ -16,6 +17,7 @@ import {
 } from "../../helpers/progression.helper";
 import { useWorkoutStore } from "../../hooks/useWorkoutStore";
 import type { ExerciseName, LoggedExercise, SessionType } from "../../types";
+import { OneRepMax } from "../onerepmax/OneRepMax";
 import { PostWorkout } from "../postworkout/PostWorkout";
 import { Profile } from "../profile/Profile";
 import { WorkoutSession } from "../workoutsession/Session";
@@ -25,37 +27,58 @@ type PendingSession = {
   exercises: LoggedExercise[];
 };
 
+type Stage = "workout" | "onerepmax" | "summary";
+
+const DIALOG_TITLES: Record<Stage, string> = {
+  workout: "Workout",
+  onerepmax: "Estimated 1RM",
+  summary: "Workout Summary",
+};
+
 export const Home = () => {
   const [showProfile, setShowProfile] = useState(false);
   const [workoutOpen, setWorkoutOpen] = useState(false);
-  const [pendingResults, setPendingResults] = useState<
-    ProgressionResult[] | null
-  >(null);
   const [pendingSession, setPendingSession] = useState<PendingSession | null>(
     null,
   );
+  const [pendingResults, setPendingResults] = useState<
+    ProgressionResult[] | null
+  >(null);
 
   const { store, update } = useWorkoutStore();
   const sessionType = getNextSessionType(store.lastCompletedSession);
   const items = buildOverviewFromStore(store);
 
+  const stage: Stage = pendingResults
+    ? "summary"
+    : pendingSession
+      ? "onerepmax"
+      : "workout";
+
   const startWorkout = () => {
-    setPendingResults(null);
     setPendingSession(null);
+    setPendingResults(null);
     setWorkoutOpen(true);
   };
 
   const closeWorkout = () => {
     setWorkoutOpen(false);
-    setPendingResults(null);
     setPendingSession(null);
+    setPendingResults(null);
   };
 
   const handleFinishWorkout = (result: PendingSession) => {
     setPendingSession(result);
+  };
+
+  const handleContinueFromOneRepMax = () => {
+    if (!pendingSession) {
+      return;
+    }
+
     setPendingResults(
       calculateSessionProgression(
-        result.exercises,
+        pendingSession.exercises,
         store.workingWeights,
         store.increments,
       ),
@@ -121,20 +144,30 @@ export const Home = () => {
       </Dialog>
 
       <Dialog
-        title={pendingResults ? "Workout Summary" : "Workout"}
+        title={DIALOG_TITLES[stage]}
         isOpen={workoutOpen}
         onClose={closeWorkout}
       >
-        {pendingResults ? (
-          <PostWorkout
-            results={pendingResults}
-            onConfirm={handleConfirmPostWorkout}
-          />
-        ) : (
+        {stage === "workout" && (
           <WorkoutSession
             sessionType={sessionType}
             workingWeights={store.workingWeights}
             onFinish={handleFinishWorkout}
+          />
+        )}
+        {stage === "onerepmax" && pendingSession && (
+          <OneRepMax
+            results={calculateSessionOneRepMax(
+              pendingSession.exercises,
+              store,
+            )}
+            onContinue={handleContinueFromOneRepMax}
+          />
+        )}
+        {stage === "summary" && pendingResults && (
+          <PostWorkout
+            results={pendingResults}
+            onConfirm={handleConfirmPostWorkout}
           />
         )}
       </Dialog>
