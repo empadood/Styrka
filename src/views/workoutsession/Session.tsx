@@ -84,37 +84,33 @@ export const WorkoutSession = ({
           />
           <div className="session__sets">
             {exercise.sets.map((set, index) => (
-              <>
-                <div>
-                  <Span text={`Set ${index + 1}`} size="small" />
-                </div>
-                <div className="session__set" key={index}>
-                  <div className="session__set__inputs">
-                    <div>
-                      <div className="session--label-gap">
-                        <Span text={"Target reps: " + set.reps} size="small" />
-                      </div>
-                      <Input
-                        value={set.reps}
-                        onChange={(val) =>
-                          updateSet(exercise.name, index, "reps", val)
-                        }
-                      />
+              <div className="session__set" key={index}>
+                <Span text={`Set ${index + 1}`} size="small" />
+                <div className="session__set__inputs">
+                  <div>
+                    <div className="session--label-gap">
+                      <Span text={"Target reps: " + set.reps} size="small" />
                     </div>
-                    <div>
-                      <div className="session--label-gap">
-                        <Span text="Weight" size="small" />
-                      </div>
-                      <Input
-                        value={set.weight}
-                        onChange={(val) =>
-                          updateSet(exercise.name, index, "weight", val)
-                        }
-                      />
+                    <Input
+                      value={set.reps}
+                      onChange={(val) =>
+                        updateSet(exercise.name, index, "reps", val)
+                      }
+                    />
+                  </div>
+                  <div>
+                    <div className="session--label-gap">
+                      <Span text="Weight" size="small" />
                     </div>
+                    <Input
+                      value={set.weight}
+                      onChange={(val) =>
+                        updateSet(exercise.name, index, "weight", val)
+                      }
+                    />
                   </div>
                 </div>
-              </>
+              </div>
             ))}
           </div>
         </div>

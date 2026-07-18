@@ -1,6 +1,11 @@
 import type { WorkoutStore } from "../data/storage";
 import type { Overview } from "../data/workout-session";
-import { EXERCISE, EXERCISE_LABELS, type ExerciseName } from "../types";
+import {
+  EXERCISE,
+  EXERCISE_LABELS,
+  type ExerciseName,
+  type LoggedExercise,
+} from "../types";
 
 const EXERCISE_NAMES: ExerciseName[] = [
   EXERCISE.squat,
@@ -9,19 +14,29 @@ const EXERCISE_NAMES: ExerciseName[] = [
   EXERCISE.benchpress,
 ];
 
-const findLastLoggedExercise = (store: WorkoutStore, name: ExerciseName) => {
-  for (let i = store.history.length - 1; i >= 0; i--) {
-    const exercise = store.history[i].exercises.find((e) => e.name === name);
-    if (exercise) {
-      return exercise;
+const findLastLoggedExercises = (
+  store: WorkoutStore,
+): Map<ExerciseName, LoggedExercise> => {
+  const lastLogged = new Map<ExerciseName, LoggedExercise>();
+  for (
+    let i = store.history.length - 1;
+    i >= 0 && lastLogged.size < EXERCISE_NAMES.length;
+    i--
+  ) {
+    for (const exercise of store.history[i].exercises) {
+      if (!lastLogged.has(exercise.name)) {
+        lastLogged.set(exercise.name, exercise);
+      }
     }
   }
-  return undefined;
+  return lastLogged;
 };
 
-const buildOverviewFromStore = (store: WorkoutStore): Overview[] =>
-  EXERCISE_NAMES.map((name) => {
-    const lastLogged = findLastLoggedExercise(store, name);
+const buildOverviewFromStore = (store: WorkoutStore): Overview[] => {
+  const lastLoggedByExercise = findLastLoggedExercises(store);
+
+  return EXERCISE_NAMES.map((name) => {
+    const lastLogged = lastLoggedByExercise.get(name);
     return {
       label: EXERCISE_LABELS[name],
       id: name,
@@ -41,5 +56,6 @@ const buildOverviewFromStore = (store: WorkoutStore): Overview[] =>
         : undefined,
     };
   });
+};
 
 export { buildOverviewFromStore };
