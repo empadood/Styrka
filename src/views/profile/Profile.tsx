@@ -2,8 +2,7 @@ import "./Profile.css";
 
 import { Heading, Section } from "../../components";
 import { ExerciseWithWeight } from "../../components/text/ExerciseWithWeight";
-import { INCREMENTATION } from "../../data/incrementation";
-import { EXERCISE } from "../../types";
+import { EXERCISE, type ExerciseName } from "../../types";
 
 const data = {
   ohp: 50,
@@ -12,7 +11,11 @@ const data = {
   benchPress: 66,
 };
 
-export const Profile = () => {
+type Props = {
+  increments: Record<ExerciseName, number>;
+};
+
+export const Profile = ({ increments }: Props) => {
   return (
     <div className="profile__container">
       <Section>
@@ -36,19 +39,19 @@ export const Profile = () => {
         <div className="profile__configure">
           <ExerciseWithWeight
             exercise={EXERCISE.benchpress}
-            weight={INCREMENTATION[EXERCISE.benchpress]}
+            weight={increments[EXERCISE.benchpress]}
           />
           <ExerciseWithWeight
             exercise={EXERCISE.deadlift}
-            weight={INCREMENTATION[EXERCISE.deadlift]}
+            weight={increments[EXERCISE.deadlift]}
           />
           <ExerciseWithWeight
             exercise={EXERCISE.ohp}
-            weight={INCREMENTATION[EXERCISE.ohp]}
+            weight={increments[EXERCISE.ohp]}
           />
           <ExerciseWithWeight
             exercise={EXERCISE.squat}
-            weight={INCREMENTATION[EXERCISE.squat]}
+            weight={increments[EXERCISE.squat]}
           />
         </div>
       </Section>

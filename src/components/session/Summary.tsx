@@ -18,7 +18,7 @@ export const Summary = ({ items }: Props) => {
       <div className="home__overview">
         {items.map(({ label, unit, value }) => {
           return (
-            <div className="home__overview__exercise">
+            <div className="home__overview__exercise" key={label}>
               <Span text={label} />
               <div>
                 {value} {unit}

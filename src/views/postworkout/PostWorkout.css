@@ -1,0 +1,18 @@
+.postworkout__container {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.postworkout__exercise {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.postworkout__increment {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}

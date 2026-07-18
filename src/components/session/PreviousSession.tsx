@@ -15,23 +15,19 @@ export const PreviousSession = ({ session }: Props) => {
         {session.map(({ label, unit, lastSession }) => {
           return (
             lastSession?.exercises && (
-              <>
-                <div
-                  className="home__overview__exercise"
-                  key={label + ":" + lastSession.increase}
-                >
-                  <Span text={label} />
-                  {lastSession.exercises?.sets.map((set, index) => {
-                    return (
-                      <>
-                        <div key={"prevous-session" + index}>
-                          {set.reps} x {set.weight} {unit}
-                        </div>
-                      </>
-                    );
-                  })}
-                </div>
-              </>
+              <div
+                className="home__overview__exercise"
+                key={label + ":" + lastSession.increase}
+              >
+                <Span text={label} />
+                {lastSession.exercises?.sets.map((set, index) => {
+                  return (
+                    <div key={"prevous-session" + index}>
+                      {set.reps} x {set.weight} {unit}
+                    </div>
+                  );
+                })}
+              </div>
             )
           );
         })}

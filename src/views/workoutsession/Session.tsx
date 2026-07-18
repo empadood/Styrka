@@ -2,77 +2,124 @@ import "./Session.css";
 
 import { useState } from "react";
 
-import { Heading } from "../../components";
+import { Button, Heading } from "../../components";
 import { Input } from "../../components/input/Input";
 import { ExerciseWithWeight } from "../../components/text/ExerciseWithWeight";
-import { INCREMENTATION } from "../../data/incrementation";
-import { type Overview, workoutA, workoutB } from "../../data/workout-session";
-import type { ExerciseName } from "../../types";
+import { Span } from "../../components/text/Span";
+import { SESSION_DEFINITION } from "../../data/session-definition";
+import { isExerciseCompleted } from "../../helpers/progression.helper";
+import type { ExerciseName, LoggedExercise, SessionType } from "../../types";
+
 type Props = {
-  items: Overview[];
+  sessionType: SessionType;
+  workingWeights: Record<ExerciseName, number>;
+  onFinish: (result: {
+    sessionType: SessionType;
+    exercises: LoggedExercise[];
+  }) => void;
 };
-export const WorkoutSession = ({ items }: Props) => {
-  const [workoutType] = useState<"A" | "B">("A");
 
-  const todaysWorkout = items.filter((val) => {
-    return workoutType === "A"
-      ? workoutA.includes(val.id)
-      : workoutB.includes(val.id);
-  });
+const buildInitialExercises = (
+  sessionType: SessionType,
+  workingWeights: Record<ExerciseName, number>,
+): LoggedExercise[] =>
+  SESSION_DEFINITION[sessionType].map((prescription) => ({
+    name: prescription.name,
+    weightUsed: workingWeights[prescription.name],
+    completed: false,
+    sets: Array.from({ length: prescription.sets }, () => ({
+      targetReps: prescription.reps,
+      reps: prescription.reps,
+      weight: workingWeights[prescription.name],
+    })),
+  }));
 
-  console.log(todaysWorkout);
+export const WorkoutSession = ({
+  sessionType,
+  workingWeights,
+  onFinish,
+}: Props) => {
+  const [exercises, setExercises] = useState<LoggedExercise[]>(() =>
+    buildInitialExercises(sessionType, workingWeights),
+  );
 
-  const stuffToLift = todaysWorkout.map((v) => {
-    const sets = v.lastSession?.exercises.sets.map(
-      (l) => l.weight + INCREMENTATION[v.id],
+  const updateSet = (
+    exerciseName: ExerciseName,
+    setIndex: number,
+    field: "reps" | "weight",
+    value: number,
+  ) => {
+    setExercises((prev) =>
+      prev.map((exercise) =>
+        exercise.name === exerciseName
+          ? {
+              ...exercise,
+              sets: exercise.sets.map((set, index) =>
+                index === setIndex ? { ...set, [field]: value } : set,
+              ),
+            }
+          : exercise,
+      ),
     );
-    return {
-      id: v.id,
-      sets: sets,
-    };
-  });
-
-  console.log(stuffToLift);
-
-  const getHighestWeightFromLastSession = (overview: Overview) => {
-    const res = overview.lastSession?.exercises.sets.reduce((prev, curr) => {
-      return curr.weight > prev.weight ? curr : prev;
-    });
-    return (res?.weight || 0) + INCREMENTATION[overview.id];
   };
 
-  const getSetsForExercise = (id: ExerciseName) => {
-    return stuffToLift.find((exName) => exName.id === id)?.sets || [];
+  const handleFinish = () => {
+    onFinish({
+      sessionType,
+      exercises: exercises.map((exercise) => ({
+        ...exercise,
+        completed: isExerciseCompleted(exercise.sets),
+      })),
+    });
   };
 
   return (
     <div className="session__container">
-      <Heading text="Today's workout" />
-      {todaysWorkout.map((val) => {
-        return (
-          <div key={val.id}>
-            <ExerciseWithWeight
-              exercise={val.id}
-              weight={getHighestWeightFromLastSession(val)}
-            />
-
-            <div className="session__sets">
-              {getSetsForExercise(val.id).map((sets) => {
-                return (
-                  <div>
+      <Heading text={`Today's workout — Session ${sessionType}`} />
+      {exercises.map((exercise) => (
+        <div key={exercise.name}>
+          <ExerciseWithWeight
+            exercise={exercise.name}
+            weight={exercise.weightUsed}
+          />
+          <div className="session__sets">
+            {exercise.sets.map((set, index) => (
+              <>
+                <div>
+                  <Span text={`Set ${index + 1}`} size="small" />
+                </div>
+                <div className="session__set" key={index}>
+                  <div className="session__set__inputs">
                     <div>
+                      <div className="session--label-gap">
+                        <Span text={"Target reps: " + set.reps} size="small" />
+                      </div>
                       <Input
-                        value={sets}
-                        onChange={(val) => console.log(val)}
+                        value={set.reps}
+                        onChange={(val) =>
+                          updateSet(exercise.name, index, "reps", val)
+                        }
+                      />
+                    </div>
+                    <div>
+                      <div className="session--label-gap">
+                        <Span text="Weight" size="small" />
+                      </div>
+                      <Input
+                        value={set.weight}
+                        onChange={(val) =>
+                          updateSet(exercise.name, index, "weight", val)
+                        }
                       />
                     </div>
                   </div>
-                );
-              })}
-            </div>
+                </div>
+              </>
+            ))}
           </div>
-        );
-      })}
+        </div>
+      ))}
+      <Button label="Finish workout" onClick={handleFinish} />
     </div>
   );
 };

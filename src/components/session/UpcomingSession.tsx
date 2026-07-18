@@ -17,21 +17,17 @@ export const UpcomingSession = ({ session, onStartWorkout }: Props) => {
         {session.map(({ label, unit, lastSession }) => {
           return (
             lastSession?.exercises && (
-              <>
-                <div className="home__overview__exercise">
-                  <Span text={label} />
-                  {lastSession.exercises?.sets.map((set, index) => {
-                    return (
-                      <>
-                        <div key={"exercise" + index}>
-                          {set.reps} x {set.weight + lastSession.increase}
-                          {unit}
-                        </div>
-                      </>
-                    );
-                  })}
-                </div>
-              </>
+              <div className="home__overview__exercise" key={label}>
+                <Span text={label} />
+                {lastSession.exercises?.sets.map((set, index) => {
+                  return (
+                    <div key={"exercise" + index}>
+                      {set.reps} x {set.weight + lastSession.increase}
+                      {unit}
+                    </div>
+                  );
+                })}
+              </div>
             )
           );
         })}
