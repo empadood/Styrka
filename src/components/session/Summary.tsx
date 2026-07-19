@@ -9,20 +9,18 @@ type Props = {
 export const Summary = ({ items }: Props) => {
   return (
     <Section>
-      <div className="home__overview__title">
-        <Heading text={"Overview"} />
+      <div className="card__heading">
         <div>
-          <Span text="Estimated one rep max" size="small" />
+          <Span text="Working weights" size="small" />
+          <Heading text="Current strength" level="2" />
         </div>
       </div>
-      <div className="home__overview">
+      <div className="summary__grid">
         {items.map(({ label, unit, value }) => {
           return (
-            <div className="home__overview__exercise" key={label}>
-              <Span text={label} />
-              <div>
-                {value} {unit}
-              </div>
+            <div className="summary__item" key={label}>
+              <Span text={label} size="small" />
+              <strong>{value} {unit}</strong>
             </div>
           );
         })}

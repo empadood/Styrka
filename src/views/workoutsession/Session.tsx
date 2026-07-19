@@ -49,8 +49,8 @@ export const WorkoutSession = ({
     field: "reps" | "weight",
     value: number,
   ) => {
-    setExercises((prev) =>
-      prev.map((exercise) =>
+    setExercises((previousExercises) =>
+      previousExercises.map((exercise) =>
         exercise.name === exerciseName
           ? {
               ...exercise,
@@ -75,13 +75,22 @@ export const WorkoutSession = ({
 
   return (
     <div className="session__container">
-      <Heading text={`Today's workout — Session ${sessionType}`} />
+      <div className="session__intro">
+        <span>Session {sessionType}</span>
+        <Heading text="Today's workout" level="2" />
+      </div>
       {exercises.map((exercise) => (
-        <div key={exercise.name}>
-          <ExerciseWithWeight
-            exercise={exercise.name}
-            weight={exercise.weightUsed}
-          />
+        <section className="session__exercise" key={exercise.name}>
+          <div className="session__exercise-header">
+            <ExerciseWithWeight
+              exercise={exercise.name}
+              weight={exercise.weightUsed}
+            />
+            <Span
+              text={`${exercise.sets.length} ${exercise.sets.length < 2 ? "set" : "sets"}`}
+              size="small"
+            />
+          </div>
           <div className="session__sets">
             {exercise.sets.map((set, index) => (
               <div className="session__set" key={index}>
@@ -90,15 +99,15 @@ export const WorkoutSession = ({
                   <div>
                     <div className="session--label-gap">
                       <Span
-                        text={"Target reps: " + set.targetReps}
+                        text={`Target reps: ${set.targetReps}`}
                         size="small"
                       />
                     </div>
                     <Input
                       value={set.reps}
                       size="small"
-                      onChange={(val) =>
-                        updateSet(exercise.name, index, "reps", val)
+                      onChange={(value) =>
+                        updateSet(exercise.name, index, "reps", value)
                       }
                     />
                   </div>
@@ -109,8 +118,8 @@ export const WorkoutSession = ({
                     <Input
                       size="medium"
                       value={set.weight}
-                      onChange={(val) =>
-                        updateSet(exercise.name, index, "weight", val)
+                      onChange={(value) =>
+                        updateSet(exercise.name, index, "weight", value)
                       }
                     />
                   </div>
@@ -118,7 +127,7 @@ export const WorkoutSession = ({
               </div>
             ))}
           </div>
-        </div>
+        </section>
       ))}
       <Button label="Finish workout" onClick={handleFinish} />
     </div>

@@ -10,7 +10,7 @@ const buildTrendData = (history: WorkoutHistoryEntry[]): ChartData[] =>
         ...workout,
         [exercise.name]: getExerciseWeight(exercise),
       }),
-      { workout: index + 1 },
+      { workout: index + 1, date: session.date },
     ),
   );
 

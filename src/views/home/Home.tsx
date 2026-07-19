@@ -1,5 +1,6 @@
 import "./Home.css";
 
+import { Minimize2 } from "lucide-react";
 import { useState } from "react";
 
 import { ChartComponent, Heading, Section, Toolbar } from "../../components";
@@ -20,6 +21,7 @@ import type { ExerciseName, LoggedExercise, SessionType } from "../../types";
 import { OneRepMax } from "../onerepmax/OneRepMax";
 import { PostWorkout } from "../postworkout/PostWorkout";
 import { Profile } from "../profile/Profile";
+import { SessionHistory } from "../sessionhistory/SessionHistory";
 import { WorkoutSession } from "../workoutsession/Session";
 
 type PendingSession = {
@@ -37,7 +39,10 @@ const DIALOG_TITLES: Record<Stage, string> = {
 
 export const Home = () => {
   const [showProfile, setShowProfile] = useState(false);
+  const [showSessionHistory, setShowSessionHistory] = useState(false);
   const [workoutOpen, setWorkoutOpen] = useState(false);
+  const [workoutActive, setWorkoutActive] = useState(false);
+  const [workoutKey, setWorkoutKey] = useState(0);
   const [pendingSession, setPendingSession] = useState<PendingSession | null>(
     null,
   );
@@ -59,13 +64,24 @@ export const Home = () => {
   const startWorkout = () => {
     setPendingSession(null);
     setPendingResults(null);
+    setWorkoutActive(true);
+    setWorkoutKey((previousKey) => previousKey + 1);
     setWorkoutOpen(true);
   };
 
   const closeWorkout = () => {
     setWorkoutOpen(false);
+    setWorkoutActive(false);
     setPendingSession(null);
     setPendingResults(null);
+  };
+
+  const minimizeWorkout = () => {
+    setWorkoutOpen(false);
+  };
+
+  const resumeWorkout = () => {
+    setWorkoutOpen(true);
   };
 
   const handleFinishWorkout = (result: PendingSession) => {
@@ -124,18 +140,35 @@ export const Home = () => {
   };
 
   return (
-    <div className="home">
-      <Toolbar title="Hey" onShowProfile={() => setShowProfile(true)} />
-      <UpcomingSession session={items} onStartWorkout={startWorkout} />
-      <Summary items={items} />
-      <PreviousSession session={items} />
-
-      <Section>
-        <div className="home__overview__title">
-          <Heading text={"Trends"} />
-        </div>
-        <ChartComponent data={trendData} />
-      </Section>
+    <main className="home">
+      <Toolbar
+        title="Good morning"
+        onShowProfile={() => setShowProfile(true)}
+        onResumeWorkout={resumeWorkout}
+        hasActiveWorkout={workoutActive}
+      />
+      <div className="home__dashboard">
+        <UpcomingSession
+          session={items}
+          sessionType={sessionType}
+          onStartWorkout={workoutActive ? resumeWorkout : startWorkout}
+          isWorkoutActive={workoutActive}
+        />
+        <Summary items={items} />
+        <PreviousSession
+          session={items}
+          onViewAllSessions={() => setShowSessionHistory(true)}
+        />
+        <Section className="home__trends">
+          <div className="card__heading">
+            <div>
+              <Heading text="Progress" level="2" />
+              <span className="card__description">Working weight by completed workout</span>
+            </div>
+          </div>
+          <ChartComponent data={trendData} />
+        </Section>
+      </div>
       <Dialog
         title="Profile"
         isOpen={showProfile}
@@ -145,12 +178,29 @@ export const Home = () => {
       </Dialog>
 
       <Dialog
+        title="Sessions"
+        isOpen={showSessionHistory}
+        onClose={() => setShowSessionHistory(false)}
+      >
+        <SessionHistory sessions={store.history} />
+      </Dialog>
+
+      <Dialog
         title={DIALOG_TITLES[stage]}
         isOpen={workoutOpen}
-        onClose={closeWorkout}
+        onClose={minimizeWorkout}
+        actionLabel="Minimize"
+        actionAriaLabel="Minimize workout"
+        actionIcon={Minimize2}
+        destructiveAction={{
+          label: "Discard workout",
+          onClick: closeWorkout,
+          ariaLabel: "Discard active workout",
+        }}
       >
         {stage === "workout" && (
           <WorkoutSession
+            key={workoutKey}
             sessionType={sessionType}
             workingWeights={store.workingWeights}
             onFinish={handleFinishWorkout}
@@ -172,6 +222,6 @@ export const Home = () => {
           />
         )}
       </Dialog>
-    </div>
+    </main>
   );
 };

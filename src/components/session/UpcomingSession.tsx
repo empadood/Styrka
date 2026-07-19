@@ -1,39 +1,58 @@
+import { SESSION_DEFINITION } from "../../data/session-definition";
 import { type Overview } from "../../data/workout-session";
+import type { SessionType } from "../../types";
 import { Button } from "../button/Button";
 import { Section } from "../section/Section";
 import { Heading } from "../text/Heading";
 import { Span } from "../text/Span";
+
 type Props = {
   session: Overview[];
+  sessionType: SessionType;
   onStartWorkout: () => void;
+  isWorkoutActive?: boolean;
 };
-export const UpcomingSession = ({ session, onStartWorkout }: Props) => {
+
+export const UpcomingSession = ({
+  session,
+  sessionType,
+  onStartWorkout,
+  isWorkoutActive = false,
+}: Props) => {
+  const exercises = SESSION_DEFINITION[sessionType].flatMap((definition) =>
+    session
+      .filter(({ id }) => id === definition.name)
+      .map((overview) => ({ definition, overview })),
+  );
+
   return (
-    <Section>
-      <div className="home__overview__title">
-        <Heading text={"Upcoming Session"} />
+    <Section className="upcoming-session">
+      <div className="card__heading">
+        <div>
+          <Span text="Ready when you are" size="small" />
+          <Heading text="Today's workout" level="2" />
+        </div>
+        <Span text={`${exercises.length} exercises`} size="small" />
       </div>
-      <div className="home__overview">
-        {session.map(({ label, unit, lastSession }) => {
-          return (
-            lastSession?.exercises && (
-              <div className="home__overview__exercise" key={label}>
-                <Span text={label} />
-                {lastSession.exercises?.sets.map((set, index) => {
-                  return (
-                    <div key={"exercise" + index}>
-                      {set.reps} x {set.weight + lastSession.increase}
-                      {unit}
-                    </div>
-                  );
-                })}
-              </div>
-            )
-          );
-        })}
+      <div className="upcoming-session__exercises">
+        {exercises.map(({ definition, overview }) => (
+          <div className="upcoming-session__exercise" key={overview.label}>
+            <div>
+              <Span text={overview.label} />
+              <Span
+                text={`${definition.sets} × ${definition.reps} reps`}
+                size="small"
+              />
+            </div>
+            <Span text={`${overview.value} ${overview.unit}`} size="small" />
+          </div>
+        ))}
       </div>
-      <div className="home_next-session_footer ">
-        <Button label="Start now" onClick={onStartWorkout} />
+      <div className="upcoming-session__footer">
+        <Button
+          label={isWorkoutActive ? "Resume workout" : "Start workout"}
+          onClick={onStartWorkout}
+        />
       </div>
     </Section>
   );

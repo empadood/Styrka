@@ -1,6 +1,5 @@
 import "./Chart.css";
 
-import { RechartsDevtools } from "@recharts/devtools";
 import {
   CartesianGrid,
   Legend,
@@ -11,12 +10,18 @@ import {
   YAxis,
 } from "recharts";
 
-import { type ChartData,EXERCISE_LABELS } from "../../types";
+import { type ChartData, EXERCISE_LABELS } from "../../types";
 import { Span } from "../text/Span";
 
 type Props = {
   data: ChartData[];
 };
+
+const formatDate = (date: string): string =>
+  new Intl.DateTimeFormat("en-GB", {
+    day: "numeric",
+    month: "short",
+  }).format(new Date(date));
 
 export const ChartComponent = ({ data }: Props) => {
   if (data.length === 0) {
@@ -46,36 +51,36 @@ export const ChartComponent = ({ data }: Props) => {
           bottom: 5,
         }}
       >
-        <CartesianGrid
-          strokeDasharray="3 3"
-          stroke="rgba(255, 255, 255, 0.2)"
-        />
+        <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" />
 
         <XAxis
-          dataKey="workout"
-          label=""
-          hide
+          dataKey="date"
+          tick={{ fill: "var(--text-secondary)", fontSize: 12 }}
+          tickFormatter={formatDate}
+          tickMargin={8}
           padding={{ left: 16, right: 16 }}
         />
-        <YAxis unit=" kg" />
+        <YAxis unit=" kg" tick={{ fill: "var(--text-secondary)", fontSize: 12 }} />
 
         <Tooltip
+          labelFormatter={(label) => formatDate(String(label))}
           cursor={{
-            stroke: "white",
+            stroke: "var(--primary)",
           }}
           contentStyle={{
-            backgroundColor: "rgba(0, 0, 0, 0.94)",
-            borderColor: "white",
-            textTransform: "capitalize",
+            backgroundColor: "var(--surface)",
+            borderColor: "var(--border)",
+            borderRadius: 12,
+            boxShadow: "0 0.5rem 1.5rem rgba(31, 41, 51, 0.12)",
           }}
         />
-        <Legend style={{ textTransform: "capitalize" }} />
+        <Legend wrapperStyle={{ fontSize: 12, paddingTop: 12 }} />
 
         <Line
           type="monotone"
           dataKey="benchpress"
           name={EXERCISE_LABELS.benchpress}
-          stroke="#8884d8"
+          stroke="var(--primary)"
           strokeWidth={2}
           connectNulls
         />
@@ -84,7 +89,7 @@ export const ChartComponent = ({ data }: Props) => {
           type="monotone"
           dataKey="squat"
           name={EXERCISE_LABELS.squat}
-          stroke="#82ca9d"
+          stroke="var(--success)"
           strokeWidth={2}
           connectNulls
         />
@@ -93,7 +98,7 @@ export const ChartComponent = ({ data }: Props) => {
           type="monotone"
           dataKey="ohp"
           name={EXERCISE_LABELS.ohp}
-          stroke="#ffc658"
+          stroke="var(--warning)"
           strokeWidth={2}
           connectNulls
         />
@@ -102,12 +107,10 @@ export const ChartComponent = ({ data }: Props) => {
           type="monotone"
           dataKey="deadlift"
           name={EXERCISE_LABELS.deadlift}
-          stroke="#ff7300"
+          stroke="var(--danger)"
           strokeWidth={2}
           connectNulls
         />
-
-        <RechartsDevtools />
       </LineChart>
     </div>
   );
