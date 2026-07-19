@@ -96,6 +96,7 @@ export const WorkoutSession = ({
                     </div>
                     <Input
                       value={set.reps}
+                      size="small"
                       onChange={(val) =>
                         updateSet(exercise.name, index, "reps", val)
                       }
@@ -106,6 +107,7 @@ export const WorkoutSession = ({
                       <Span text="Weight" size="small" />
                     </div>
                     <Input
+                      size="medium"
                       value={set.weight}
                       onChange={(val) =>
                         updateSet(exercise.name, index, "weight", val)

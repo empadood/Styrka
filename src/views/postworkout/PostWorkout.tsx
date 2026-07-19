@@ -39,6 +39,7 @@ export const PostWorkout = ({ results, onConfirm }: Props) => {
                 <Span text="Increment" size="small" />
                 <Input
                   value={increments[result.name]}
+                  size="small"
                   onChange={(val) =>
                     setIncrements((prev) => ({
                       ...prev,

@@ -10,20 +10,16 @@ import {
   XAxis,
   YAxis,
 } from "recharts";
-import type { ChartData } from "recharts/types/state/chartDataSlice";
 
-import {
-  capitalizeFirstLetter,
-  splitAtCapitalLetter,
-} from "../../helpers/string.helper";
+import { type ChartData,EXERCISE_LABELS } from "../../types";
 import { Span } from "../text/Span";
 
 type Props = {
-  data: ChartData;
+  data: ChartData[];
 };
 
 export const ChartComponent = ({ data }: Props) => {
-  if (!data) {
+  if (data.length === 0) {
     return (
       <div>
         <Span text="No data available" />
@@ -73,16 +69,12 @@ export const ChartComponent = ({ data }: Props) => {
             textTransform: "capitalize",
           }}
         />
-        <Legend
-          style={{ textTransform: "capitalize" }}
-          formatter={(value: string) =>
-            splitAtCapitalLetter(capitalizeFirstLetter(value))
-          }
-        />
+        <Legend style={{ textTransform: "capitalize" }} />
 
         <Line
           type="monotone"
-          dataKey="bench"
+          dataKey="benchpress"
+          name={EXERCISE_LABELS.benchpress}
           stroke="#8884d8"
           strokeWidth={2}
           connectNulls
@@ -91,6 +83,7 @@ export const ChartComponent = ({ data }: Props) => {
         <Line
           type="monotone"
           dataKey="squat"
+          name={EXERCISE_LABELS.squat}
           stroke="#82ca9d"
           strokeWidth={2}
           connectNulls
@@ -98,7 +91,8 @@ export const ChartComponent = ({ data }: Props) => {
 
         <Line
           type="monotone"
-          dataKey="overheadPress"
+          dataKey="ohp"
+          name={EXERCISE_LABELS.ohp}
           stroke="#ffc658"
           strokeWidth={2}
           connectNulls
@@ -107,6 +101,7 @@ export const ChartComponent = ({ data }: Props) => {
         <Line
           type="monotone"
           dataKey="deadlift"
+          name={EXERCISE_LABELS.deadlift}
           stroke="#ff7300"
           strokeWidth={2}
           connectNulls

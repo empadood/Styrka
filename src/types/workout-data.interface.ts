@@ -1,7 +1,5 @@
-export interface ChartData {
+import type { ExerciseName } from "./exercise.type";
+
+export type ChartData = {
   workout: number;
-  bench?: number;
-  squat?: number;
-  overheadPress?: number;
-  deadlift?: number;
-}
+} & Partial<Record<ExerciseName, number>>;

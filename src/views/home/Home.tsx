@@ -7,7 +7,6 @@ import { Dialog } from "../../components/dialog/Dialog";
 import { PreviousSession } from "../../components/session/PreviousSession";
 import { Summary } from "../../components/session/Summary";
 import { UpcomingSession } from "../../components/session/UpcomingSession";
-import { workoutData } from "../../data";
 import { calculateSessionOneRepMax } from "../../helpers/one-rep-max.helper";
 import { buildOverviewFromStore } from "../../helpers/overview.helper";
 import {
@@ -15,6 +14,7 @@ import {
   getNextSessionType,
   type ProgressionResult,
 } from "../../helpers/progression.helper";
+import { buildTrendData } from "../../helpers/trends.helper";
 import { useWorkoutStore } from "../../hooks/useWorkoutStore";
 import type { ExerciseName, LoggedExercise, SessionType } from "../../types";
 import { OneRepMax } from "../onerepmax/OneRepMax";
@@ -48,6 +48,7 @@ export const Home = () => {
   const { store, update } = useWorkoutStore();
   const sessionType = getNextSessionType(store.lastCompletedSession);
   const items = buildOverviewFromStore(store);
+  const trendData = buildTrendData(store.history);
 
   const stage: Stage = pendingResults
     ? "summary"
@@ -133,7 +134,7 @@ export const Home = () => {
         <div className="home__overview__title">
           <Heading text={"Trends"} />
         </div>
-        <ChartComponent data={workoutData} />
+        <ChartComponent data={trendData} />
       </Section>
       <Dialog
         title="Profile"

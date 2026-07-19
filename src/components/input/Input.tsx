@@ -5,11 +5,12 @@ import { useEffect, useRef, useState } from "react";
 type Props = {
   value: number;
   onChange: (val: number) => void;
+  size?: "small" | "medium" | "large";
 };
 
 const parseNumber = (raw: string): number => parseFloat(raw.replace(",", "."));
 
-export const Input = ({ value, onChange }: Props) => {
+export const Input = ({ value, onChange, size = "medium" }: Props) => {
   const [text, setText] = useState(String(value));
   const lastEmitted = useRef(value);
 
@@ -41,7 +42,7 @@ export const Input = ({ value, onChange }: Props) => {
 
   return (
     <input
-      className="input"
+      className={`input input--${size}`}
       value={text}
       onChange={onValueChange}
       onBlur={onBlur}
