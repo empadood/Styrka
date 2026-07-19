@@ -1,6 +1,6 @@
 import "./Profile.css";
 
-import { Heading, Section } from "../../components";
+import { Heading, Section, Span } from "../../components";
 import { ExerciseWithWeight } from "../../components/text/ExerciseWithWeight";
 import { EXERCISE, type ExerciseName } from "../../types";
 
@@ -47,6 +47,14 @@ export const Profile = ({ increments, estimatedOneRepMax }: Props) => {
             weight={increments[EXERCISE.squat]}
           />
         </div>
+      </Section>
+
+      <Section>
+        <Heading text="Privacy" />
+        <Span
+          text="We use cookie-free, aggregate analytics to understand app usage. Workout data and personal identifiers are never collected."
+          size="small"
+        />
       </Section>
     </div>
   );

@@ -8,6 +8,7 @@ import { Dialog } from "../../components/dialog/Dialog";
 import { PreviousSession } from "../../components/session/PreviousSession";
 import { Summary } from "../../components/session/Summary";
 import { UpcomingSession } from "../../components/session/UpcomingSession";
+import { trackAnalyticsEvent } from "../../helpers/analytics.helper";
 import { calculateSessionOneRepMax } from "../../helpers/one-rep-max.helper";
 import { buildOverviewFromStore } from "../../helpers/overview.helper";
 import {
@@ -67,6 +68,7 @@ export const Home = () => {
       hasConfiguredOneRepMax: true,
       workingWeights: buildStartingWeights(estimatedOneRepMax),
     }));
+    trackAnalyticsEvent("Onboarding completed");
   };
 
   const stage: Stage = pendingResults
@@ -85,6 +87,7 @@ export const Home = () => {
         exercises: buildInitialExercises(sessionType, previousStore.workingWeights),
       },
     }));
+    trackAnalyticsEvent("Workout started");
     setWorkoutOpen(true);
   };
 
@@ -100,6 +103,7 @@ export const Home = () => {
   };
 
   const resumeWorkout = () => {
+    trackAnalyticsEvent("Workout resumed");
     setWorkoutOpen(true);
   };
 
@@ -155,6 +159,7 @@ export const Home = () => {
         activeWorkout: null,
       };
     });
+    trackAnalyticsEvent("Workout completed");
 
     closeWorkout();
   };
