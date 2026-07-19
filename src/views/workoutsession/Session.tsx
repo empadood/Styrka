@@ -1,56 +1,36 @@
 import "./Session.css";
 
-import { useState } from "react";
-
 import { Button, Heading } from "../../components";
 import { Input } from "../../components/input/Input";
 import { ExerciseWithWeight } from "../../components/text/ExerciseWithWeight";
 import { Span } from "../../components/text/Span";
-import { SESSION_DEFINITION } from "../../data/session-definition";
 import { isExerciseCompleted } from "../../helpers/progression.helper";
 import type { ExerciseName, LoggedExercise, SessionType } from "../../types";
 
 type Props = {
   sessionType: SessionType;
-  workingWeights: Record<ExerciseName, number>;
+  exercises: LoggedExercise[];
+  onExercisesChange: (exercises: LoggedExercise[]) => void;
   onFinish: (result: {
     sessionType: SessionType;
     exercises: LoggedExercise[];
   }) => void;
 };
 
-const buildInitialExercises = (
-  sessionType: SessionType,
-  workingWeights: Record<ExerciseName, number>,
-): LoggedExercise[] =>
-  SESSION_DEFINITION[sessionType].map((prescription) => ({
-    name: prescription.name,
-    weightUsed: workingWeights[prescription.name],
-    completed: false,
-    sets: Array.from({ length: prescription.sets }, () => ({
-      targetReps: prescription.reps,
-      reps: 0,
-      weight: workingWeights[prescription.name],
-    })),
-  }));
-
 export const WorkoutSession = ({
   sessionType,
-  workingWeights,
+  exercises,
+  onExercisesChange,
   onFinish,
 }: Props) => {
-  const [exercises, setExercises] = useState<LoggedExercise[]>(() =>
-    buildInitialExercises(sessionType, workingWeights),
-  );
-
   const updateSet = (
     exerciseName: ExerciseName,
     setIndex: number,
     field: "reps" | "weight",
     value: number,
   ) => {
-    setExercises((previousExercises) =>
-      previousExercises.map((exercise) =>
+    onExercisesChange(
+      exercises.map((exercise) =>
         exercise.name === exerciseName
           ? {
               ...exercise,

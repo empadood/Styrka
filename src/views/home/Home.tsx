@@ -15,6 +15,7 @@ import {
   getNextSessionType,
   type ProgressionResult,
 } from "../../helpers/progression.helper";
+import { buildInitialExercises } from "../../helpers/session.helper";
 import { buildStartingWeights } from "../../helpers/starting-weight.helper";
 import { buildTrendData } from "../../helpers/trends.helper";
 import { useWorkoutStore } from "../../hooks/useWorkoutStore";
@@ -43,8 +44,6 @@ export const Home = () => {
   const [showProfile, setShowProfile] = useState(false);
   const [showSessionHistory, setShowSessionHistory] = useState(false);
   const [workoutOpen, setWorkoutOpen] = useState(false);
-  const [workoutActive, setWorkoutActive] = useState(false);
-  const [workoutKey, setWorkoutKey] = useState(0);
   const [pendingSession, setPendingSession] = useState<PendingSession | null>(
     null,
   );
@@ -54,6 +53,8 @@ export const Home = () => {
 
   const { store, update } = useWorkoutStore();
   const sessionType = getNextSessionType(store.lastCompletedSession);
+  const activeSessionType = store.activeWorkout?.sessionType ?? sessionType;
+  const workoutActive = store.activeWorkout !== null;
   const items = buildOverviewFromStore(store);
   const trendData = buildTrendData(store.history);
 
@@ -77,16 +78,21 @@ export const Home = () => {
   const startWorkout = () => {
     setPendingSession(null);
     setPendingResults(null);
-    setWorkoutActive(true);
-    setWorkoutKey((previousKey) => previousKey + 1);
+    update((previousStore) => ({
+      ...previousStore,
+      activeWorkout: {
+        sessionType,
+        exercises: buildInitialExercises(sessionType, previousStore.workingWeights),
+      },
+    }));
     setWorkoutOpen(true);
   };
 
   const closeWorkout = () => {
     setWorkoutOpen(false);
-    setWorkoutActive(false);
     setPendingSession(null);
     setPendingResults(null);
+    update((previousStore) => ({ ...previousStore, activeWorkout: null }));
   };
 
   const minimizeWorkout = () => {
@@ -146,6 +152,7 @@ export const Home = () => {
             exercises: pendingSession.exercises,
           },
         ],
+        activeWorkout: null,
       };
     });
 
@@ -224,9 +231,21 @@ export const Home = () => {
       >
         {stage === "workout" && (
           <WorkoutSession
-            key={workoutKey}
-            sessionType={sessionType}
-            workingWeights={store.workingWeights}
+            sessionType={activeSessionType}
+            exercises={store.activeWorkout?.exercises ?? []}
+            onExercisesChange={(exercises) =>
+              update((previousStore) =>
+                previousStore.activeWorkout
+                  ? {
+                      ...previousStore,
+                      activeWorkout: {
+                        ...previousStore.activeWorkout,
+                        exercises,
+                      },
+                    }
+                  : previousStore,
+              )
+            }
             onFinish={handleFinishWorkout}
           />
         )}

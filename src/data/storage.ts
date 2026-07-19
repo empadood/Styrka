@@ -1,4 +1,9 @@
-import type { ExerciseName, SessionType, WorkoutHistoryEntry } from "../types";
+import type {
+  ExerciseName,
+  LoggedExercise,
+  SessionType,
+  WorkoutHistoryEntry,
+} from "../types";
 
 const STORAGE_KEY = "styrka.workout-store.v1";
 
@@ -9,6 +14,10 @@ interface WorkoutStore {
   increments: Record<ExerciseName, number>;
   lastCompletedSession: SessionType | null;
   history: WorkoutHistoryEntry[];
+  activeWorkout: {
+    sessionType: SessionType;
+    exercises: LoggedExercise[];
+  } | null;
 }
 
 const DEFAULT_STORE: WorkoutStore = {
@@ -18,6 +27,7 @@ const DEFAULT_STORE: WorkoutStore = {
   increments: { squat: 5, deadlift: 5, ohp: 2.5, benchpress: 2.5 },
   lastCompletedSession: null,
   history: [],
+  activeWorkout: null,
 };
 
 const loadStore = (): WorkoutStore => {
@@ -42,6 +52,7 @@ const loadStore = (): WorkoutStore => {
       increments: { ...DEFAULT_STORE.increments, ...parsed.increments },
       lastCompletedSession: parsed.lastCompletedSession ?? null,
       history,
+      activeWorkout: parsed.activeWorkout ?? null,
     };
   } catch {
     return DEFAULT_STORE;
