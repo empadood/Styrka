@@ -1,0 +1,72 @@
+import "./SetupOneRepMax.css";
+
+import { useState } from "react";
+
+import { Button, Heading, Input, Span } from "../../components";
+import { EXERCISE, EXERCISE_LABELS, type ExerciseName } from "../../types";
+
+type Props = {
+  onComplete: (estimatedOneRepMax: Record<ExerciseName, number>) => void;
+};
+
+const EXERCISES = Object.values(EXERCISE);
+
+const INITIAL_ONE_REP_MAX: Record<ExerciseName, number> = {
+  benchpress: 60,
+  deadlift: 100,
+  ohp: 40,
+  squat: 80,
+};
+
+export const SetupOneRepMax = ({ onComplete }: Props) => {
+  const [estimatedOneRepMax, setEstimatedOneRepMax] = useState(
+    INITIAL_ONE_REP_MAX,
+  );
+  const [error, setError] = useState("");
+
+  const updateOneRepMax = (exercise: ExerciseName, value: number) => {
+    setEstimatedOneRepMax((previousOneRepMax) => ({
+      ...previousOneRepMax,
+      [exercise]: value,
+    }));
+  };
+
+  const completeSetup = () => {
+    if (EXERCISES.some((exercise) => estimatedOneRepMax[exercise] <= 0)) {
+      setError("Enter an estimated 1RM above 0 kg for each lift.");
+      return;
+    }
+
+    onComplete(estimatedOneRepMax);
+  };
+
+  return (
+    <section className="setup-one-rep-max">
+      <div>
+        <Span text="Welcome to Styrka" size="small" />
+        <Heading text="Set your estimated 1RM" level="1" />
+        <p>
+          We’ll use 70% of each estimate as your starting training weight and
+          round it to the nearest 2.5 kg.
+        </p>
+      </div>
+      <div className="setup-one-rep-max__lifts">
+        {EXERCISES.map((exercise) => (
+          <label className="setup-one-rep-max__lift" key={exercise}>
+            <Span text={EXERCISE_LABELS[exercise]} />
+            <div>
+              <Input
+                value={estimatedOneRepMax[exercise]}
+                onChange={(value) => updateOneRepMax(exercise, value)}
+                size="large"
+              />
+              <Span text="kg" size="small" />
+            </div>
+          </label>
+        ))}
+      </div>
+      {error && <p className="setup-one-rep-max__error">{error}</p>}
+      <Button label="Save and view workout" onClick={completeSetup} />
+    </section>
+  );
+};
