@@ -1,16 +1,35 @@
 import "./Dialog.css";
 
+import { type LucideIcon, X } from "lucide-react";
 import { type ReactNode, useEffect, useRef } from "react";
 
 import { Button } from "../button/Button";
 import { Heading } from "../text/Heading";
+
 type Props = {
   onClose: () => void;
   isOpen: boolean;
   title: string;
   children: ReactNode;
+  actionLabel?: string;
+  actionAriaLabel?: string;
+  actionIcon?: LucideIcon;
+  destructiveAction?: {
+    label: string;
+    onClick: () => void;
+    ariaLabel?: string;
+  };
 };
-export const Dialog = ({ onClose, children, title, isOpen }: Props) => {
+export const Dialog = ({
+  onClose,
+  children,
+  title,
+  isOpen,
+  actionLabel = "Close",
+  actionAriaLabel = "Close dialog",
+  actionIcon = X,
+  destructiveAction,
+}: Props) => {
   const dialoRef = useRef<HTMLDialogElement>(null);
   const showing = useRef<boolean>(false);
 
@@ -48,11 +67,31 @@ export const Dialog = ({ onClose, children, title, isOpen }: Props) => {
     <dialog className="dialog" id="modal" ref={dialoRef}>
       <div className="dialog__content">
         <div className="dialog__toolbar">
-          <Heading text={title} level="1" />
-          <Button onClick={() => dialoRef.current?.close()} label="X" />
+          <Heading text={title} level="2" />
+          <Button
+            onClick={() => dialoRef.current?.close()}
+            icon={actionIcon}
+            size="icon"
+            variant="secondary"
+            ariaLabel={actionAriaLabel}
+          />
         </div>
         <div className="dialog__rendered-content ">{children}</div>
-        <Button onClick={() => dialoRef.current?.close()} label="Close" />
+        <div className="dialog__actions">
+          {destructiveAction && (
+            <Button
+              onClick={destructiveAction.onClick}
+              label={destructiveAction.label}
+              variant="danger"
+              ariaLabel={destructiveAction.ariaLabel}
+            />
+          )}
+          <Button
+            onClick={() => dialoRef.current?.close()}
+            label={actionLabel}
+            variant="secondary"
+          />
+        </div>
       </div>
     </dialog>
   );

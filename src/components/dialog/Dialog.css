@@ -1,31 +1,46 @@
 .dialog {
-  height: 80vh;
-  width: 500px;
-  border: 2px solid var(--accent-border);
-  border-radius: 8px;
-  background: var(--background);
+  width: min(100% - 2rem, 40rem);
+  height: min(45rem, calc(100dvh - 2rem));
+  padding: 0;
+  border: 0.0625rem solid var(--border);
+  border-radius: 1.25rem;
+  background: var(--surface);
+  box-shadow: 0 1.5rem 4rem rgba(31, 41, 51, 0.18);
+  overflow: hidden;
   z-index: 10000;
 }
 
 .dialog__content {
   display: flex;
   height: 100%;
-  gap: 1rem;
+  min-height: 0;
+  gap: 1.5rem;
+  padding: 1.5rem;
   flex-direction: column;
-  justify-content: space-between;
 }
 
 .dialog__toolbar {
   display: flex;
-  flex-direction: row;
+  flex: 0 0 auto;
   justify-content: space-between;
+  align-items: center;
 }
 
 .dialog__rendered-content {
-  height: 100%;
+  flex: 1 1 auto;
+  min-height: 0;
   overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+.dialog__actions {
+  display: flex;
+  flex: 0 0 auto;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 0.75rem;
 }
 
 dialog::backdrop {
-  background-color: rgba(0, 0, 0, 0.5);
+  background-color: rgba(31, 41, 51, 0.4);
 }
