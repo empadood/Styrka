@@ -9,10 +9,18 @@
   align-items: center;
   justify-content: space-between;
   gap: 1rem;
+  padding: 1rem;
+  border: 0.0625rem solid var(--border);
+  border-radius: 0.75rem;
 }
 
 .onerepmax__values {
   display: flex;
   align-items: center;
   gap: 0.5rem;
+}
+
+.onerepmax__values .span:last-child {
+  color: var(--success);
+  font-weight: 600;
 }

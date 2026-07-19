@@ -1,4 +1,9 @@
 .exercise--gap {
   display: flex;
-  gap: 0.25rem;
+  align-items: baseline;
+  gap: 0.5rem;
+}
+
+.exercise--gap .span:last-child {
+  color: var(--text-secondary);
 }

@@ -8,12 +8,12 @@ type Props = {
 export const Heading = ({ text, level = "1" }: Props) => {
   const getLevel = (text: string) => {
     const levelMap = {
-      "1": <h1 className="heading">{text}</h1>,
-      "2": <h2 className="heading">{text}</h2>,
-      "3": <h3 className="heading">{text}</h3>,
-      "4": <h4 className="heading">{text}</h4>,
-      "5": <h5 className="heading">{text}</h5>,
-      "6": <h6 className="heading">{text}</h6>,
+      "1": <h1 className="heading heading--1">{text}</h1>,
+      "2": <h2 className="heading heading--2">{text}</h2>,
+      "3": <h3 className="heading heading--3">{text}</h3>,
+      "4": <h4 className="heading heading--4">{text}</h4>,
+      "5": <h5 className="heading heading--5">{text}</h5>,
+      "6": <h6 className="heading heading--6">{text}</h6>,
     };
 
     return levelMap[level];

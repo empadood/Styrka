@@ -1,32 +1,127 @@
 .home {
-  display: flex;
-  flex-direction: column;
+  width: min(100% - 2rem, 73.75rem);
+  margin: 0 auto;
+  padding: 1.5rem 0 3rem;
+}
+
+.home__dashboard {
+  display: grid;
   gap: 1rem;
+  margin-top: 1.5rem;
 }
 
-.home__overview {
-  display: flex;
-  flex-direction: row;
-  justify-content: space-around;
-  overflow: hidden;
-  flex-wrap: wrap;
-  padding: 1rem 0;
-  text-align: center;
-}
-
-.home__overview__title {
+.card__heading {
   display: flex;
   align-items: flex-start;
-  flex-direction: column;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
 }
-.home__overview__exercise {
+
+.card__heading .span,
+.card__description {
+  color: var(--text-secondary);
+  font-size: 0.875rem;
+}
+
+.upcoming-session {
+  border-color: var(--primary);
+  background: var(--primary-soft);
+}
+
+.upcoming-session__exercises {
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
+
   gap: 0.5rem;
 }
 
-.home_next-session_footer {
+.upcoming-session__exercise,
+.summary__item {
+  padding: 0.75rem;
+  border-radius: 0.75rem;
+  background: var(--surface);
+}
+
+.upcoming-session__exercise .span:last-child {
+  display: block;
+  color: var(--text-secondary);
+}
+
+.upcoming-session__exercise > div .span:last-child {
+  font-size: 0.75rem;
+}
+
+.upcoming-session__footer {
+  margin-top: 1.5rem;
   display: flex;
-  flex-direction: row;
   justify-content: flex-end;
+}
+
+.upcoming-session__footer .button {
+  width: 100%;
+}
+
+.summary__grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.5rem;
+}
+
+.summary__item strong {
+  display: block;
+  margin-top: 0.25rem;
+  color: var(--text);
+  font-size: 1.125rem;
+}
+
+.previous-session__list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.previous-session__exercise {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 0.0625rem solid var(--border);
+}
+
+.previous-session__exercise:last-child {
+  padding-bottom: 0;
+  border-bottom: 0;
+}
+
+.previous-session__exercise .span:last-child {
+  color: var(--text-secondary);
+  text-align: right;
+}
+
+.previous-session__footer {
+  margin-top: 1rem;
+}
+
+@media (min-width: 48rem) {
+  .home {
+    padding-top: 2.5rem;
+  }
+
+  .home__dashboard {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .upcoming-session,
+  .home__trends {
+    grid-column: span 2;
+  }
+
+  .upcoming-session__exercises {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+
+  .upcoming-session__footer .button {
+    width: auto;
+  }
 }

@@ -6,9 +6,9 @@ type Props = {
 };
 export const Span = ({ text, capitalize, size = "normal" }: Props) => {
   const fontSize = {
-    small: "14px",
-    normal: "16px",
-    large: "20px",
+    small: "0.875rem",
+    normal: "1rem",
+    large: "1.25rem",
   } as const;
 
   return (
