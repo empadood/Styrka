@@ -48,3 +48,19 @@
 .session--label-gap {
   margin-bottom: 0.25rem;
 }
+
+@media (max-width: 30rem) {
+  .session__set {
+    grid-template-columns: 1fr;
+  }
+
+  .session__set__inputs {
+    grid-template-columns: 1fr;
+    gap: 0;
+    padding: 0 0.25rem;
+  }
+
+  .session__set__inputs .input {
+    max-width: 100%;
+  }
+}
