@@ -4,6 +4,8 @@ const STORAGE_KEY = "styrka.workout-store.v1";
 
 interface WorkoutStore {
   workingWeights: Record<ExerciseName, number>;
+  estimatedOneRepMax: Record<ExerciseName, number> | null;
+  hasConfiguredOneRepMax: boolean;
   increments: Record<ExerciseName, number>;
   lastCompletedSession: SessionType | null;
   history: WorkoutHistoryEntry[];
@@ -11,6 +13,8 @@ interface WorkoutStore {
 
 const DEFAULT_STORE: WorkoutStore = {
   workingWeights: { squat: 20, deadlift: 40, ohp: 20, benchpress: 20 },
+  estimatedOneRepMax: null,
+  hasConfiguredOneRepMax: false,
   increments: { squat: 5, deadlift: 5, ohp: 2.5, benchpress: 2.5 },
   lastCompletedSession: null,
   history: [],
@@ -29,6 +33,9 @@ const loadStore = (): WorkoutStore => {
         ...DEFAULT_STORE.workingWeights,
         ...parsed.workingWeights,
       },
+      estimatedOneRepMax: parsed.estimatedOneRepMax ?? null,
+      hasConfiguredOneRepMax:
+        parsed.hasConfiguredOneRepMax ?? Boolean(parsed.estimatedOneRepMax),
       increments: { ...DEFAULT_STORE.increments, ...parsed.increments },
       lastCompletedSession: parsed.lastCompletedSession ?? null,
       history: Array.isArray(parsed.history) ? parsed.history : [],

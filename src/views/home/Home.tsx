@@ -15,6 +15,7 @@ import {
   getNextSessionType,
   type ProgressionResult,
 } from "../../helpers/progression.helper";
+import { buildStartingWeights } from "../../helpers/starting-weight.helper";
 import { buildTrendData } from "../../helpers/trends.helper";
 import { useWorkoutStore } from "../../hooks/useWorkoutStore";
 import type { ExerciseName, LoggedExercise, SessionType } from "../../types";
@@ -22,6 +23,7 @@ import { OneRepMax } from "../onerepmax/OneRepMax";
 import { PostWorkout } from "../postworkout/PostWorkout";
 import { Profile } from "../profile/Profile";
 import { SessionHistory } from "../sessionhistory/SessionHistory";
+import { SetupOneRepMax } from "../setuponepmax/SetupOneRepMax";
 import { WorkoutSession } from "../workoutsession/Session";
 
 type PendingSession = {
@@ -54,6 +56,17 @@ export const Home = () => {
   const sessionType = getNextSessionType(store.lastCompletedSession);
   const items = buildOverviewFromStore(store);
   const trendData = buildTrendData(store.history);
+
+  const handleCompleteOneRepMaxSetup = (
+    estimatedOneRepMax: Record<ExerciseName, number>,
+  ) => {
+    update((previousStore) => ({
+      ...previousStore,
+      estimatedOneRepMax,
+      hasConfiguredOneRepMax: true,
+      workingWeights: buildStartingWeights(estimatedOneRepMax),
+    }));
+  };
 
   const stage: Stage = pendingResults
     ? "summary"
@@ -139,6 +152,14 @@ export const Home = () => {
     closeWorkout();
   };
 
+  if (!store.hasConfiguredOneRepMax) {
+    return (
+      <main className="home">
+        <SetupOneRepMax onComplete={handleCompleteOneRepMaxSetup} />
+      </main>
+    );
+  }
+
   return (
     <main className="home">
       <Toolbar
@@ -174,7 +195,10 @@ export const Home = () => {
         isOpen={showProfile}
         onClose={() => setShowProfile(false)}
       >
-        <Profile increments={store.increments} />
+        <Profile
+          increments={store.increments}
+          estimatedOneRepMax={store.estimatedOneRepMax}
+        />
       </Dialog>
 
       <Dialog

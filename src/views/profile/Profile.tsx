@@ -4,34 +4,27 @@ import { Heading, Section } from "../../components";
 import { ExerciseWithWeight } from "../../components/text/ExerciseWithWeight";
 import { EXERCISE, type ExerciseName } from "../../types";
 
-const data = {
-  ohp: 50,
-  squat: 80,
-  deadlift: 90,
-  benchPress: 66,
-};
-
 type Props = {
   increments: Record<ExerciseName, number>;
+  estimatedOneRepMax: Record<ExerciseName, number> | null;
 };
 
-export const Profile = ({ increments }: Props) => {
+export const Profile = ({ increments, estimatedOneRepMax }: Props) => {
   return (
     <div className="profile__container">
       <Section>
         <Heading text="Current Estimated One Rep Max" />
-        <div className="profile__configure">
-          <ExerciseWithWeight
-            exercise={EXERCISE.benchpress}
-            weight={data.benchPress}
-          />
-          <ExerciseWithWeight
-            exercise={EXERCISE.deadlift}
-            weight={data.deadlift}
-          />
-          <ExerciseWithWeight exercise={EXERCISE.ohp} weight={data.ohp} />
-          <ExerciseWithWeight exercise={EXERCISE.squat} weight={data.squat} />
-        </div>
+        {estimatedOneRepMax && (
+          <div className="profile__configure">
+            {Object.values(EXERCISE).map((exercise) => (
+              <ExerciseWithWeight
+                exercise={exercise}
+                key={exercise}
+                weight={estimatedOneRepMax[exercise]}
+              />
+            ))}
+          </div>
+        )}
       </Section>
 
       <Section>
