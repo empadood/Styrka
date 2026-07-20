@@ -19,6 +19,7 @@ import {
 import { buildInitialExercises } from "../../helpers/session.helper";
 import { buildStartingWeights } from "../../helpers/starting-weight.helper";
 import { buildRpeTrendData, buildTrendData } from "../../helpers/trends.helper";
+import { computeTrainingStatus, type TrainingStatus } from "../../helpers/status.helper";
 import { SingleLineChart } from "../../components/chart/SingleLineChart";
 import { useWorkoutStore } from "../../hooks/useWorkoutStore";
 import type {
@@ -47,6 +48,14 @@ const DIALOG_TITLES: Record<Stage, string> = {
   summary: "Workout Summary",
 };
 
+const STATUS_LABELS: Record<TrainingStatus | "insufficient-data", string> = {
+  comeback: "Comeback",
+  gaining: "Gaining",
+  maintaining: "Maintaining",
+  declining: "Declining",
+  "insufficient-data": "Not enough data yet",
+};
+
 export const Home = () => {
   const [showProfile, setShowProfile] = useState(false);
   const [showSessionHistory, setShowSessionHistory] = useState(false);
@@ -65,6 +74,7 @@ export const Home = () => {
   const items = buildOverviewFromStore(store);
   const trendData = buildTrendData(store.history);
   const rpeTrendData = buildRpeTrendData(store.history);
+  const trainingStatus = computeTrainingStatus(store.history);
 
   const handleOverrideWorkingWeight = (
     exercise: ExerciseName,
@@ -213,6 +223,9 @@ export const Home = () => {
               <Heading text="Progress" level="2" />
               <span className="card__description">Working weight by completed workout</span>
             </div>
+            <span className={`status-badge status-badge--${trainingStatus}`}>
+              {STATUS_LABELS[trainingStatus]}
+            </span>
           </div>
           <ChartComponent data={trendData} />
         </Section>

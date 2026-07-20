@@ -24,6 +24,40 @@
   font-size: 0.875rem;
 }
 
+.status-badge {
+  flex-shrink: 0;
+  padding: 0.375rem 0.75rem;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.status-badge--comeback {
+  color: var(--primary);
+  background: var(--primary-soft);
+}
+
+.status-badge--gaining {
+  color: var(--success);
+  background: color-mix(in srgb, var(--success) 15%, transparent);
+}
+
+.status-badge--maintaining {
+  color: var(--text-secondary);
+  background: var(--surface-secondary);
+}
+
+.status-badge--declining {
+  color: var(--danger);
+  background: color-mix(in srgb, var(--danger) 15%, transparent);
+}
+
+.status-badge--insufficient-data {
+  color: var(--text-secondary);
+  background: var(--surface-secondary);
+}
+
 .upcoming-session {
   border-color: var(--primary);
   background: var(--primary-soft);
