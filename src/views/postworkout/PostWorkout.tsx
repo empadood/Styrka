@@ -2,17 +2,21 @@ import "./PostWorkout.css";
 
 import { useState } from "react";
 
-import { Button } from "../../components";
+import { Button, Heading, Section } from "../../components";
 import { Input } from "../../components/input/Input";
+import { RpeScale } from "../../components/rpescale/RpeScale";
 import { ExerciseWithWeight } from "../../components/text/ExerciseWithWeight";
 import { Span } from "../../components/text/Span";
 import { Weight } from "../../components/text/Weight";
 import type { ProgressionResult } from "../../helpers/progression.helper";
-import type { ExerciseName } from "../../types";
+import type { ExerciseName, SessionCheckIn } from "../../types";
 
 type Props = {
   results: ProgressionResult[];
-  onConfirm: (finalIncrements: Record<ExerciseName, number>) => void;
+  onConfirm: (
+    finalIncrements: Record<ExerciseName, number>,
+    checkIn: SessionCheckIn,
+  ) => void;
 };
 
 export const PostWorkout = ({ results, onConfirm }: Props) => {
@@ -24,6 +28,8 @@ export const PostWorkout = ({ results, onConfirm }: Props) => {
           .map((result) => [result.name, result.proposedIncrement]),
       ) as Record<ExerciseName, number>,
   );
+  const [rpe, setRpe] = useState(5);
+  const [notes, setNotes] = useState("");
 
   return (
     <div className="postworkout__container">
@@ -66,7 +72,25 @@ export const PostWorkout = ({ results, onConfirm }: Props) => {
           )}
         </div>
       ))}
-      <Button label="Confirm" onClick={() => onConfirm(increments)} />
+
+      <Section>
+        <Heading text="How did it feel?" level="3" />
+        <div className="postworkout__rpe">
+          <Span text="Rate of perceived exertion" size="small" />
+          <RpeScale value={rpe} onChange={setRpe} />
+        </div>
+        <textarea
+          className="postworkout__notes"
+          placeholder="What did you actually do, and how did it feel?"
+          value={notes}
+          onChange={(e) => setNotes(e.target.value)}
+        />
+      </Section>
+
+      <Button
+        label="Confirm"
+        onClick={() => onConfirm(increments, { rpe, notes })}
+      />
     </div>
   );
 };

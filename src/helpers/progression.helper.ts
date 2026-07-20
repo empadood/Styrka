@@ -16,6 +16,9 @@ interface ProgressionResult {
 const isExerciseCompleted = (sets: LoggedSet[]): boolean =>
   sets.every((s) => s.reps >= s.targetReps);
 
+const getActualWeight = (sets: LoggedSet[]): number =>
+  Math.max(...sets.map((s) => s.weight));
+
 const calculateNextWeight = (
   currentWeight: number,
   increment: number,
@@ -24,12 +27,11 @@ const calculateNextWeight = (
 
 const calculateSessionProgression = (
   loggedExercises: LoggedExercise[],
-  currentWeights: Record<ExerciseName, number>,
   currentIncrements: Record<ExerciseName, number>,
 ): ProgressionResult[] =>
   loggedExercises.map((ex) => {
     const completed = isExerciseCompleted(ex.sets);
-    const previousWeight = currentWeights[ex.name];
+    const previousWeight = getActualWeight(ex.sets);
     const proposedIncrement = currentIncrements[ex.name];
     return {
       name: ex.name,
@@ -50,6 +52,7 @@ const getNextSessionType = (last: SessionType | null): SessionType =>
 export {
   calculateNextWeight,
   calculateSessionProgression,
+  getActualWeight,
   getNextSessionType,
   isExerciseCompleted,
   type ProgressionResult,

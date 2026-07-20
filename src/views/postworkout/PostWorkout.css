@@ -31,6 +31,26 @@
   grid-column: 2 / -1;
 }
 
+.postworkout__rpe {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-bottom: 0.75rem;
+}
+
+.postworkout__notes {
+  width: 100%;
+  min-height: 5rem;
+  padding: 0.75rem;
+  border: 0.0625rem solid var(--border);
+  border-radius: 0.75rem;
+  background: var(--surface);
+  color: var(--text);
+  font-family: inherit;
+  font-size: 0.875rem;
+  resize: vertical;
+}
+
 @media (max-width: 30rem) {
   .postworkout__exercise {
     grid-template-columns: 1fr 5rem;

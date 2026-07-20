@@ -23,17 +23,24 @@ interface LoggedExercise {
   weightUsed: number;
 }
 
+interface SessionCheckIn {
+  rpe: number;
+  notes: string;
+}
+
 interface WorkoutHistoryEntry {
   id: string;
   date: string;
   sessionType: SessionType;
   exercises: LoggedExercise[];
+  checkIn?: SessionCheckIn;
 }
 
 export type {
   ExercisePrescription,
   LoggedExercise,
   LoggedSet,
+  SessionCheckIn,
   SessionDefinition,
   SessionType,
   WorkoutHistoryEntry,

@@ -36,6 +36,14 @@ export const SessionHistory = ({ sessions }: Props) => {
             {formatDate(selectedSession.date)}
           </time>
         </div>
+        {selectedSession.checkIn && (
+          <section className="session-history__checkin">
+            <Span text={`RPE ${selectedSession.checkIn.rpe}/10`} size="small" />
+            {selectedSession.checkIn.notes && (
+              <Span text={selectedSession.checkIn.notes} size="small" />
+            )}
+          </section>
+        )}
         <div className="session-history__exercise-list">
           {selectedSession.exercises.map((exercise) => (
             <section className="session-history__exercise" key={exercise.name}>

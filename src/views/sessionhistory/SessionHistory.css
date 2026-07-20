@@ -59,6 +59,16 @@
   border-radius: 0.75rem;
 }
 
+.session-history__checkin {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding: 1rem;
+  border: 0.0625rem solid var(--border);
+  border-radius: 0.75rem;
+  background: var(--surface-secondary);
+}
+
 .session-history__exercise-heading .span {
   color: var(--success);
   font-weight: 600;

@@ -14,4 +14,20 @@ const buildTrendData = (history: WorkoutHistoryEntry[]): ChartData[] =>
     ),
   );
 
-export { buildTrendData };
+type RpeDataPoint = {
+  workout: number;
+  date: string;
+  rpe: number;
+};
+
+const buildRpeTrendData = (history: WorkoutHistoryEntry[]): RpeDataPoint[] =>
+  history
+    .map((session, index) => ({ session, workout: index + 1 }))
+    .filter(({ session }) => session.checkIn?.rpe !== undefined)
+    .map(({ session, workout }) => ({
+      workout,
+      date: session.date,
+      rpe: session.checkIn!.rpe,
+    }));
+
+export { buildRpeTrendData, buildTrendData, getExerciseWeight };

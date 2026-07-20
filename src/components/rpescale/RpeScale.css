@@ -1,0 +1,33 @@
+.rpe-scale {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 0.5rem;
+}
+
+@media (min-width: 30rem) {
+  .rpe-scale {
+    grid-template-columns: repeat(10, minmax(0, 1fr));
+  }
+}
+
+.rpe-scale__option {
+  min-height: 2.75rem;
+  border: 0.0625rem solid var(--border);
+  border-radius: 0.75rem;
+  background: var(--surface);
+  color: var(--text);
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 150ms ease, border-color 150ms ease, color 150ms ease;
+}
+
+.rpe-scale__option:hover {
+  background: var(--surface-secondary);
+}
+
+.rpe-scale__option--selected {
+  background: var(--primary);
+  border-color: var(--primary);
+  color: #ffffff;
+}

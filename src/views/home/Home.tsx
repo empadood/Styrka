@@ -18,9 +18,15 @@ import {
 } from "../../helpers/progression.helper";
 import { buildInitialExercises } from "../../helpers/session.helper";
 import { buildStartingWeights } from "../../helpers/starting-weight.helper";
-import { buildTrendData } from "../../helpers/trends.helper";
+import { buildRpeTrendData, buildTrendData } from "../../helpers/trends.helper";
+import { SingleLineChart } from "../../components/chart/SingleLineChart";
 import { useWorkoutStore } from "../../hooks/useWorkoutStore";
-import type { ExerciseName, LoggedExercise, SessionType } from "../../types";
+import type {
+  ExerciseName,
+  LoggedExercise,
+  SessionCheckIn,
+  SessionType,
+} from "../../types";
 import { OneRepMax } from "../onerepmax/OneRepMax";
 import { PostWorkout } from "../postworkout/PostWorkout";
 import { Profile } from "../profile/Profile";
@@ -58,6 +64,7 @@ export const Home = () => {
   const workoutActive = store.activeWorkout !== null;
   const items = buildOverviewFromStore(store);
   const trendData = buildTrendData(store.history);
+  const rpeTrendData = buildRpeTrendData(store.history);
 
   const handleOverrideWorkingWeight = (
     exercise: ExerciseName,
@@ -127,16 +134,13 @@ export const Home = () => {
     }
 
     setPendingResults(
-      calculateSessionProgression(
-        pendingSession.exercises,
-        store.workingWeights,
-        store.increments,
-      ),
+      calculateSessionProgression(pendingSession.exercises, store.increments),
     );
   };
 
   const handleConfirmPostWorkout = (
     finalIncrements: Record<ExerciseName, number>,
+    checkIn: SessionCheckIn,
   ) => {
     if (!pendingResults || !pendingSession) {
       return;
@@ -164,6 +168,7 @@ export const Home = () => {
             date: new Date().toISOString(),
             sessionType: pendingSession.sessionType,
             exercises: pendingSession.exercises,
+            checkIn,
           },
         ],
         activeWorkout: null,
@@ -210,6 +215,21 @@ export const Home = () => {
             </div>
           </div>
           <ChartComponent data={trendData} />
+        </Section>
+        <Section className="home__trends">
+          <div className="card__heading">
+            <div>
+              <Heading text="Effort (RPE)" level="2" />
+              <span className="card__description">Perceived exertion by completed workout</span>
+            </div>
+          </div>
+          <SingleLineChart
+            data={rpeTrendData}
+            dataKey="rpe"
+            label="RPE"
+            color="var(--warning)"
+            domain={[1, 10]}
+          />
         </Section>
       </div>
       <Dialog
