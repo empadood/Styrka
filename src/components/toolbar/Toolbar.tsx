@@ -10,12 +10,14 @@ import { Span } from "../text/Span";
 type Props = {
   title: string;
   onShowProfile: () => void;
+  onShowBodyWeight: () => void;
   onResumeWorkout: () => void;
   hasActiveWorkout?: boolean;
 };
 export const Toolbar = ({
   title,
   onShowProfile,
+  onShowBodyWeight,
   onResumeWorkout,
   hasActiveWorkout = false,
 }: Props) => {
@@ -39,6 +41,11 @@ export const Toolbar = ({
   const showProfile = () => {
     setIsMenuOpen(false);
     onShowProfile();
+  };
+
+  const showBodyWeight = () => {
+    setIsMenuOpen(false);
+    onShowBodyWeight();
   };
 
   const resumeWorkout = () => {
@@ -68,6 +75,9 @@ export const Toolbar = ({
           <div className="toolbar__menu" role="menu">
             <button className="toolbar__menu-item" onClick={showProfile} role="menuitem">
               Profile
+            </button>
+            <button className="toolbar__menu-item" onClick={showBodyWeight} role="menuitem">
+              Log weight
             </button>
             {hasActiveWorkout && (
               <button

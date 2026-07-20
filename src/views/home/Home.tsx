@@ -16,6 +16,7 @@ import {
   getNextSessionType,
   type ProgressionResult,
 } from "../../helpers/progression.helper";
+import { upsertBodyWeightEntry } from "../../helpers/bodyweight.helper";
 import { buildInitialExercises } from "../../helpers/session.helper";
 import { buildStartingWeights } from "../../helpers/starting-weight.helper";
 import { buildRpeTrendData, buildTrendData } from "../../helpers/trends.helper";
@@ -28,6 +29,7 @@ import type {
   SessionCheckIn,
   SessionType,
 } from "../../types";
+import { BodyWeight } from "../bodyweight/BodyWeight";
 import { OneRepMax } from "../onerepmax/OneRepMax";
 import { PostWorkout } from "../postworkout/PostWorkout";
 import { Profile } from "../profile/Profile";
@@ -58,6 +60,7 @@ const STATUS_LABELS: Record<TrainingStatus | "insufficient-data", string> = {
 
 export const Home = () => {
   const [showProfile, setShowProfile] = useState(false);
+  const [showBodyWeight, setShowBodyWeight] = useState(false);
   const [showSessionHistory, setShowSessionHistory] = useState(false);
   const [workoutOpen, setWorkoutOpen] = useState(false);
   const [pendingSession, setPendingSession] = useState<PendingSession | null>(
@@ -75,6 +78,17 @@ export const Home = () => {
   const trendData = buildTrendData(store.history);
   const rpeTrendData = buildRpeTrendData(store.history);
   const trainingStatus = computeTrainingStatus(store.history);
+
+  const handleLogBodyWeight = (weight: number) => {
+    update((previousStore) => ({
+      ...previousStore,
+      bodyWeightLog: upsertBodyWeightEntry(
+        previousStore.bodyWeightLog,
+        new Date().toISOString(),
+        weight,
+      ),
+    }));
+  };
 
   const handleOverrideWorkingWeight = (
     exercise: ExerciseName,
@@ -202,6 +216,7 @@ export const Home = () => {
       <Toolbar
         title="Good morning"
         onShowProfile={() => setShowProfile(true)}
+        onShowBodyWeight={() => setShowBodyWeight(true)}
         onResumeWorkout={resumeWorkout}
         hasActiveWorkout={workoutActive}
       />
@@ -256,6 +271,14 @@ export const Home = () => {
           workingWeights={store.workingWeights}
           onOverrideWeight={handleOverrideWorkingWeight}
         />
+      </Dialog>
+
+      <Dialog
+        title="Body weight"
+        isOpen={showBodyWeight}
+        onClose={() => setShowBodyWeight(false)}
+      >
+        <BodyWeight log={store.bodyWeightLog} onLog={handleLogBodyWeight} />
       </Dialog>
 
       <Dialog

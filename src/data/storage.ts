@@ -1,4 +1,5 @@
 import type {
+  BodyWeightEntry,
   ExerciseName,
   LoggedExercise,
   SessionType,
@@ -18,6 +19,7 @@ interface WorkoutStore {
     sessionType: SessionType;
     exercises: LoggedExercise[];
   } | null;
+  bodyWeightLog: BodyWeightEntry[];
 }
 
 const DEFAULT_STORE: WorkoutStore = {
@@ -28,6 +30,7 @@ const DEFAULT_STORE: WorkoutStore = {
   lastCompletedSession: null,
   history: [],
   activeWorkout: null,
+  bodyWeightLog: [],
 };
 
 const loadStore = (): WorkoutStore => {
@@ -53,6 +56,9 @@ const loadStore = (): WorkoutStore => {
       lastCompletedSession: parsed.lastCompletedSession ?? null,
       history,
       activeWorkout: parsed.activeWorkout ?? null,
+      bodyWeightLog: Array.isArray(parsed.bodyWeightLog)
+        ? parsed.bodyWeightLog
+        : [],
     };
   } catch {
     return DEFAULT_STORE;
