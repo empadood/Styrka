@@ -3,6 +3,7 @@ import type {
   LoggedExercise,
   LoggedSet,
   SessionType,
+  WorkoutHistoryEntry,
 } from "../types";
 
 interface ProgressionResult {
@@ -49,11 +50,30 @@ const calculateSessionProgression = (
 const getNextSessionType = (last: SessionType | null): SessionType =>
   last === "A" ? "B" : "A";
 
+const toCalendarDay = (date: Date): number =>
+  Math.floor(date.getTime() / (24 * 60 * 60 * 1000));
+
+const wasTrainedRecently = (
+  history: WorkoutHistoryEntry[],
+  now: Date = new Date(),
+): boolean => {
+  const lastSession = history[history.length - 1];
+  if (!lastSession) {
+    return false;
+  }
+
+  const daysSinceLastSession =
+    toCalendarDay(now) - toCalendarDay(new Date(lastSession.date));
+
+  return daysSinceLastSession <= 1;
+};
+
 export {
   calculateNextWeight,
   calculateSessionProgression,
   getActualWeight,
   getNextSessionType,
   isExerciseCompleted,
+  wasTrainedRecently,
   type ProgressionResult,
 };

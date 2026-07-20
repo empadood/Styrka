@@ -17,9 +17,10 @@ type Props = {
     finalIncrements: Record<ExerciseName, number>,
     checkIn: SessionCheckIn,
   ) => void;
+  onBack: () => void;
 };
 
-export const PostWorkout = ({ results, onConfirm }: Props) => {
+export const PostWorkout = ({ results, onConfirm, onBack }: Props) => {
   const [increments, setIncrements] = useState<Record<ExerciseName, number>>(
     () =>
       Object.fromEntries(
@@ -33,6 +34,11 @@ export const PostWorkout = ({ results, onConfirm }: Props) => {
 
   return (
     <div className="postworkout__container">
+      <Button
+        label="Edit workout"
+        variant="secondary"
+        onClick={onBack}
+      />
       {results.map((result) => (
         <div className="postworkout__exercise" key={result.name}>
           <ExerciseWithWeight

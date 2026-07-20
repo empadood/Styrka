@@ -11,6 +11,7 @@ type Props = {
   sessionType: SessionType;
   onStartWorkout: () => void;
   isWorkoutActive?: boolean;
+  isUpcoming?: boolean;
 };
 
 export const UpcomingSession = ({
@@ -18,6 +19,7 @@ export const UpcomingSession = ({
   sessionType,
   onStartWorkout,
   isWorkoutActive = false,
+  isUpcoming = false,
 }: Props) => {
   const exercises = SESSION_DEFINITION[sessionType].flatMap((definition) =>
     session
@@ -30,7 +32,10 @@ export const UpcomingSession = ({
       <div className="card__heading">
         <div>
           <Span text="Ready when you are" size="small" />
-          <Heading text="Today's workout" level="2" />
+          <Heading
+            text={isUpcoming && !isWorkoutActive ? "Upcoming workout" : "Today's workout"}
+            level="2"
+          />
         </div>
         <Span text={`${exercises.length} exercises`} size="small" />
       </div>

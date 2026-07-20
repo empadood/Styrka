@@ -72,12 +72,22 @@ export const WorkoutSession = ({
             />
           </div>
           <div className="session__sets">
+            <div className="session__set session__set--header">
+              <span />
+              <div className="session__set__inputs">
+                <Span
+                  text={`Target reps: ${exercise.sets[0]?.targetReps ?? ""}`}
+                  size="small"
+                />
+                <Span text="Weight (kg)" size="small" />
+              </div>
+            </div>
             {exercise.sets.map((set, index) => (
               <div className="session__set" key={index}>
                 <Span text={`Set ${index + 1}`} size="small" />
                 <div className="session__set__inputs">
-                  <div>
-                    <div className="session--label-gap">
+                  <div className="session__input-group">
+                    <div className="session__input-label">
                       <Span
                         text={`Target reps: ${set.targetReps}`}
                         size="small"
@@ -85,15 +95,15 @@ export const WorkoutSession = ({
                     </div>
                     <Input
                       value={set.reps}
-                      size="small"
+                      size="medium"
                       onChange={(value) =>
                         updateSet(exercise.name, index, "reps", value)
                       }
                     />
                   </div>
-                  <div>
-                    <div className="session--label-gap">
-                      <Span text="Weight" size="small" />
+                  <div className="session__input-group">
+                    <div className="session__input-label">
+                      <Span text="Weight (kg)" size="small" />
                     </div>
                     <Input
                       size="medium"

@@ -14,12 +14,16 @@ import { buildOverviewFromStore } from "../../helpers/overview.helper";
 import {
   calculateSessionProgression,
   getNextSessionType,
+  wasTrainedRecently,
   type ProgressionResult,
 } from "../../helpers/progression.helper";
-import { upsertBodyWeightEntry } from "../../helpers/bodyweight.helper";
+import {
+  buildBodyWeightTrendData,
+  upsertBodyWeightEntry,
+} from "../../helpers/bodyweight.helper";
 import { buildInitialExercises } from "../../helpers/session.helper";
 import { buildStartingWeights } from "../../helpers/starting-weight.helper";
-import { buildRpeTrendData, buildTrendData } from "../../helpers/trends.helper";
+import { buildTrendData } from "../../helpers/trends.helper";
 import { computeTrainingStatus, type TrainingStatus } from "../../helpers/status.helper";
 import { SingleLineChart } from "../../components/chart/SingleLineChart";
 import { useWorkoutStore } from "../../hooks/useWorkoutStore";
@@ -76,7 +80,7 @@ export const Home = () => {
   const workoutActive = store.activeWorkout !== null;
   const items = buildOverviewFromStore(store);
   const trendData = buildTrendData(store.history);
-  const rpeTrendData = buildRpeTrendData(store.history);
+  const bodyWeightTrendData = buildBodyWeightTrendData(store.bodyWeightLog);
   const trainingStatus = computeTrainingStatus(store.history);
 
   const handleLogBodyWeight = (weight: number) => {
@@ -150,6 +154,22 @@ export const Home = () => {
 
   const handleFinishWorkout = (result: PendingSession) => {
     setPendingSession(result);
+  };
+
+  const handleBackToWorkout = () => {
+    if (!pendingSession) {
+      return;
+    }
+
+    update((previousStore) => ({
+      ...previousStore,
+      activeWorkout: {
+        sessionType: pendingSession.sessionType,
+        exercises: pendingSession.exercises,
+      },
+    }));
+    setPendingResults(null);
+    setPendingSession(null);
   };
 
   const handleContinueFromOneRepMax = () => {
@@ -226,6 +246,7 @@ export const Home = () => {
           sessionType={sessionType}
           onStartWorkout={workoutActive ? resumeWorkout : startWorkout}
           isWorkoutActive={workoutActive}
+          isUpcoming={wasTrainedRecently(store.history)}
         />
         <Summary items={items} />
         <PreviousSession
@@ -247,16 +268,16 @@ export const Home = () => {
         <Section className="home__trends">
           <div className="card__heading">
             <div>
-              <Heading text="Effort (RPE)" level="2" />
-              <span className="card__description">Perceived exertion by completed workout</span>
+              <Heading text="Body weight" level="2" />
+              <span className="card__description">Logged body weight over time</span>
             </div>
           </div>
           <SingleLineChart
-            data={rpeTrendData}
-            dataKey="rpe"
-            label="RPE"
+            data={bodyWeightTrendData}
+            dataKey="weight"
+            label="Weight"
+            unit="kg"
             color="var(--warning)"
-            domain={[1, 10]}
           />
         </Section>
       </div>
@@ -335,6 +356,7 @@ export const Home = () => {
           <PostWorkout
             results={pendingResults}
             onConfirm={handleConfirmPostWorkout}
+            onBack={handleBackToWorkout}
           />
         )}
       </Dialog>
