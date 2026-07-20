@@ -9,11 +9,12 @@ import { PreviousSession } from "../../components/session/PreviousSession";
 import { Summary } from "../../components/session/Summary";
 import { UpcomingSession } from "../../components/session/UpcomingSession";
 import { trackAnalyticsEvent } from "../../helpers/analytics.helper";
+import { getCombinedCatalog } from "../../helpers/exercise-catalog.helper";
 import { calculateSessionOneRepMax } from "../../helpers/one-rep-max.helper";
 import { buildOverviewFromStore } from "../../helpers/overview.helper";
 import {
   calculateSessionProgression,
-  getNextSessionType,
+  getNextProgramSession,
   wasTrainedRecently,
   type ProgressionResult,
 } from "../../helpers/progression.helper";
@@ -28,10 +29,9 @@ import { computeTrainingStatus, type TrainingStatus } from "../../helpers/status
 import { SingleLineChart } from "../../components/chart/SingleLineChart";
 import { useWorkoutStore } from "../../hooks/useWorkoutStore";
 import type {
-  ExerciseName,
   LoggedExercise,
   SessionCheckIn,
-  SessionType,
+  TrackedLiftId,
 } from "../../types";
 import { BodyWeight } from "../bodyweight/BodyWeight";
 import { OneRepMax } from "../onerepmax/OneRepMax";
@@ -42,7 +42,6 @@ import { SetupOneRepMax } from "../setuponepmax/SetupOneRepMax";
 import { WorkoutSession } from "../workoutsession/Session";
 
 type PendingSession = {
-  sessionType: SessionType;
   exercises: LoggedExercise[];
 };
 
@@ -75,8 +74,13 @@ export const Home = () => {
   >(null);
 
   const { store, update } = useWorkoutStore();
-  const sessionType = getNextSessionType(store.lastCompletedSession);
-  const activeSessionType = store.activeWorkout?.sessionType ?? sessionType;
+  const catalog = getCombinedCatalog(store);
+  const activeProgram =
+    store.programs.find((program) => program.id === store.activeProgramId) ??
+    null;
+  const nextSession = activeProgram
+    ? getNextProgramSession(activeProgram, store.lastCompletedSessionId)
+    : null;
   const workoutActive = store.activeWorkout !== null;
   const items = buildOverviewFromStore(store);
   const trendData = buildTrendData(store.history);
@@ -95,7 +99,7 @@ export const Home = () => {
   };
 
   const handleOverrideWorkingWeight = (
-    exercise: ExerciseName,
+    exercise: TrackedLiftId,
     weight: number,
   ) => {
     update((previousStore) => ({
@@ -105,7 +109,7 @@ export const Home = () => {
   };
 
   const handleCompleteOneRepMaxSetup = (
-    estimatedOneRepMax: Record<ExerciseName, number>,
+    estimatedOneRepMax: Record<TrackedLiftId, number>,
   ) => {
     update((previousStore) => ({
       ...previousStore,
@@ -128,8 +132,15 @@ export const Home = () => {
     update((previousStore) => ({
       ...previousStore,
       activeWorkout: {
-        sessionType,
-        exercises: buildInitialExercises(sessionType, previousStore.workingWeights),
+        programId: activeProgram?.id ?? null,
+        sessionId: nextSession?.id ?? null,
+        sessionLabel: nextSession?.name ?? "Workout",
+        exercises: buildInitialExercises(
+          nextSession,
+          catalog,
+          previousStore.workingWeights,
+          previousStore.history,
+        ),
       },
     }));
     trackAnalyticsEvent("Workout started");
@@ -157,17 +168,21 @@ export const Home = () => {
   };
 
   const handleBackToWorkout = () => {
-    if (!pendingSession) {
+    if (!pendingSession || !store.activeWorkout) {
       return;
     }
 
-    update((previousStore) => ({
-      ...previousStore,
-      activeWorkout: {
-        sessionType: pendingSession.sessionType,
-        exercises: pendingSession.exercises,
-      },
-    }));
+    update((previousStore) =>
+      previousStore.activeWorkout
+        ? {
+            ...previousStore,
+            activeWorkout: {
+              ...previousStore.activeWorkout,
+              exercises: pendingSession.exercises,
+            },
+          }
+        : previousStore,
+    );
     setPendingResults(null);
     setPendingSession(null);
   };
@@ -183,20 +198,25 @@ export const Home = () => {
   };
 
   const handleConfirmPostWorkout = (
-    finalIncrements: Record<ExerciseName, number>,
+    finalIncrements: Record<TrackedLiftId, number>,
     checkIn: SessionCheckIn,
   ) => {
-    if (!pendingResults || !pendingSession) {
+    if (!pendingResults || !pendingSession || !store.activeWorkout) {
       return;
     }
 
     update((prev) => {
+      if (!prev.activeWorkout) {
+        return prev;
+      }
+
       const workingWeights = { ...prev.workingWeights };
       pendingResults.forEach((result) => {
-        if (result.completed) {
-          workingWeights[result.name] =
+        if (result.tracked && result.completed) {
+          workingWeights[result.exerciseId as TrackedLiftId] =
             result.previousWeight +
-            (finalIncrements[result.name] ?? result.proposedIncrement);
+            (finalIncrements[result.exerciseId as TrackedLiftId] ??
+              result.proposedIncrement!);
         }
       });
 
@@ -204,13 +224,16 @@ export const Home = () => {
         ...prev,
         workingWeights,
         increments: { ...prev.increments, ...finalIncrements },
-        lastCompletedSession: pendingSession.sessionType,
+        lastCompletedSessionId:
+          prev.activeWorkout.sessionId ?? prev.lastCompletedSessionId,
         history: [
           ...prev.history,
           {
             id: crypto.randomUUID(),
             date: new Date().toISOString(),
-            sessionType: pendingSession.sessionType,
+            programId: prev.activeWorkout.programId,
+            sessionId: prev.activeWorkout.sessionId,
+            sessionLabel: prev.activeWorkout.sessionLabel,
             exercises: pendingSession.exercises,
             checkIn,
           },
@@ -243,7 +266,7 @@ export const Home = () => {
       <div className="home__dashboard">
         <UpcomingSession
           session={items}
-          sessionType={sessionType}
+          nextSession={nextSession}
           onStartWorkout={workoutActive ? resumeWorkout : startWorkout}
           isWorkoutActive={workoutActive}
           isUpcoming={wasTrainedRecently(store.history)}
@@ -325,7 +348,7 @@ export const Home = () => {
       >
         {stage === "workout" && (
           <WorkoutSession
-            sessionType={activeSessionType}
+            sessionLabel={store.activeWorkout?.sessionLabel ?? ""}
             exercises={store.activeWorkout?.exercises ?? []}
             onExercisesChange={(exercises) =>
               update((previousStore) =>

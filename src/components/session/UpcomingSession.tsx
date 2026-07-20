@@ -1,6 +1,5 @@
-import { SESSION_DEFINITION } from "../../data/session-definition";
 import { type Overview } from "../../data/workout-session";
-import type { SessionType } from "../../types";
+import type { ProgramSession } from "../../types";
 import { Button } from "../button/Button";
 import { Section } from "../section/Section";
 import { Heading } from "../text/Heading";
@@ -8,7 +7,7 @@ import { Span } from "../text/Span";
 
 type Props = {
   session: Overview[];
-  sessionType: SessionType;
+  nextSession: ProgramSession | null;
   onStartWorkout: () => void;
   isWorkoutActive?: boolean;
   isUpcoming?: boolean;
@@ -16,16 +15,15 @@ type Props = {
 
 export const UpcomingSession = ({
   session,
-  sessionType,
+  nextSession,
   onStartWorkout,
   isWorkoutActive = false,
   isUpcoming = false,
 }: Props) => {
-  const exercises = SESSION_DEFINITION[sessionType].flatMap((definition) =>
-    session
-      .filter(({ id }) => id === definition.name)
-      .map((overview) => ({ definition, overview })),
-  );
+  const exercises = (nextSession?.exercises ?? []).map((definition) => ({
+    definition,
+    overview: session.find(({ id }) => id === definition.exerciseId),
+  }));
 
   return (
     <Section className="upcoming-session">
@@ -39,20 +37,26 @@ export const UpcomingSession = ({
         </div>
         <Span text={`${exercises.length} exercises`} size="small" />
       </div>
-      <div className="upcoming-session__exercises">
-        {exercises.map(({ definition, overview }) => (
-          <div className="upcoming-session__exercise" key={overview.label}>
-            <div>
-              <Span text={overview.label} />
-              <Span
-                text={`${definition.sets} × ${definition.reps} reps`}
-                size="small"
-              />
+      {nextSession ? (
+        <div className="upcoming-session__exercises">
+          {exercises.map(({ definition, overview }) => (
+            <div className="upcoming-session__exercise" key={definition.exerciseId}>
+              <div>
+                <Span text={definition.label} />
+                <Span
+                  text={`${definition.sets} × ${definition.reps} reps`}
+                  size="small"
+                />
+              </div>
+              {overview && (
+                <Span text={`${overview.value} ${overview.unit}`} size="small" />
+              )}
             </div>
-            <Span text={`${overview.value} ${overview.unit}`} size="small" />
-          </div>
-        ))}
-      </div>
+          ))}
+        </div>
+      ) : (
+        <Span text="No program enrolled — browse programs to get started." size="small" />
+      )}
       <div className="upcoming-session__footer">
         <Button
           label={isWorkoutActive ? "Resume workout" : "Start workout"}

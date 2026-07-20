@@ -3,11 +3,11 @@ import type { Overview } from "../data/workout-session";
 import {
   EXERCISE,
   EXERCISE_LABELS,
-  type ExerciseName,
   type LoggedExercise,
+  type TrackedLiftId,
 } from "../types";
 
-const EXERCISE_NAMES: ExerciseName[] = [
+const EXERCISE_NAMES: TrackedLiftId[] = [
   EXERCISE.squat,
   EXERCISE.deadlift,
   EXERCISE.ohp,
@@ -16,16 +16,16 @@ const EXERCISE_NAMES: ExerciseName[] = [
 
 const findLastLoggedExercises = (
   store: WorkoutStore,
-): Map<ExerciseName, LoggedExercise> => {
-  const lastLogged = new Map<ExerciseName, LoggedExercise>();
+): Map<string, LoggedExercise> => {
+  const lastLogged = new Map<string, LoggedExercise>();
   for (
     let i = store.history.length - 1;
     i >= 0 && lastLogged.size < EXERCISE_NAMES.length;
     i--
   ) {
     for (const exercise of store.history[i].exercises) {
-      if (!lastLogged.has(exercise.name)) {
-        lastLogged.set(exercise.name, exercise);
+      if (!lastLogged.has(exercise.exerciseId)) {
+        lastLogged.set(exercise.exerciseId, exercise);
       }
     }
   }
@@ -41,7 +41,7 @@ const buildOverviewFromStore = (store: WorkoutStore): Overview[] => {
       label: EXERCISE_LABELS[name],
       id: name,
       value: store.workingWeights[name],
-      unit: "kg",
+      unit: "kg" as const,
       lastSession: lastLogged
         ? {
             exercises: {

@@ -1,4 +1,4 @@
-import type { ExerciseName } from "../types";
+import type { TrackedLiftId } from "../types";
 
 const TRAINING_WEIGHT_RATIO = 0.7;
 const WEIGHT_INCREMENT = 2.5;
@@ -11,13 +11,13 @@ const getStartingWeight = (oneRepMax: number): number =>
   );
 
 const buildStartingWeights = (
-  estimatedOneRepMax: Record<ExerciseName, number>,
-): Record<ExerciseName, number> =>
+  estimatedOneRepMax: Record<TrackedLiftId, number>,
+): Record<TrackedLiftId, number> =>
   Object.fromEntries(
     Object.entries(estimatedOneRepMax).map(([exercise, oneRepMax]) => [
       exercise,
       getStartingWeight(oneRepMax),
     ]),
-  ) as Record<ExerciseName, number>;
+  ) as Record<TrackedLiftId, number>;
 
 export { buildStartingWeights };

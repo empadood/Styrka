@@ -3,15 +3,15 @@ import "./SetupOneRepMax.css";
 import { useState } from "react";
 
 import { Button, Heading, Input, Span } from "../../components";
-import { EXERCISE, EXERCISE_LABELS, type ExerciseName } from "../../types";
+import { EXERCISE, EXERCISE_LABELS, type TrackedLiftId } from "../../types";
 
 type Props = {
-  onComplete: (estimatedOneRepMax: Record<ExerciseName, number>) => void;
+  onComplete: (estimatedOneRepMax: Record<TrackedLiftId, number>) => void;
 };
 
 const EXERCISES = Object.values(EXERCISE);
 
-const INITIAL_ONE_REP_MAX: Record<ExerciseName, number> = {
+const INITIAL_ONE_REP_MAX: Record<TrackedLiftId, number> = {
   benchpress: 60,
   deadlift: 100,
   ohp: 40,
@@ -24,7 +24,7 @@ export const SetupOneRepMax = ({ onComplete }: Props) => {
   );
   const [error, setError] = useState("");
 
-  const updateOneRepMax = (exercise: ExerciseName, value: number) => {
+  const updateOneRepMax = (exercise: TrackedLiftId, value: number) => {
     setEstimatedOneRepMax((previousOneRepMax) => ({
       ...previousOneRepMax,
       [exercise]: value,

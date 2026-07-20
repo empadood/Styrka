@@ -1,14 +1,4 @@
-import type { ExerciseName } from "./exercise.type";
-
-type SessionType = "A" | "B";
-
-interface ExercisePrescription {
-  name: ExerciseName;
-  sets: number;
-  reps: number;
-}
-
-type SessionDefinition = Record<SessionType, ExercisePrescription[]>;
+import type { ExerciseId } from "./exercise-catalog.type";
 
 interface LoggedSet {
   targetReps: number;
@@ -17,7 +7,10 @@ interface LoggedSet {
 }
 
 interface LoggedExercise {
-  name: ExerciseName;
+  exerciseId: ExerciseId;
+  label: string;
+  tracked: boolean;
+  isAdHoc: boolean;
   sets: LoggedSet[];
   completed: boolean;
   weightUsed: number;
@@ -31,17 +24,16 @@ interface SessionCheckIn {
 interface WorkoutHistoryEntry {
   id: string;
   date: string;
-  sessionType: SessionType;
+  programId: string | null;
+  sessionId: string | null;
+  sessionLabel: string;
   exercises: LoggedExercise[];
   checkIn?: SessionCheckIn;
 }
 
 export type {
-  ExercisePrescription,
   LoggedExercise,
   LoggedSet,
   SessionCheckIn,
-  SessionDefinition,
-  SessionType,
   WorkoutHistoryEntry,
 };

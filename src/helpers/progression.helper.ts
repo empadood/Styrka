@@ -1,17 +1,20 @@
+import type { Program, ProgramSession } from "../types/program.type";
 import type {
-  ExerciseName,
+  ExerciseId,
   LoggedExercise,
   LoggedSet,
-  SessionType,
+  TrackedLiftId,
   WorkoutHistoryEntry,
 } from "../types";
 
 interface ProgressionResult {
-  name: ExerciseName;
+  exerciseId: ExerciseId;
+  label: string;
+  tracked: boolean;
   completed: boolean;
   previousWeight: number;
-  proposedIncrement: number;
-  proposedWeight: number;
+  proposedIncrement: number | null;
+  proposedWeight: number | null;
 }
 
 const isExerciseCompleted = (sets: LoggedSet[]): boolean =>
@@ -28,14 +31,29 @@ const calculateNextWeight = (
 
 const calculateSessionProgression = (
   loggedExercises: LoggedExercise[],
-  currentIncrements: Record<ExerciseName, number>,
+  currentIncrements: Record<TrackedLiftId, number>,
 ): ProgressionResult[] =>
   loggedExercises.map((ex) => {
     const completed = isExerciseCompleted(ex.sets);
     const previousWeight = getActualWeight(ex.sets);
-    const proposedIncrement = currentIncrements[ex.name];
+
+    if (!ex.tracked) {
+      return {
+        exerciseId: ex.exerciseId,
+        label: ex.label,
+        tracked: false,
+        completed,
+        previousWeight,
+        proposedIncrement: null,
+        proposedWeight: null,
+      };
+    }
+
+    const proposedIncrement = currentIncrements[ex.exerciseId as TrackedLiftId];
     return {
-      name: ex.name,
+      exerciseId: ex.exerciseId,
+      label: ex.label,
+      tracked: true,
       completed,
       previousWeight,
       proposedIncrement,
@@ -47,8 +65,20 @@ const calculateSessionProgression = (
     };
   });
 
-const getNextSessionType = (last: SessionType | null): SessionType =>
-  last === "A" ? "B" : "A";
+const getNextProgramSession = (
+  program: Program,
+  lastCompletedSessionId: string | null,
+): ProgramSession | null => {
+  if (program.sessions.length === 0) {
+    return null;
+  }
+
+  const lastIndex = program.sessions.findIndex(
+    (session) => session.id === lastCompletedSessionId,
+  );
+  const nextIndex = lastIndex === -1 ? 0 : (lastIndex + 1) % program.sessions.length;
+  return program.sessions[nextIndex];
+};
 
 const toCalendarDay = (date: Date): number =>
   Math.floor(date.getTime() / (24 * 60 * 60 * 1000));
@@ -72,7 +102,7 @@ export {
   calculateNextWeight,
   calculateSessionProgression,
   getActualWeight,
-  getNextSessionType,
+  getNextProgramSession,
   isExerciseCompleted,
   wasTrainedRecently,
   type ProgressionResult,

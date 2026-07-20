@@ -3,7 +3,7 @@ import "./SessionHistory.css";
 import { useState } from "react";
 
 import { Button, Heading, Span } from "../../components";
-import { EXERCISE_LABELS, type WorkoutHistoryEntry } from "../../types";
+import type { WorkoutHistoryEntry } from "../../types";
 
 type Props = {
   sessions: WorkoutHistoryEntry[];
@@ -29,7 +29,7 @@ export const SessionHistory = ({ sessions }: Props) => {
         />
         <div className="session-history__detail-heading">
           <div>
-            <Span text={`Session ${selectedSession.sessionType}`} size="small" />
+            <Span text={selectedSession.sessionLabel} size="small" />
             <Heading text="Workout details" level="2" />
           </div>
           <time dateTime={selectedSession.date}>
@@ -45,10 +45,10 @@ export const SessionHistory = ({ sessions }: Props) => {
           </section>
         )}
         <div className="session-history__exercise-list">
-          {selectedSession.exercises.map((exercise) => (
-            <section className="session-history__exercise" key={exercise.name}>
+          {selectedSession.exercises.map((exercise, index) => (
+            <section className="session-history__exercise" key={index}>
               <div className="session-history__exercise-heading">
-                <Heading text={EXERCISE_LABELS[exercise.name]} level="3" />
+                <Heading text={exercise.label} level="3" />
                 <Span
                   text={exercise.completed ? "Completed" : "Incomplete"}
                   size="small"
@@ -83,7 +83,7 @@ export const SessionHistory = ({ sessions }: Props) => {
               onClick={() => setSelectedSession(session)}
             >
               <span>
-                <strong>Session {session.sessionType}</strong>
+                <strong>{session.sessionLabel}</strong>
                 <small>{session.exercises.length} exercises</small>
               </span>
               <time dateTime={session.date}>{formatDate(session.date)}</time>

@@ -1,4 +1,4 @@
-import type { ExerciseName } from "../types";
+import type { TrackedLiftId } from "../types";
 
 interface WorkingSet {
   reps: number;
@@ -14,7 +14,7 @@ interface Session {
 
 interface Overview {
   label: string;
-  id: ExerciseName;
+  id: TrackedLiftId;
   value: number;
   unit: "kg";
   lastSession?: Session;

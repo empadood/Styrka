@@ -5,37 +5,34 @@ import { Input } from "../../components/input/Input";
 import { ExerciseWithWeight } from "../../components/text/ExerciseWithWeight";
 import { Span } from "../../components/text/Span";
 import { isExerciseCompleted } from "../../helpers/progression.helper";
-import type { ExerciseName, LoggedExercise, SessionType } from "../../types";
+import type { LoggedExercise } from "../../types";
 
 type Props = {
-  sessionType: SessionType;
+  sessionLabel: string;
   exercises: LoggedExercise[];
   onExercisesChange: (exercises: LoggedExercise[]) => void;
-  onFinish: (result: {
-    sessionType: SessionType;
-    exercises: LoggedExercise[];
-  }) => void;
+  onFinish: (result: { exercises: LoggedExercise[] }) => void;
 };
 
 export const WorkoutSession = ({
-  sessionType,
+  sessionLabel,
   exercises,
   onExercisesChange,
   onFinish,
 }: Props) => {
   const updateSet = (
-    exerciseName: ExerciseName,
+    exerciseIndex: number,
     setIndex: number,
     field: "reps" | "weight",
     value: number,
   ) => {
     onExercisesChange(
-      exercises.map((exercise) =>
-        exercise.name === exerciseName
+      exercises.map((exercise, index) =>
+        index === exerciseIndex
           ? {
               ...exercise,
-              sets: exercise.sets.map((set, index) =>
-                index === setIndex ? { ...set, [field]: value } : set,
+              sets: exercise.sets.map((set, sIndex) =>
+                sIndex === setIndex ? { ...set, [field]: value } : set,
               ),
             }
           : exercise,
@@ -45,7 +42,6 @@ export const WorkoutSession = ({
 
   const handleFinish = () => {
     onFinish({
-      sessionType,
       exercises: exercises.map((exercise) => ({
         ...exercise,
         completed: isExerciseCompleted(exercise.sets),
@@ -56,14 +52,14 @@ export const WorkoutSession = ({
   return (
     <div className="session__container">
       <div className="session__intro">
-        <span>Session {sessionType}</span>
+        <span>{sessionLabel}</span>
         <Heading text="Today's workout" level="2" />
       </div>
-      {exercises.map((exercise) => (
-        <section className="session__exercise" key={exercise.name}>
+      {exercises.map((exercise, exerciseIndex) => (
+        <section className="session__exercise" key={exerciseIndex}>
           <div className="session__exercise-header">
             <ExerciseWithWeight
-              exercise={exercise.name}
+              label={exercise.label}
               weight={exercise.weightUsed}
             />
             <Span
@@ -97,7 +93,7 @@ export const WorkoutSession = ({
                       value={set.reps}
                       size="medium"
                       onChange={(value) =>
-                        updateSet(exercise.name, index, "reps", value)
+                        updateSet(exerciseIndex, index, "reps", value)
                       }
                     />
                   </div>
@@ -109,7 +105,7 @@ export const WorkoutSession = ({
                       size="medium"
                       value={set.weight}
                       onChange={(value) =>
-                        updateSet(exercise.name, index, "weight", value)
+                        updateSet(exerciseIndex, index, "weight", value)
                       }
                     />
                   </div>

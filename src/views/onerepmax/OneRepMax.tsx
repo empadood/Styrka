@@ -4,7 +4,6 @@ import { Button, Heading } from "../../components";
 import { Span } from "../../components/text/Span";
 import { Weight } from "../../components/text/Weight";
 import type { OneRepMaxResult } from "../../helpers/one-rep-max.helper";
-import { EXERCISE_LABELS } from "../../types";
 
 type Props = {
   results: OneRepMaxResult[];
@@ -37,8 +36,8 @@ export const OneRepMax = ({ results, onContinue }: Props) => {
     <div className="onerepmax__container">
       <Heading text="Estimated One Rep Max" />
       {results.map((result) => (
-        <div className="onerepmax__exercise" key={result.name}>
-          <Span text={EXERCISE_LABELS[result.name]} capitalize />
+        <div className="onerepmax__exercise" key={result.exerciseId}>
+          <Span text={result.label} capitalize />
           {result.oneRepMax !== null ? (
             <div className="onerepmax__values">
               <Weight weight={Math.round(result.oneRepMax * 10) / 10} />

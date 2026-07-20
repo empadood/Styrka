@@ -1,5 +1,5 @@
 import type { WorkoutStore } from "../data/storage";
-import type { ExerciseName, LoggedExercise, LoggedSet } from "../types";
+import type { ExerciseId, LoggedExercise, LoggedSet } from "../types";
 import { findLastLoggedExercises } from "./overview.helper";
 
 // Brzycki formula: 1RM = weight * (36 / (37 - reps))
@@ -21,7 +21,8 @@ const calculateBestOneRepMax = (sets: LoggedSet[]): number | null => {
 };
 
 interface OneRepMaxResult {
-  name: ExerciseName;
+  exerciseId: ExerciseId;
+  label: string;
   oneRepMax: number | null;
   previousOneRepMax: number | null;
   difference: number | null;
@@ -37,7 +38,7 @@ const calculateSessionOneRepMax = (
 
   return exercises.map((exercise) => {
     const oneRepMax = calculateBestOneRepMax(exercise.sets);
-    const previousExercise = previousByExercise.get(exercise.name);
+    const previousExercise = previousByExercise.get(exercise.exerciseId);
     const previousOneRepMax = previousExercise
       ? calculateBestOneRepMax(previousExercise.sets)
       : null;
@@ -46,7 +47,13 @@ const calculateSessionOneRepMax = (
         ? oneRepMax - previousOneRepMax
         : null;
 
-    return { name: exercise.name, oneRepMax, previousOneRepMax, difference };
+    return {
+      exerciseId: exercise.exerciseId,
+      label: exercise.label,
+      oneRepMax,
+      previousOneRepMax,
+      difference,
+    };
   });
 };
 

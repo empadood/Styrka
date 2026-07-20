@@ -5,13 +5,13 @@ const EXERCISE = {
   ohp: "ohp",
 } as const;
 
-type ExerciseName = (typeof EXERCISE)[keyof typeof EXERCISE];
+type TrackedLiftId = (typeof EXERCISE)[keyof typeof EXERCISE];
 
-const EXERCISE_LABELS: Record<ExerciseName, string> = {
+const EXERCISE_LABELS: Record<TrackedLiftId, string> = {
   benchpress: "Bench Press",
   deadlift: "Deadlift",
   ohp: "Overhead press",
   squat: "Squat",
 };
 
-export { EXERCISE, EXERCISE_LABELS, type ExerciseName };
+export { EXERCISE, EXERCISE_LABELS, type TrackedLiftId };

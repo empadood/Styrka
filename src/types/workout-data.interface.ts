@@ -1,6 +1,6 @@
-import type { ExerciseName } from "./exercise.type";
+import type { TrackedLiftId } from "./exercise.type";
 
 export type ChartData = {
   workout: number;
   date: string;
-} & Partial<Record<ExerciseName, number>>;
+} & Partial<Record<TrackedLiftId, number>>;

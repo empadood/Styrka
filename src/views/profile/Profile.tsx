@@ -4,13 +4,13 @@ import { useState } from "react";
 
 import { Button, Heading, Input, Section, Span } from "../../components";
 import { ExerciseWithWeight } from "../../components/text/ExerciseWithWeight";
-import { EXERCISE, EXERCISE_LABELS, type ExerciseName } from "../../types";
+import { EXERCISE, EXERCISE_LABELS, type TrackedLiftId } from "../../types";
 
 type Props = {
-  increments: Record<ExerciseName, number>;
-  estimatedOneRepMax: Record<ExerciseName, number> | null;
-  workingWeights: Record<ExerciseName, number>;
-  onOverrideWeight: (exercise: ExerciseName, weight: number) => void;
+  increments: Record<TrackedLiftId, number>;
+  estimatedOneRepMax: Record<TrackedLiftId, number> | null;
+  workingWeights: Record<TrackedLiftId, number>;
+  onOverrideWeight: (exercise: TrackedLiftId, weight: number) => void;
 };
 
 export const Profile = ({
@@ -20,7 +20,7 @@ export const Profile = ({
   onOverrideWeight,
 }: Props) => {
   const [drafts, setDrafts] =
-    useState<Record<ExerciseName, number>>(workingWeights);
+    useState<Record<TrackedLiftId, number>>(workingWeights);
 
   return (
     <div className="profile__container">
@@ -59,7 +59,7 @@ export const Profile = ({
           <div className="profile__configure">
             {Object.values(EXERCISE).map((exercise) => (
               <ExerciseWithWeight
-                exercise={exercise}
+                label={EXERCISE_LABELS[exercise]}
                 key={exercise}
                 weight={estimatedOneRepMax[exercise]}
               />
@@ -72,19 +72,19 @@ export const Profile = ({
         <Heading text="Current Incremenation Per Session" />
         <div className="profile__configure">
           <ExerciseWithWeight
-            exercise={EXERCISE.benchpress}
+            label={EXERCISE_LABELS[EXERCISE.benchpress]}
             weight={increments[EXERCISE.benchpress]}
           />
           <ExerciseWithWeight
-            exercise={EXERCISE.deadlift}
+            label={EXERCISE_LABELS[EXERCISE.deadlift]}
             weight={increments[EXERCISE.deadlift]}
           />
           <ExerciseWithWeight
-            exercise={EXERCISE.ohp}
+            label={EXERCISE_LABELS[EXERCISE.ohp]}
             weight={increments[EXERCISE.ohp]}
           />
           <ExerciseWithWeight
-            exercise={EXERCISE.squat}
+            label={EXERCISE_LABELS[EXERCISE.squat]}
             weight={increments[EXERCISE.squat]}
           />
         </div>

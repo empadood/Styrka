@@ -1,16 +1,15 @@
 import "./ExcerciseWithWeight.css";
 
-import { EXERCISE_LABELS, type ExerciseName } from "../../types";
 import { Span } from "./Span";
 import { Weight } from "./Weight";
 type Props = {
-  exercise: ExerciseName;
+  label: string;
   weight: number | string;
 };
-export const ExerciseWithWeight = ({ exercise, weight }: Props) => {
+export const ExerciseWithWeight = ({ label, weight }: Props) => {
   return (
     <div className="exercise--gap">
-      <Span text={EXERCISE_LABELS[exercise]} capitalize />
+      <Span text={label} capitalize />
       <Weight weight={weight} />
     </div>
   );

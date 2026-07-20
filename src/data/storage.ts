@@ -1,24 +1,40 @@
 import type {
   BodyWeightEntry,
-  ExerciseName,
+  ExerciseCatalogEntry,
   LoggedExercise,
-  SessionType,
+  Program,
+  TrackedLiftId,
   WorkoutHistoryEntry,
 } from "../types";
+import { STARTING_STRENGTH_PROGRAM } from "./built-in-programs";
+import {
+  mergeBuiltInPrograms,
+  migrateLegacyActiveWorkout,
+  migrateLegacyHistoryEntry,
+  resolveActiveProgramId,
+  resolveLastCompletedSessionId,
+} from "./migrations";
 
 const STORAGE_KEY = "styrka.workout-store.v1";
 
+interface ActiveWorkout {
+  programId: string | null;
+  sessionId: string | null;
+  sessionLabel: string;
+  exercises: LoggedExercise[];
+}
+
 interface WorkoutStore {
-  workingWeights: Record<ExerciseName, number>;
-  estimatedOneRepMax: Record<ExerciseName, number> | null;
+  workingWeights: Record<TrackedLiftId, number>;
+  estimatedOneRepMax: Record<TrackedLiftId, number> | null;
   hasConfiguredOneRepMax: boolean;
-  increments: Record<ExerciseName, number>;
-  lastCompletedSession: SessionType | null;
+  increments: Record<TrackedLiftId, number>;
+  programs: Program[];
+  activeProgramId: string | null;
+  lastCompletedSessionId: string | null;
+  customExerciseCatalog: ExerciseCatalogEntry[];
   history: WorkoutHistoryEntry[];
-  activeWorkout: {
-    sessionType: SessionType;
-    exercises: LoggedExercise[];
-  } | null;
+  activeWorkout: ActiveWorkout | null;
   bodyWeightLog: BodyWeightEntry[];
 }
 
@@ -27,7 +43,10 @@ const DEFAULT_STORE: WorkoutStore = {
   estimatedOneRepMax: null,
   hasConfiguredOneRepMax: false,
   increments: { squat: 5, deadlift: 5, ohp: 2.5, benchpress: 2.5 },
-  lastCompletedSession: null,
+  programs: [STARTING_STRENGTH_PROGRAM],
+  activeProgramId: STARTING_STRENGTH_PROGRAM.id,
+  lastCompletedSessionId: null,
+  customExerciseCatalog: [],
   history: [],
   activeWorkout: null,
   bodyWeightLog: [],
@@ -41,7 +60,10 @@ const loadStore = (): WorkoutStore => {
 
   try {
     const parsed = JSON.parse(raw);
-    const history = Array.isArray(parsed.history) ? parsed.history : [];
+    const programs = mergeBuiltInPrograms(parsed.programs);
+    const history = Array.isArray(parsed.history)
+      ? parsed.history.map(migrateLegacyHistoryEntry)
+      : [];
 
     return {
       workingWeights: {
@@ -53,9 +75,14 @@ const loadStore = (): WorkoutStore => {
         parsed.hasConfiguredOneRepMax ??
         (Boolean(parsed.estimatedOneRepMax) || history.length > 0),
       increments: { ...DEFAULT_STORE.increments, ...parsed.increments },
-      lastCompletedSession: parsed.lastCompletedSession ?? null,
+      programs,
+      activeProgramId: resolveActiveProgramId(parsed, programs),
+      lastCompletedSessionId: resolveLastCompletedSessionId(parsed),
+      customExerciseCatalog: Array.isArray(parsed.customExerciseCatalog)
+        ? parsed.customExerciseCatalog
+        : [],
       history,
-      activeWorkout: parsed.activeWorkout ?? null,
+      activeWorkout: migrateLegacyActiveWorkout(parsed.activeWorkout ?? null),
       bodyWeightLog: Array.isArray(parsed.bodyWeightLog)
         ? parsed.bodyWeightLog
         : [],
@@ -69,4 +96,11 @@ const saveStore = (store: WorkoutStore): void => {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(store));
 };
 
-export { DEFAULT_STORE, loadStore, saveStore, STORAGE_KEY, type WorkoutStore };
+export {
+  DEFAULT_STORE,
+  loadStore,
+  saveStore,
+  STORAGE_KEY,
+  type ActiveWorkout,
+  type WorkoutStore,
+};

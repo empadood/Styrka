@@ -1,19 +1,80 @@
-import { SESSION_DEFINITION } from "../data/session-definition";
-import type { ExerciseName, LoggedExercise, SessionType } from "../types";
+import { findCatalogEntry, getLastLoggedWeight } from "./exercise-catalog.helper";
+import type { ProgramExercisePrescription, ProgramSession } from "../types/program.type";
+import type {
+  ExerciseCatalogEntry,
+  ExerciseId,
+  LoggedExercise,
+  TrackedLiftId,
+  WorkoutHistoryEntry,
+} from "../types";
 
-const buildInitialExercises = (
-  sessionType: SessionType,
-  workingWeights: Record<ExerciseName, number>,
-): LoggedExercise[] =>
-  SESSION_DEFINITION[sessionType].map((prescription) => ({
-    name: prescription.name,
-    weightUsed: workingWeights[prescription.name],
+const buildLoggedExerciseFromPrescription = (
+  prescription: ProgramExercisePrescription,
+  catalog: ExerciseCatalogEntry[],
+  workingWeights: Record<TrackedLiftId, number>,
+  history: WorkoutHistoryEntry[],
+): LoggedExercise => {
+  const catalogEntry = findCatalogEntry(catalog, prescription.exerciseId);
+  const tracked = catalogEntry?.tracked ?? false;
+  const defaultWeight = tracked
+    ? workingWeights[prescription.exerciseId as TrackedLiftId]
+    : getLastLoggedWeight(history, prescription.exerciseId) ?? 0;
+
+  return {
+    exerciseId: prescription.exerciseId,
+    label: prescription.label,
+    tracked,
+    isAdHoc: false,
+    weightUsed: defaultWeight,
     completed: false,
     sets: Array.from({ length: prescription.sets }, () => ({
       targetReps: prescription.reps,
       reps: 0,
-      weight: workingWeights[prescription.name],
+      weight: defaultWeight,
     })),
-  }));
+  };
+};
 
-export { buildInitialExercises };
+const buildInitialExercises = (
+  session: ProgramSession | null,
+  catalog: ExerciseCatalogEntry[],
+  workingWeights: Record<TrackedLiftId, number>,
+  history: WorkoutHistoryEntry[],
+): LoggedExercise[] =>
+  session
+    ? session.exercises.map((prescription) =>
+        buildLoggedExerciseFromPrescription(
+          prescription,
+          catalog,
+          workingWeights,
+          history,
+        ),
+      )
+    : [];
+
+const buildAdHocLoggedExercise = (
+  exerciseId: ExerciseId,
+  label: string,
+  tracked: boolean,
+  sets: number,
+  reps: number,
+  defaultWeight: number,
+): LoggedExercise => ({
+  exerciseId,
+  label,
+  tracked,
+  isAdHoc: true,
+  weightUsed: defaultWeight,
+  completed: false,
+  sets: Array.from({ length: sets }, () => ({
+    targetReps: reps,
+    reps: 0,
+    weight: defaultWeight,
+  })),
+});
+
+export {
+  buildAdHocLoggedExercise,
+  buildInitialExercises,
+  buildLoggedExerciseFromPrescription,
+};

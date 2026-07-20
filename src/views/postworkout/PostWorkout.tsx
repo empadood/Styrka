@@ -9,25 +9,25 @@ import { ExerciseWithWeight } from "../../components/text/ExerciseWithWeight";
 import { Span } from "../../components/text/Span";
 import { Weight } from "../../components/text/Weight";
 import type { ProgressionResult } from "../../helpers/progression.helper";
-import type { ExerciseName, SessionCheckIn } from "../../types";
+import type { SessionCheckIn, TrackedLiftId } from "../../types";
 
 type Props = {
   results: ProgressionResult[];
   onConfirm: (
-    finalIncrements: Record<ExerciseName, number>,
+    finalIncrements: Record<TrackedLiftId, number>,
     checkIn: SessionCheckIn,
   ) => void;
   onBack: () => void;
 };
 
 export const PostWorkout = ({ results, onConfirm, onBack }: Props) => {
-  const [increments, setIncrements] = useState<Record<ExerciseName, number>>(
+  const [increments, setIncrements] = useState<Record<TrackedLiftId, number>>(
     () =>
       Object.fromEntries(
         results
-          .filter((result) => result.completed)
-          .map((result) => [result.name, result.proposedIncrement]),
-      ) as Record<ExerciseName, number>,
+          .filter((result) => result.tracked && result.completed)
+          .map((result) => [result.exerciseId, result.proposedIncrement]),
+      ) as Record<TrackedLiftId, number>,
   );
   const [rpe, setRpe] = useState(5);
   const [notes, setNotes] = useState("");
@@ -40,22 +40,26 @@ export const PostWorkout = ({ results, onConfirm, onBack }: Props) => {
         onClick={onBack}
       />
       {results.map((result) => (
-        <div className="postworkout__exercise" key={result.name}>
+        <div className="postworkout__exercise" key={result.exerciseId}>
           <ExerciseWithWeight
-            exercise={result.name}
+            label={result.label}
             weight={result.previousWeight}
           />
-          {result.completed ? (
+          {!result.tracked ? (
+            <div className="postworkout__no-increase">
+              <Span text="Logged — no auto progression for this exercise" size="small" />
+            </div>
+          ) : result.completed ? (
             <>
               <div className="postworkout__increment">
                 <Span text="Increment" size="small" />
                 <Input
-                  value={increments[result.name]}
+                  value={increments[result.exerciseId as TrackedLiftId]}
                   size="small"
                   onChange={(val) =>
                     setIncrements((prev) => ({
                       ...prev,
-                      [result.name]: val,
+                      [result.exerciseId]: val,
                     }))
                   }
                 />
@@ -65,7 +69,9 @@ export const PostWorkout = ({ results, onConfirm, onBack }: Props) => {
                 <Weight
                   weight={
                     Math.round(
-                      (result.previousWeight + increments[result.name]) * 10,
+                      (result.previousWeight +
+                        increments[result.exerciseId as TrackedLiftId]) *
+                        10,
                     ) / 10
                   }
                 />
