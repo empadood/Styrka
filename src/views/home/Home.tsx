@@ -59,6 +59,16 @@ export const Home = () => {
   const items = buildOverviewFromStore(store);
   const trendData = buildTrendData(store.history);
 
+  const handleOverrideWorkingWeight = (
+    exercise: ExerciseName,
+    weight: number,
+  ) => {
+    update((previousStore) => ({
+      ...previousStore,
+      workingWeights: { ...previousStore.workingWeights, [exercise]: weight },
+    }));
+  };
+
   const handleCompleteOneRepMaxSetup = (
     estimatedOneRepMax: Record<ExerciseName, number>,
   ) => {
@@ -210,6 +220,8 @@ export const Home = () => {
         <Profile
           increments={store.increments}
           estimatedOneRepMax={store.estimatedOneRepMax}
+          workingWeights={store.workingWeights}
+          onOverrideWeight={handleOverrideWorkingWeight}
         />
       </Dialog>
 

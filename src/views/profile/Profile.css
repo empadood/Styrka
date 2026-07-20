@@ -17,3 +17,23 @@
   border-radius: 0.75rem;
   background: var(--surface-secondary);
 }
+
+.profile__configure--editable {
+  grid-template-columns: 1fr;
+}
+
+.profile__weight-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.75rem;
+  border-radius: 0.75rem;
+  background: var(--surface-secondary);
+  gap: 0.75rem;
+}
+
+.profile__weight-edit {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
