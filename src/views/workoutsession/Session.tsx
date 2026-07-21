@@ -1,6 +1,6 @@
 import "./Session.scss";
 
-import { Plus, Trash2, Weight as WeightIcon } from "lucide-react";
+import { Plus, Trash2 } from "lucide-react";
 import { useState } from "react";
 
 import {
@@ -9,6 +9,7 @@ import {
   Expandable,
   Heading,
   PlateBreakdown,
+  PlateIndicator,
   Row,
   Stack,
 } from "../../components";
@@ -139,164 +140,134 @@ export const WorkoutSession = ({
         <span>{sessionLabel}</span>
         <Heading text="Today's workout" level="2" />
       </div>
-      {exercises.map((exercise, exerciseIndex) => (
-        <section className="session__exercise" key={exerciseIndex}>
-          <Row justify="between" className="session__exercise-header">
-            <ExerciseWithWeight
-              label={exercise.label}
-              weight={exercise.weightUsed}
-            />
-            <Row gap="sm" align="center">
-              <Span
-                text={`${exercise.sets.length} ${exercise.sets.length < 2 ? "set" : "sets"}`}
-                size="small"
-              />
-              <Button
-                icon={WeightIcon}
-                variant="secondary"
-                size="icon"
-                ariaLabel={`Show plates for ${exercise.label}`}
-                onClick={() => setPlateDialogWeight(exercise.weightUsed)}
-              />
-              {exercise.isAdHoc && (
-                <Button
-                  icon={Trash2}
-                  variant="danger"
-                  size="icon"
-                  ariaLabel={`Remove ${exercise.label}`}
-                  onClick={() => handleRemoveExercise(exerciseIndex)}
-                />
-              )}
-            </Row>
-          </Row>
-          {(() => {
-            const warmupSets = generateWarmupSets(exercise.weightUsed);
-            if (warmupSets.length === 0) {
-              return null;
-            }
+      {exercises.map((exercise, exerciseIndex) => {
+        const visibleWarmups = generateWarmupSets(exercise.weightUsed)
+          .map((warmupSet, warmupIndex) => ({
+            warmupSet,
+            warmupIndex,
+            entry: getWarmupEntry(exerciseIndex, warmupIndex, warmupSet.weight),
+          }))
+          .filter(({ entry }) => entry.reps <= 0);
 
-            const visibleWarmups = warmupSets
-              .map((warmupSet, warmupIndex) => ({
-                warmupSet,
-                warmupIndex,
-                entry: getWarmupEntry(exerciseIndex, warmupIndex, warmupSet.weight),
-              }))
-              .filter(({ entry }) => entry.reps <= 0);
-
-            return (
-              <Expandable icon={WeightIcon} label="Warm-up sets">
-                {visibleWarmups.length === 0 ? (
-                  <Span text="All warm-up sets done." size="small" />
-                ) : (
-                  <div className="session__sets">
-                    {visibleWarmups.map(({ warmupSet, warmupIndex, entry }) => (
-                      <div className="session__set" key={warmupIndex}>
-                        <Span text={`${Math.round(warmupSet.percentage * 100)}%`} size="small" />
-                        <div className="session__set__inputs">
-                          <div className="session__input-group">
-                            <div className="session__input-label">
-                              <Span
-                                text={`Target reps: ${warmupSet.reps}`}
-                                size="small"
-                              />
-                            </div>
-                            <Input
-                              value={entry.reps}
-                              size="medium"
-                              onChange={(value) =>
-                                updateWarmupEntry(
-                                  exerciseIndex,
-                                  warmupIndex,
-                                  "reps",
-                                  value,
-                                  warmupSet.weight,
-                                )
-                              }
-                            />
-                          </div>
-                          <div className="session__input-group">
-                            <div className="session__input-label">
-                              <Span text="Weight (kg)" size="small" />
-                            </div>
-                            <Input
-                              size="medium"
-                              value={entry.weight}
-                              onChange={(value) =>
-                                updateWarmupEntry(
-                                  exerciseIndex,
-                                  warmupIndex,
-                                  "weight",
-                                  value,
-                                  warmupSet.weight,
-                                )
-                              }
-                            />
-                          </div>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </Expandable>
-            );
-          })()}
-          <div className="session__sets">
-            <div className="session__set session__set--header">
-              <span />
-              <div className="session__set__inputs">
+        return (
+          <section className="session__exercise" key={exerciseIndex}>
+            <Row justify="between" className="session__exercise-header">
+              <ExerciseWithWeight
+                label={exercise.label}
+                weight={exercise.weightUsed}
+              />
+              <Row gap="sm" align="center">
                 <Span
-                  text={`Target reps: ${exercise.sets[0]?.targetReps ?? ""}`}
+                  text={`${exercise.sets.length} ${exercise.sets.length < 2 ? "set" : "sets"}`}
                   size="small"
                 />
-                <Span text="Weight (kg)" size="small" />
-              </div>
-            </div>
-            {exercise.sets.map((set, index) => (
-              <div className="session__set" key={index}>
-                <Span text={`Set ${index + 1}`} size="small" />
-                <div className="session__set__inputs">
-                  <div className="session__input-group">
-                    <div className="session__input-label">
-                      <Span
-                        text={`Target reps: ${set.targetReps}`}
-                        size="small"
-                      />
-                    </div>
-                    <Input
-                      value={set.reps}
-                      size="medium"
-                      onChange={(value) =>
-                        updateSet(exerciseIndex, index, "reps", value)
-                      }
-                    />
-                  </div>
-                  <div className="session__input-group">
-                    <div className="session__input-label">
-                      <Span text="Weight (kg)" size="small" />
-                    </div>
-                    <Row gap="sm" align="center">
+                {exercise.isAdHoc && (
+                  <Button
+                    icon={Trash2}
+                    variant="danger"
+                    size="icon"
+                    ariaLabel={`Remove ${exercise.label}`}
+                    onClick={() => handleRemoveExercise(exerciseIndex)}
+                  />
+                )}
+              </Row>
+            </Row>
+            <div className="session__sets">
+              {visibleWarmups.map(({ warmupSet, warmupIndex, entry }) => (
+                <div className="session__set session__set--warmup" key={`warmup-${warmupIndex}`}>
+                  <Span text={`${Math.round(warmupSet.percentage * 100)}%`} size="small" />
+                  <div className="session__set__inputs">
+                    <div className="session__input-group">
+                      <div className="session__input-label">
+                        <Span text={`Target reps: ${warmupSet.reps}`} size="small" />
+                      </div>
                       <Input
+                        value={entry.reps}
                         size="medium"
-                        value={set.weight}
                         onChange={(value) =>
-                          updateSet(exerciseIndex, index, "weight", value)
+                          updateWarmupEntry(
+                            exerciseIndex,
+                            warmupIndex,
+                            "reps",
+                            value,
+                            warmupSet.weight,
+                          )
                         }
                       />
-                      <Button
-                        icon={WeightIcon}
-                        variant="secondary"
-                        size="icon"
-                        ariaLabel={`Show plates for ${set.weight} kg`}
-                        onClick={() => setPlateDialogWeight(set.weight)}
-                      />
-                    </Row>
+                    </div>
+                    <div className="session__input-group">
+                      <div className="session__input-label">
+                        <Span text="Weight (kg)" size="small" />
+                      </div>
+                      <Row gap="sm" align="center">
+                        <Input
+                          size="medium"
+                          value={entry.weight}
+                          onChange={(value) =>
+                            updateWarmupEntry(
+                              exerciseIndex,
+                              warmupIndex,
+                              "weight",
+                              value,
+                              warmupSet.weight,
+                            )
+                          }
+                        />
+                        <PlateIndicator
+                          weight={entry.weight}
+                          ariaLabel={`Show plates for ${entry.weight} kg`}
+                          onClick={() => setPlateDialogWeight(entry.weight)}
+                        />
+                      </Row>
+                    </div>
                   </div>
                 </div>
-              </div>
-            ))}
-          </div>
-        </section>
-      ))}
+              ))}
+              {exercise.sets.map((set, index) => (
+                <div className="session__set" key={index}>
+                  <Span text={`Set ${index + 1}`} size="small" />
+                  <div className="session__set__inputs">
+                    <div className="session__input-group">
+                      <div className="session__input-label">
+                        <Span
+                          text={`Target reps: ${set.targetReps}`}
+                          size="small"
+                        />
+                      </div>
+                      <Input
+                        value={set.reps}
+                        size="medium"
+                        onChange={(value) =>
+                          updateSet(exerciseIndex, index, "reps", value)
+                        }
+                      />
+                    </div>
+                    <div className="session__input-group">
+                      <div className="session__input-label">
+                        <Span text="Weight (kg)" size="small" />
+                      </div>
+                      <Row gap="sm" align="center">
+                        <Input
+                          size="medium"
+                          value={set.weight}
+                          onChange={(value) =>
+                            updateSet(exerciseIndex, index, "weight", value)
+                          }
+                        />
+                        <PlateIndicator
+                          weight={set.weight}
+                          ariaLabel={`Show plates for ${set.weight} kg`}
+                          onClick={() => setPlateDialogWeight(set.weight)}
+                        />
+                      </Row>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </section>
+        );
+      })}
       <Expandable icon={Plus} label="Add exercise">
         <AddExerciseForm
           catalog={catalog}

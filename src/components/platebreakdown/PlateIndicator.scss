@@ -1,0 +1,54 @@
+.plate-indicator {
+  display: flex;
+  align-items: center;
+  gap: 0.125rem;
+  padding: var(--space-1);
+  border: none;
+  background: none;
+  cursor: pointer;
+}
+
+.plate-indicator__bar {
+  flex: 0 0 auto;
+  width: 1rem;
+  height: 0;
+  border-top: 0.1875rem dashed var(--border-strong);
+}
+
+.plate-indicator__empty {
+  flex: 0 0 auto;
+  width: 1rem;
+  height: 0;
+  border-top: 0.1875rem dashed var(--border-strong);
+}
+
+.plate-indicator__plate {
+  flex: 0 0 auto;
+  border-radius: 0.125rem;
+}
+
+.plate-indicator__plate--lg {
+  width: 0.5rem;
+  height: 1.75rem;
+}
+
+.plate-indicator__plate--sm {
+  width: 0.375rem;
+  height: 1.25rem;
+}
+
+.plate-indicator__plate--red {
+  background: #e53e3e;
+}
+
+.plate-indicator__plate--blue {
+  background: #3182ce;
+}
+
+.plate-indicator__plate--yellow {
+  background: #ecc94b;
+}
+
+.plate-indicator__plate--green {
+  background: #38a169;
+}

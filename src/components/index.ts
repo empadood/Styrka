@@ -8,6 +8,7 @@ export { Expandable } from "./expandable/Expandable";
 export { Input } from "./input/Input";
 export { PageContainer } from "./page-container/PageContainer";
 export { PlateBreakdown } from "./platebreakdown/PlateBreakdown";
+export { PlateIndicator } from "./platebreakdown/PlateIndicator";
 export { Row } from "./row/Row";
 export { RpeScale } from "./rpescale/RpeScale";
 export { Stack } from "./stack/Stack";

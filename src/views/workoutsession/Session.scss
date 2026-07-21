@@ -24,10 +24,17 @@
   grid-template-columns: 3rem 1fr;
   align-items: center;
   gap: var(--space-3);
+  padding-top: var(--space-2);
+  border-top: 0.0625rem solid var(--border);
 }
 
-.session__set--header {
-  margin-bottom: var(--space-1);
+.session__set:first-child {
+  padding-top: 0;
+  border-top: none;
+}
+
+.session__set--warmup {
+  opacity: 0.85;
 }
 
 .session__set__inputs {
@@ -37,16 +44,13 @@
 }
 
 .session__input-label {
-  display: none;
+  display: block;
+  margin-bottom: var(--space-1);
 }
 
 @media (max-width: 30rem) {
   .session__set {
     grid-template-columns: 1fr;
-  }
-
-  .session__set--header {
-    display: none;
   }
 
   .session__set__inputs {
@@ -57,10 +61,5 @@
 
   .session__set__inputs .input {
     max-width: 100%;
-  }
-
-  .session__input-label {
-    display: block;
-    margin-bottom: var(--space-1);
   }
 }
