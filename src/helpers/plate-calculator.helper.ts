@@ -2,6 +2,9 @@ const BAR_WEIGHT_KG = 20;
 const PLATE_WEIGHTS_KG = [25, 20, 15, 10, 5, 2.5, 1.25] as const;
 const EPSILON = 0.001;
 
+// Below this total weight, prefer 20kg plates over 25kg ones.
+const HEAVY_PLATE_THRESHOLD_KG = 150;
+
 type PlateColor = "red" | "blue" | "yellow" | "green";
 type PlateSize = "lg" | "sm";
 
@@ -36,8 +39,12 @@ const calculatePlateBreakdown = (targetWeightKg: number): PlateBreakdown => {
 
   let remaining = (targetWeightKg - BAR_WEIGHT_KG) / 2;
   const perSide: PlateCount[] = [];
+  const availablePlates =
+    targetWeightKg < HEAVY_PLATE_THRESHOLD_KG
+      ? PLATE_WEIGHTS_KG.filter((plateWeight) => plateWeight !== 25)
+      : PLATE_WEIGHTS_KG;
 
-  for (const plateWeight of PLATE_WEIGHTS_KG) {
+  for (const plateWeight of availablePlates) {
     let count = 0;
     while (remaining + EPSILON >= plateWeight) {
       remaining -= plateWeight;
