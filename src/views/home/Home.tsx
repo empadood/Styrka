@@ -12,6 +12,7 @@ import {
   Row,
   Span,
   Toolbar,
+  WeeklyView,
 } from "../../components";
 import { SingleLineChart } from "../../components/chart/SingleLineChart";
 import { Dialog } from "../../components/dialog/Dialog";
@@ -30,6 +31,7 @@ import { buildStartingWeights } from "../../helpers/starting-weight.helper";
 import { computeTrainingStatus, type TrainingStatus } from "../../helpers/status.helper";
 import { buildTrendData } from "../../helpers/trends.helper";
 import type { ActiveWorkoutState } from "../../hooks/useActiveWorkout";
+import type { DriveSyncState } from "../../hooks/useDriveSync";
 import type { TrackedLiftId } from "../../types";
 import { BodyWeight } from "../bodyweight/BodyWeight";
 import { Profile } from "../profile/Profile";
@@ -41,6 +43,7 @@ type Props = {
   store: WorkoutStore;
   update: UpdateFn;
   workout: ActiveWorkoutState;
+  drive: DriveSyncState;
 };
 
 const STATUS_LABELS: Record<TrainingStatus | "insufficient-data", string> = {
@@ -62,7 +65,7 @@ const STATUS_TONES: Record<
   "insufficient-data": "neutral",
 };
 
-export const Home = ({ store, update, workout }: Props) => {
+export const Home = ({ store, update, workout, drive }: Props) => {
   const navigate = useNavigate();
   const [showProfile, setShowProfile] = useState(false);
   const [showBodyWeight, setShowBodyWeight] = useState(false);
@@ -139,6 +142,7 @@ export const Home = ({ store, update, workout }: Props) => {
         hasActiveWorkout={workout.workoutActive}
       />
       <div className="home__dashboard">
+        <WeeklyView history={store.history} />
         <UpcomingSession
           session={items}
           nextSession={workout.nextSession}
@@ -188,6 +192,7 @@ export const Home = ({ store, update, workout }: Props) => {
           estimatedOneRepMax={store.estimatedOneRepMax}
           workingWeights={store.workingWeights}
           onOverrideWeight={handleOverrideWorkingWeight}
+          drive={drive}
         />
       </Dialog>
 

@@ -4,7 +4,18 @@ import { ChevronDown, ChevronLeft, ChevronRight, ChevronsUpDown } from "lucide-r
 import { Fragment, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-import { Button, Card, Heading, PageContainer, Row, Span, Stack } from "../../components";
+import {
+  Badge,
+  Button,
+  Card,
+  Heading,
+  PageContainer,
+  Row,
+  Span,
+  Stack,
+  TextField,
+} from "../../components";
+import { findPersonalRecords, isPersonalRecordSet } from "../../helpers/personal-records.helper";
 import type { Program, WorkoutHistoryEntry } from "../../types";
 
 const PAGE_SIZE_OPTIONS = [10, 25, 50] as const;
@@ -41,6 +52,10 @@ export const Sessions = ({ sessions, programs }: Props) => {
   const [sortDirection, setSortDirection] = useState<SortDirection>("desc");
   const [pageSize, setPageSize] = useState<number>(PAGE_SIZE_OPTIONS[0]);
   const [currentPage, setCurrentPage] = useState(1);
+  const [searchText, setSearchText] = useState("");
+  const [programFilter, setProgramFilter] = useState<string>("all");
+  const [dateFrom, setDateFrom] = useState("");
+  const [dateTo, setDateTo] = useState("");
 
   const getProgramName = (programId: string | null): string =>
     programs.find((program) => program.id === programId)?.name ?? "Freestanding";
@@ -60,10 +75,50 @@ export const Sessions = ({ sessions, programs }: Props) => {
     setCurrentPage(1);
   };
 
+  const clearFilters = () => {
+    setSearchText("");
+    setProgramFilter("all");
+    setDateFrom("");
+    setDateTo("");
+    setCurrentPage(1);
+  };
+
+  const hasActiveFilters =
+    searchText.trim() !== "" || programFilter !== "all" || dateFrom !== "" || dateTo !== "";
+
+  const personalRecords = useMemo(() => findPersonalRecords(sessions), [sessions]);
+
+  const filteredSessions = useMemo(() => {
+    const query = searchText.trim().toLowerCase();
+
+    return sessions.filter((session) => {
+      const matchesProgram =
+        programFilter === "all" ||
+        (programFilter === "freestanding" && session.programId === null) ||
+        session.programId === programFilter;
+
+      const sessionDate = formatDate(session.date);
+      const matchesDate =
+        (!dateFrom || sessionDate >= dateFrom) && (!dateTo || sessionDate <= dateTo);
+
+      const haystack = [
+        session.sessionLabel,
+        getProgramName(session.programId),
+        ...session.exercises.map((exercise) => exercise.label),
+      ]
+        .join(" ")
+        .toLowerCase();
+      const matchesSearch = query === "" || haystack.includes(query);
+
+      return matchesProgram && matchesDate && matchesSearch;
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [sessions, programFilter, dateFrom, dateTo, searchText, programs]);
+
   const orderedSessions = useMemo(() => {
     const direction = sortDirection === "asc" ? 1 : -1;
 
-    return [...sessions].sort((a, b) => {
+    return [...filteredSessions].sort((a, b) => {
       switch (sortKey) {
         case "sessionLabel":
           return a.sessionLabel.localeCompare(b.sessionLabel) * direction;
@@ -77,7 +132,7 @@ export const Sessions = ({ sessions, programs }: Props) => {
       }
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [sessions, sortKey, sortDirection, programs]);
+  }, [filteredSessions, sortKey, sortDirection, programs]);
 
   const totalPages = Math.max(1, Math.ceil(orderedSessions.length / pageSize));
   const clampedPage = Math.min(currentPage, totalPages);
@@ -92,8 +147,69 @@ export const Sessions = ({ sessions, programs }: Props) => {
       </Row>
 
       <Card padding="sm">
+        <Row justify="start" gap="md" className="sessions__filters">
+          <TextField
+            value={searchText}
+            onChange={(value) => {
+              setSearchText(value);
+              setCurrentPage(1);
+            }}
+            placeholder="Search sessions or exercises…"
+          />
+          <select
+            aria-label="Filter by program"
+            value={programFilter}
+            onChange={(e) => {
+              setProgramFilter(e.target.value);
+              setCurrentPage(1);
+            }}
+          >
+            <option value="all">All programs</option>
+            <option value="freestanding">Freestanding</option>
+            {programs.map((program) => (
+              <option key={program.id} value={program.id}>
+                {program.name}
+              </option>
+            ))}
+          </select>
+          <label>
+            From
+            <input
+              type="date"
+              value={dateFrom}
+              onChange={(e) => {
+                setDateFrom(e.target.value);
+                setCurrentPage(1);
+              }}
+            />
+          </label>
+          <label>
+            To
+            <input
+              type="date"
+              value={dateTo}
+              onChange={(e) => {
+                setDateTo(e.target.value);
+                setCurrentPage(1);
+              }}
+            />
+          </label>
+          {hasActiveFilters && (
+            <Button label="Clear filters" variant="secondary" onClick={clearFilters} />
+          )}
+        </Row>
+      </Card>
+
+      <Card padding="sm">
         {orderedSessions.length === 0 ? (
-          <Span text="No completed workouts yet." size="small" />
+          <Span
+            text={
+              sessions.length === 0
+                ? "No completed workouts yet."
+                : "No sessions match your filters."
+            }
+            size="small"
+          />
         ) : (
           <table className="sessions__table">
             <thead>
@@ -183,10 +299,23 @@ export const Sessions = ({ sessions, programs }: Props) => {
                                     {exercise.sets.map((set, setIndex) => (
                                       <div className="sessions__set" key={setIndex}>
                                         <Span text={`Set ${setIndex + 1}`} size="small" />
-                                        <Span
-                                          text={`${set.reps} / ${set.targetReps} reps`}
-                                          size="small"
-                                        />
+                                        <Row gap="sm" align="center">
+                                          <Span
+                                            text={`${set.reps} / ${set.targetReps} reps`}
+                                            size="small"
+                                          />
+                                          {isPersonalRecordSet(
+                                            personalRecords,
+                                            session,
+                                            exercise.exerciseId,
+                                            set.weight,
+                                            set.reps,
+                                          ) && (
+                                            <Badge tone="success" size="sm">
+                                              PR
+                                            </Badge>
+                                          )}
+                                        </Row>
                                         <Span text={`${set.weight} kg`} size="small" />
                                       </div>
                                     ))}

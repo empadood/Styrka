@@ -36,6 +36,7 @@ interface WorkoutStore {
   history: WorkoutHistoryEntry[];
   activeWorkout: ActiveWorkout | null;
   bodyWeightLog: BodyWeightEntry[];
+  updatedAt: string;
 }
 
 const DEFAULT_STORE: WorkoutStore = {
@@ -50,10 +51,10 @@ const DEFAULT_STORE: WorkoutStore = {
   history: [],
   activeWorkout: null,
   bodyWeightLog: [],
+  updatedAt: new Date(0).toISOString(),
 };
 
-const loadStore = (): WorkoutStore => {
-  const raw = localStorage.getItem(STORAGE_KEY);
+const parseStore = (raw: string | null): WorkoutStore => {
   if (!raw) {
     return DEFAULT_STORE;
   }
@@ -86,11 +87,17 @@ const loadStore = (): WorkoutStore => {
       bodyWeightLog: Array.isArray(parsed.bodyWeightLog)
         ? parsed.bodyWeightLog
         : [],
+      updatedAt:
+        typeof parsed.updatedAt === "string"
+          ? parsed.updatedAt
+          : DEFAULT_STORE.updatedAt,
     };
   } catch {
     return DEFAULT_STORE;
   }
 };
+
+const loadStore = (): WorkoutStore => parseStore(localStorage.getItem(STORAGE_KEY));
 
 const saveStore = (store: WorkoutStore): void => {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(store));
@@ -100,6 +107,7 @@ export {
   type ActiveWorkout,
   DEFAULT_STORE,
   loadStore,
+  parseStore,
   saveStore,
   STORAGE_KEY,
   type WorkoutStore,

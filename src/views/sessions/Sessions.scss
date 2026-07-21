@@ -135,6 +135,29 @@
   text-align: right;
 }
 
+.sessions__filters {
+  flex-wrap: wrap;
+}
+
+.sessions__filters select,
+.sessions__filters input[type="date"] {
+  padding: var(--space-1) var(--space-2);
+  border: 0.0625rem solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+  color: var(--text);
+  font: inherit;
+  font-size: var(--font-size-sm);
+}
+
+.sessions__filters label {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  color: var(--text-secondary);
+  font-size: var(--font-size-sm);
+}
+
 .sessions__footer {
   flex-wrap: wrap;
   gap: var(--space-3);

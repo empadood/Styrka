@@ -7,7 +7,7 @@ export const useWorkoutStore = () => {
 
   const update = (updater: (prev: WorkoutStore) => WorkoutStore) => {
     setStore((prev) => {
-      const next = updater(prev);
+      const next = { ...updater(prev), updatedAt: new Date().toISOString() };
       saveStore(next);
       return next;
     });

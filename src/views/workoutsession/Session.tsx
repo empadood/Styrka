@@ -1,8 +1,17 @@
 import "./Session.scss";
 
-import { Plus, Trash2 } from "lucide-react";
+import { Plus, Trash2, Weight as WeightIcon } from "lucide-react";
+import { useState } from "react";
 
-import { Button, Expandable, Heading, Row, Stack } from "../../components";
+import {
+  Button,
+  Dialog,
+  Expandable,
+  Heading,
+  PlateBreakdown,
+  Row,
+  Stack,
+} from "../../components";
 import { AddExerciseForm } from "../../components/addexercise/AddExerciseForm";
 import { Input } from "../../components/input/Input";
 import { ExerciseWithWeight } from "../../components/text/ExerciseWithWeight";
@@ -13,6 +22,7 @@ import {
 } from "../../helpers/exercise-catalog.helper";
 import { isExerciseCompleted } from "../../helpers/progression.helper";
 import { buildAdHocLoggedExercise } from "../../helpers/session.helper";
+import { generateWarmupSets } from "../../helpers/warmup.helper";
 import type { ExerciseCatalogEntry, LoggedExercise } from "../../types";
 
 type Props = {
@@ -32,6 +42,8 @@ export const WorkoutSession = ({
   onRegisterCustomExercise,
   onFinish,
 }: Props) => {
+  const [plateDialogWeight, setPlateDialogWeight] = useState<number | null>(null);
+
   const updateSet = (
     exerciseIndex: number,
     setIndex: number,
@@ -115,6 +127,13 @@ export const WorkoutSession = ({
                 text={`${exercise.sets.length} ${exercise.sets.length < 2 ? "set" : "sets"}`}
                 size="small"
               />
+              <Button
+                icon={WeightIcon}
+                variant="secondary"
+                size="icon"
+                ariaLabel={`Show plates for ${exercise.label}`}
+                onClick={() => setPlateDialogWeight(exercise.weightUsed)}
+              />
               {exercise.isAdHoc && (
                 <Button
                   icon={Trash2}
@@ -126,6 +145,24 @@ export const WorkoutSession = ({
               )}
             </Row>
           </Row>
+          {generateWarmupSets(exercise.weightUsed).length > 0 && (
+            <Expandable icon={WeightIcon} label="Warm-up sets">
+              <Stack gap="sm">
+                {generateWarmupSets(exercise.weightUsed).map((warmupSet) => (
+                  <Row justify="between" key={warmupSet.percentage}>
+                    <Span
+                      text={`${Math.round(warmupSet.percentage * 100)}%`}
+                      size="small"
+                    />
+                    <Span
+                      text={`${warmupSet.weight} kg × ${warmupSet.reps}`}
+                      size="small"
+                    />
+                  </Row>
+                ))}
+              </Stack>
+            </Expandable>
+          )}
           <div className="session__sets">
             <div className="session__set session__set--header">
               <span />
@@ -160,13 +197,22 @@ export const WorkoutSession = ({
                     <div className="session__input-label">
                       <Span text="Weight (kg)" size="small" />
                     </div>
-                    <Input
-                      size="medium"
-                      value={set.weight}
-                      onChange={(value) =>
-                        updateSet(exerciseIndex, index, "weight", value)
-                      }
-                    />
+                    <Row gap="sm" align="center">
+                      <Input
+                        size="medium"
+                        value={set.weight}
+                        onChange={(value) =>
+                          updateSet(exerciseIndex, index, "weight", value)
+                        }
+                      />
+                      <Button
+                        icon={WeightIcon}
+                        variant="secondary"
+                        size="icon"
+                        ariaLabel={`Show plates for ${set.weight} kg`}
+                        onClick={() => setPlateDialogWeight(set.weight)}
+                      />
+                    </Row>
                   </div>
                 </div>
               </div>
@@ -183,6 +229,15 @@ export const WorkoutSession = ({
         />
       </Expandable>
       <Button label="Finish workout" onClick={handleFinish} />
+      <Dialog
+        isOpen={plateDialogWeight !== null}
+        onClose={() => setPlateDialogWeight(null)}
+        title="Plates"
+      >
+        {plateDialogWeight !== null && (
+          <PlateBreakdown weight={plateDialogWeight} />
+        )}
+      </Dialog>
     </Stack>
   );
 };

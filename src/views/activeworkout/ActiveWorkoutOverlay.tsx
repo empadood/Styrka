@@ -4,6 +4,7 @@ import { Dialog } from "../../components/dialog/Dialog";
 import type { WorkoutStore } from "../../data/storage";
 import { calculateSessionOneRepMax } from "../../helpers/one-rep-max.helper";
 import type { ActiveWorkoutState } from "../../hooks/useActiveWorkout";
+import type { DriveSyncState } from "../../hooks/useDriveSync";
 import { OneRepMax } from "../onerepmax/OneRepMax";
 import { PostWorkout } from "../postworkout/PostWorkout";
 import { WorkoutSession } from "../workoutsession/Session";
@@ -19,9 +20,10 @@ const DIALOG_TITLES: Record<Stage, string> = {
 type Props = {
   store: WorkoutStore;
   workout: ActiveWorkoutState;
+  drive: DriveSyncState;
 };
 
-export const ActiveWorkoutOverlay = ({ store, workout }: Props) => {
+export const ActiveWorkoutOverlay = ({ store, workout, drive }: Props) => {
   if (!store.hasConfiguredOneRepMax) {
     return null;
   }
@@ -64,6 +66,7 @@ export const ActiveWorkoutOverlay = ({ store, workout }: Props) => {
           results={workout.pendingResults}
           onConfirm={workout.onConfirmPostWorkout}
           onBack={workout.onBackToWorkout}
+          drive={drive}
         />
       )}
     </Dialog>

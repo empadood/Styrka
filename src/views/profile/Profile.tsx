@@ -2,8 +2,9 @@ import "./Profile.scss";
 
 import { useState } from "react";
 
-import { Button, Card, Heading, Input, Row, Span, Stack } from "../../components";
+import { Badge, Button, Card, Heading, Input, Row, Span, Stack } from "../../components";
 import { ExerciseWithWeight } from "../../components/text/ExerciseWithWeight";
+import { DRIVE_SYNC_UI_ENABLED, type DriveSyncState } from "../../hooks/useDriveSync";
 import { EXERCISE, EXERCISE_LABELS, type TrackedLiftId } from "../../types";
 
 type Props = {
@@ -11,6 +12,7 @@ type Props = {
   estimatedOneRepMax: Record<TrackedLiftId, number> | null;
   workingWeights: Record<TrackedLiftId, number>;
   onOverrideWeight: (exercise: TrackedLiftId, weight: number) => void;
+  drive: DriveSyncState;
 };
 
 export const Profile = ({
@@ -18,6 +20,7 @@ export const Profile = ({
   estimatedOneRepMax,
   workingWeights,
   onOverrideWeight,
+  drive,
 }: Props) => {
   const [drafts, setDrafts] =
     useState<Record<TrackedLiftId, number>>(workingWeights);
@@ -89,6 +92,48 @@ export const Profile = ({
           />
         </div>
       </Card>
+
+      {DRIVE_SYNC_UI_ENABLED && (
+        <Card>
+          <Heading text="Cloud sync" />
+          <Span
+            text="Manually back up or restore your data via a private, app-only file in your Google Drive."
+            size="small"
+          />
+          <Row justify="start" gap="sm" className="profile__sync">
+            <Button
+              label={drive.status === "syncing" ? "Syncing…" : "Sync now"}
+              variant="secondary"
+              disabled={drive.status === "syncing"}
+              onClick={drive.sync}
+            />
+            {drive.status === "success" && <Badge tone="success">Synced</Badge>}
+            {drive.status === "error" && (
+              <Span text={drive.errorMessage ?? "Sync failed."} size="small" />
+            )}
+          </Row>
+          {drive.status === "conflict" && (
+            <Stack gap="xs">
+              <Span
+                text="Cloud data is newer than what's on this device. Overwrite local data with the cloud version?"
+                size="small"
+              />
+              <Row gap="sm">
+                <Button
+                  label="Use cloud version"
+                  variant="secondary"
+                  onClick={drive.confirmPullRemote}
+                />
+                <Button
+                  label="Keep local version"
+                  variant="secondary"
+                  onClick={drive.dismissConflict}
+                />
+              </Row>
+            </Stack>
+          )}
+        </Card>
+      )}
 
       <Card>
         <Heading text="Privacy" />
