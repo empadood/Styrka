@@ -10,6 +10,7 @@ type Props = {
   size?: "default" | "icon";
   ariaLabel?: string;
   ariaExpanded?: boolean;
+  disabled?: boolean;
 };
 export const Button = ({
   onClick,
@@ -19,6 +20,7 @@ export const Button = ({
   size = "default",
   ariaLabel,
   ariaExpanded,
+  disabled = false,
 }: Props) => {
   return (
     <button
@@ -26,6 +28,7 @@ export const Button = ({
       onClick={onClick}
       aria-label={ariaLabel}
       aria-expanded={ariaExpanded}
+      disabled={disabled}
     >
       {Icon && <Icon aria-hidden="true" size={20} strokeWidth={2} />}
       {label && <span>{label}</span>}

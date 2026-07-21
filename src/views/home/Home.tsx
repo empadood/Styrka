@@ -33,7 +33,6 @@ import type { ActiveWorkoutState } from "../../hooks/useActiveWorkout";
 import type { TrackedLiftId } from "../../types";
 import { BodyWeight } from "../bodyweight/BodyWeight";
 import { Profile } from "../profile/Profile";
-import { SessionHistory } from "../sessionhistory/SessionHistory";
 import { SetupOneRepMax } from "../setuponepmax/SetupOneRepMax";
 
 type UpdateFn = (updater: (prev: WorkoutStore) => WorkoutStore) => void;
@@ -67,7 +66,6 @@ export const Home = ({ store, update, workout }: Props) => {
   const navigate = useNavigate();
   const [showProfile, setShowProfile] = useState(false);
   const [showBodyWeight, setShowBodyWeight] = useState(false);
-  const [showSessionHistory, setShowSessionHistory] = useState(false);
 
   const items = buildOverviewFromStore(store);
   const trendData = buildTrendData(store.history);
@@ -152,7 +150,7 @@ export const Home = ({ store, update, workout }: Props) => {
         <Summary items={items} />
         <PreviousSession
           session={items}
-          onViewAllSessions={() => setShowSessionHistory(true)}
+          onViewAllSessions={() => navigate("/sessions")}
         />
         <Card className="home__trends">
           <Row justify="between" align="start" mb="md">
@@ -199,14 +197,6 @@ export const Home = ({ store, update, workout }: Props) => {
         onClose={() => setShowBodyWeight(false)}
       >
         <BodyWeight log={store.bodyWeightLog} onLog={handleLogBodyWeight} />
-      </Dialog>
-
-      <Dialog
-        title="Sessions"
-        isOpen={showSessionHistory}
-        onClose={() => setShowSessionHistory(false)}
-      >
-        <SessionHistory sessions={store.history} />
       </Dialog>
     </PageContainer>
   );

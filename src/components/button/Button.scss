@@ -54,3 +54,9 @@
   width: 3rem;
   padding: 0;
 }
+
+.button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  pointer-events: none;
+}

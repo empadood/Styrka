@@ -1,0 +1,229 @@
+@use "../../styles/breakpoints" as *;
+
+.sessions {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.sessions__table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.sessions__table th {
+  padding: 0;
+  color: var(--text-secondary);
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  text-align: left;
+}
+
+.sessions__sort-button {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  padding: var(--space-2) var(--space-3);
+  background: none;
+  border: none;
+  color: inherit;
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.sessions__sort-button:hover {
+  color: var(--text);
+}
+
+.sessions__sort-icon {
+  transition: transform 150ms ease;
+}
+
+.sessions__sort-icon--asc {
+  transform: rotate(180deg);
+}
+
+.sessions__sort-icon--inactive {
+  opacity: 0.5;
+}
+
+.sessions__table td {
+  padding: var(--space-3);
+}
+
+.sessions__row {
+  cursor: pointer;
+  transition: background-color 150ms ease;
+}
+
+.sessions__row:hover {
+  background: var(--primary-soft);
+}
+
+.sessions__row td {
+  border-top: 0.0625rem solid var(--border);
+}
+
+.sessions__row td time {
+  color: var(--text-secondary);
+  font-size: var(--font-size-sm);
+}
+
+.sessions__chevron-cell {
+  width: 2rem;
+  text-align: right;
+}
+
+.sessions__chevron {
+  transition: transform 150ms ease;
+  color: var(--text-secondary);
+}
+
+.sessions__chevron--open {
+  transform: rotate(180deg);
+}
+
+.sessions__detail-row td {
+  padding: 0 var(--space-3) var(--space-4);
+  background: var(--surface-secondary);
+}
+
+.sessions__detail {
+  padding-top: var(--space-4);
+}
+
+.sessions__checkin {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  padding: var(--space-4);
+  border: 0.0625rem solid var(--border);
+  border-radius: var(--radius-md);
+  background: var(--surface);
+}
+
+.sessions__exercise {
+  padding: var(--space-4);
+  border: 0.0625rem solid var(--border);
+  border-radius: var(--radius-md);
+  background: var(--surface);
+}
+
+.sessions__exercise-heading .span {
+  color: var(--success);
+  font-weight: 600;
+}
+
+.sessions__sets {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  margin-top: var(--space-4);
+}
+
+.sessions__set {
+  display: grid;
+  grid-template-columns: 3rem 1fr auto;
+  padding-top: var(--space-2);
+  border-top: 0.0625rem solid var(--border);
+}
+
+.sessions__set .span:last-child {
+  color: var(--text);
+  font-weight: 600;
+  text-align: right;
+}
+
+.sessions__footer {
+  flex-wrap: wrap;
+  gap: var(--space-3);
+  margin-top: var(--space-3);
+  padding-top: var(--space-3);
+  border-top: 0.0625rem solid var(--border);
+}
+
+.sessions__page-size {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  color: var(--text-secondary);
+  font-size: var(--font-size-sm);
+}
+
+.sessions__page-size select {
+  padding: var(--space-1) var(--space-2);
+  border: 0.0625rem solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+  color: var(--text);
+  font: inherit;
+  font-size: var(--font-size-sm);
+  cursor: pointer;
+}
+
+.sessions__pagination {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.sessions__pagination .button--icon {
+  min-height: 2rem;
+  width: 2rem;
+}
+
+@media (max-width: $bp-tablet) {
+  .sessions__table thead {
+    display: none;
+  }
+
+  .sessions__table,
+  .sessions__table tbody,
+  .sessions__row,
+  .sessions__detail-row {
+    display: block;
+    width: 100%;
+  }
+
+  .sessions__row {
+    display: flex;
+    align-items: center;
+  }
+
+  .sessions__row td {
+    padding: var(--space-2) var(--space-3);
+  }
+
+  .sessions__row td:nth-child(2),
+  .sessions__row td:nth-child(4) {
+    display: none;
+  }
+
+  .sessions__row td:first-child {
+    flex: 1 1 auto;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .sessions__row td:nth-child(3) {
+    flex: 0 0 auto;
+  }
+
+  .sessions__chevron-cell {
+    flex: 0 0 auto;
+    margin-left: auto;
+  }
+
+  .sessions__detail-row td {
+    display: block;
+    padding: 0;
+    margin: 0 calc(-1 * var(--space-3));
+  }
+
+  .sessions__detail {
+    padding: var(--space-4) var(--space-3);
+  }
+}
