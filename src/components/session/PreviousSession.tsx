@@ -1,3 +1,5 @@
+import "./PreviousSession.scss";
+
 import type { Overview } from "../../data/workout-session";
 import { Button } from "../button/Button";
 import { Card } from "../card/Card";

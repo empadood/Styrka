@@ -1,3 +1,5 @@
+import "./UpcomingSession.scss";
+
 import { type Overview } from "../../data/workout-session";
 import type { ProgramSession } from "../../types";
 import { Button } from "../button/Button";

@@ -1,3 +1,5 @@
+import "./Summary.scss";
+
 import { type Overview } from "../../data/workout-session";
 import { Card } from "../card/Card";
 import { Row } from "../row/Row";
