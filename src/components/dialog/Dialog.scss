@@ -1,6 +1,10 @@
 .dialog {
+  position: fixed;
+  inset: 0;
+  margin: auto;
   width: min(100% - var(--page-gutter), 40rem);
   height: min(45rem, calc(100dvh - 2rem));
+  max-width: 100%;
   padding: 0;
   border: 0.0625rem solid var(--border);
   border-radius: 1.25rem;
