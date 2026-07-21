@@ -90,6 +90,7 @@
   margin-top: 1.5rem;
   display: flex;
   justify-content: flex-end;
+  gap: 0.5rem;
 }
 
 .upcoming-session__footer .button {
