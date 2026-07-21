@@ -1,0 +1,10 @@
+.onerepmax__exercise {
+  padding: var(--space-4);
+  border: 0.0625rem solid var(--border);
+  border-radius: var(--radius-md);
+}
+
+.onerepmax__values .span:last-child {
+  color: var(--success);
+  font-weight: 600;
+}

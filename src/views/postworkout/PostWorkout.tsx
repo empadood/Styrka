@@ -1,8 +1,8 @@
-import "./PostWorkout.css";
+import "./PostWorkout.scss";
 
 import { useState } from "react";
 
-import { Button, Heading, Section } from "../../components";
+import { Button, Card, Heading, Stack } from "../../components";
 import { Input } from "../../components/input/Input";
 import { RpeScale } from "../../components/rpescale/RpeScale";
 import { ExerciseWithWeight } from "../../components/text/ExerciseWithWeight";
@@ -33,7 +33,7 @@ export const PostWorkout = ({ results, onConfirm, onBack }: Props) => {
   const [notes, setNotes] = useState("");
 
   return (
-    <div className="postworkout__container">
+    <Stack gap="lg" className="postworkout__container">
       <Button
         label="Edit workout"
         variant="secondary"
@@ -51,7 +51,7 @@ export const PostWorkout = ({ results, onConfirm, onBack }: Props) => {
             </div>
           ) : result.completed ? (
             <>
-              <div className="postworkout__increment">
+              <Stack gap="xs" className="postworkout__increment">
                 <Span text="Increment" size="small" />
                 <Input
                   value={increments[result.exerciseId as TrackedLiftId]}
@@ -63,8 +63,8 @@ export const PostWorkout = ({ results, onConfirm, onBack }: Props) => {
                     }))
                   }
                 />
-              </div>
-              <div className="postworkout__next">
+              </Stack>
+              <Stack gap="xs" className="postworkout__next">
                 <Span text="Next session" size="small" />
                 <Weight
                   weight={
@@ -75,7 +75,7 @@ export const PostWorkout = ({ results, onConfirm, onBack }: Props) => {
                     ) / 10
                   }
                 />
-              </div>
+              </Stack>
             </>
           ) : (
             <div className="postworkout__no-increase">
@@ -85,7 +85,7 @@ export const PostWorkout = ({ results, onConfirm, onBack }: Props) => {
         </div>
       ))}
 
-      <Section>
+      <Card>
         <Heading text="How did it feel?" level="3" />
         <div className="postworkout__rpe">
           <Span text="Rate of perceived exertion" size="small" />
@@ -97,12 +97,12 @@ export const PostWorkout = ({ results, onConfirm, onBack }: Props) => {
           value={notes}
           onChange={(e) => setNotes(e.target.value)}
         />
-      </Section>
+      </Card>
 
       <Button
         label="Confirm"
         onClick={() => onConfirm(increments, { rpe, notes })}
       />
-    </div>
+    </Stack>
   );
 };

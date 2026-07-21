@@ -1,7 +1,0 @@
-.section {
-  padding: 1.5rem;
-  border: 0.0625rem solid var(--border);
-  border-radius: 1rem;
-  background: var(--surface);
-  box-shadow: var(--shadow);
-}

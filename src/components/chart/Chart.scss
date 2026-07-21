@@ -1,10 +1,12 @@
+@use "../../styles/breakpoints" as *;
+
 .chart__container {
   display: flex;
   max-width: 100%;
   min-height: 15rem;
 }
 
-@media (min-width: 48rem) {
+@media (min-width: $bp-tablet) {
   .chart__container {
     justify-content: center;
     > div {

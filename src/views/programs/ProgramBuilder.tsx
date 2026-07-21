@@ -1,9 +1,9 @@
-import "./Programs.css";
+import "./Programs.scss";
 
 import { useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 
-import { Button, Heading, Section, Span } from "../../components";
+import { Button, Card, Heading, PageContainer, Row, Span } from "../../components";
 import { AddExerciseForm } from "../../components/addexercise/AddExerciseForm";
 import { TextField } from "../../components/textfield/TextField";
 import type { WorkoutStore } from "../../data/storage";
@@ -150,13 +150,13 @@ export const ProgramBuilder = ({ store, update }: Props) => {
   };
 
   return (
-    <main className="programs">
-      <div className="programs__header">
+    <PageContainer className="programs">
+      <Row justify="start" gap="md">
         <Button label="Back" variant="secondary" onClick={() => navigate("/programs")} />
         <Heading text={programId ? "Edit program" : "New program"} level="1" />
-      </div>
+      </Row>
 
-      <Section>
+      <Card>
         <label className="programs__field">
           <Span text="Program name" size="small" />
           <TextField
@@ -165,11 +165,11 @@ export const ProgramBuilder = ({ store, update }: Props) => {
             placeholder="e.g. Upper/Lower split"
           />
         </label>
-      </Section>
+      </Card>
 
       {draft.sessions.map((session) => (
-        <Section key={session.id}>
-          <div className="card__heading">
+        <Card key={session.id}>
+          <Row justify="between" align="start" mb="md">
             <label className="programs__field">
               <Span text="Session name" size="small" />
               <TextField
@@ -182,12 +182,12 @@ export const ProgramBuilder = ({ store, update }: Props) => {
               variant="danger"
               onClick={() => removeSession(session.id)}
             />
-          </div>
+          </Row>
           <div className="programs__exercise-list">
             {session.exercises.map((exercise, index) => (
               <div className="programs__exercise-row" key={index}>
                 <Span text={exercise.label} />
-                <Span text={`${exercise.sets} × ${exercise.reps} reps`} size="small" />
+                <Span text={`${exercise.sets} × ${exercise.reps} reps`} size="small" tone="secondary" />
                 <Button
                   label="Remove"
                   variant="secondary"
@@ -201,7 +201,7 @@ export const ProgramBuilder = ({ store, update }: Props) => {
             onSubmit={(input) => addExerciseToSession(session.id, input)}
             submitLabel="Add to session"
           />
-        </Section>
+        </Card>
       ))}
 
       <Button label="Add session" variant="secondary" onClick={addSession} />
@@ -209,6 +209,6 @@ export const ProgramBuilder = ({ store, update }: Props) => {
       {error && <p className="programs__error">{error}</p>}
 
       <Button label="Save program" onClick={save} />
-    </main>
+    </PageContainer>
   );
 };

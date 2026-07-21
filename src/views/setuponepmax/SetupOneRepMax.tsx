@@ -1,4 +1,4 @@
-import "./SetupOneRepMax.css";
+import "./SetupOneRepMax.scss";
 
 import { useState } from "react";
 

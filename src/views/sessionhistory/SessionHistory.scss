@@ -1,23 +1,12 @@
-.session-history,
-.session-history__exercise-list,
-.session-history__list {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-}
-
 .session-history__item {
+  appearance: none;
+  width: 100%;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 1rem;
-  width: 100%;
-  padding: 1rem;
+  gap: var(--space-4);
   color: var(--text);
   text-align: left;
-  border: 0.0625rem solid var(--border);
-  border-radius: 0.75rem;
-  background: var(--surface);
   cursor: pointer;
   transition: border-color 150ms ease, background-color 150ms ease;
 }
@@ -30,7 +19,7 @@
 .session-history__item > span {
   display: flex;
   flex-direction: column;
-  gap: 0.25rem;
+  gap: var(--space-1);
 }
 
 .session-history__item small,
@@ -41,31 +30,16 @@
 
 .session-history__item time,
 .session-history__detail-heading time {
-  font-size: 0.875rem;
-}
-
-.session-history__detail-heading,
-.session-history__exercise-heading,
-.session-history__set {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 1rem;
-}
-
-.session-history__exercise {
-  padding: 1rem;
-  border: 0.0625rem solid var(--border);
-  border-radius: 0.75rem;
+  font-size: var(--font-size-sm);
 }
 
 .session-history__checkin {
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
-  padding: 1rem;
+  gap: var(--space-2);
+  padding: var(--space-4);
   border: 0.0625rem solid var(--border);
-  border-radius: 0.75rem;
+  border-radius: var(--radius-md);
   background: var(--surface-secondary);
 }
 
@@ -77,14 +51,14 @@
 .session-history__sets {
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
-  margin-top: 1rem;
+  gap: var(--space-2);
+  margin-top: var(--space-4);
 }
 
 .session-history__set {
   display: grid;
   grid-template-columns: 3rem 1fr auto;
-  padding-top: 0.5rem;
+  padding-top: var(--space-2);
   border-top: 0.0625rem solid var(--border);
 }
 
@@ -100,7 +74,7 @@
 
 @media (max-width: 30rem) {
   .session-history__item,
-  .session-history__detail-heading {
+  .row.session-history__detail-heading {
     align-items: flex-start;
     flex-direction: column;
   }

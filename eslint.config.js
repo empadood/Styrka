@@ -1,3 +1,6 @@
+// For more info, see https://github.com/storybookjs/eslint-plugin-storybook#configuration-flat-config-format
+import storybook from "eslint-plugin-storybook";
+
 import js from '@eslint/js'
 import globals from 'globals'
 import reactHooks from 'eslint-plugin-react-hooks'
@@ -6,25 +9,22 @@ import tseslint from 'typescript-eslint'
 import simpleImportSort from "eslint-plugin-simple-import-sort";
 import { defineConfig, globalIgnores } from 'eslint/config'
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      js.configs.recommended,
-      tseslint.configs.recommended,
-      reactHooks.configs.flat.recommended,
-      reactRefresh.configs.vite,
-    ],
-    languageOptions: {
-      globals: globals.browser,
-    },
-     plugins: {
-      "simple-import-sort": simpleImportSort,
-    },
-      rules: {
-      "simple-import-sort/imports": "error",
-      "simple-import-sort/exports": "error",
-    },
+export default defineConfig([globalIgnores(['dist', 'storybook-static']), {
+  files: ['**/*.{ts,tsx}'],
+  extends: [
+    js.configs.recommended,
+    tseslint.configs.recommended,
+    reactHooks.configs.flat.recommended,
+    reactRefresh.configs.vite,
+  ],
+  languageOptions: {
+    globals: globals.browser,
   },
-])
+   plugins: {
+    "simple-import-sort": simpleImportSort,
+  },
+    rules: {
+    "simple-import-sort/imports": "error",
+    "simple-import-sort/exports": "error",
+  },
+}, ...storybook.configs["flat/recommended"]])

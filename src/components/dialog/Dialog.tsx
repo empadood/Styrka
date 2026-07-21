@@ -1,9 +1,10 @@
-import "./Dialog.css";
+import "./Dialog.scss";
 
 import { type LucideIcon, X } from "lucide-react";
 import { type ReactNode, useEffect, useRef } from "react";
 
 import { Button } from "../button/Button";
+import { Row } from "../row/Row";
 import { Heading } from "../text/Heading";
 
 type Props = {
@@ -66,7 +67,7 @@ export const Dialog = ({
   return (
     <dialog className="dialog" id="modal" ref={dialoRef}>
       <div className="dialog__content">
-        <div className="dialog__toolbar">
+        <Row justify="between" className="dialog__toolbar">
           <Heading text={title} level="2" />
           <Button
             onClick={() => dialoRef.current?.close()}
@@ -75,7 +76,7 @@ export const Dialog = ({
             variant="secondary"
             ariaLabel={actionAriaLabel}
           />
-        </div>
+        </Row>
         <div className="dialog__rendered-content ">{children}</div>
         <div className="dialog__actions">
           {destructiveAction && (

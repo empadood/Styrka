@@ -1,0 +1,11 @@
+.span {
+  line-height: 1.5;
+
+  &--default {
+    color: var(--text);
+  }
+
+  &--secondary {
+    color: var(--text-secondary);
+  }
+}

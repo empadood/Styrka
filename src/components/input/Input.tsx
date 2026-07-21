@@ -1,4 +1,4 @@
-import "./Input.css";
+import "./Input.scss";
 
 import { useEffect, useRef, useState } from "react";
 

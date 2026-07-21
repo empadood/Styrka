@@ -1,9 +1,10 @@
-import "./Toolbar.css";
+import "./Toolbar.scss";
 
 import { CircleUserRound } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 
 import { Button } from "../button/Button";
+import { Row } from "../row/Row";
 import { Heading } from "../text/Heading";
 import { Span } from "../text/Span";
 
@@ -61,7 +62,7 @@ export const Toolbar = ({
   };
 
   return (
-    <div className="toolbar">
+    <Row justify="between" className="toolbar">
       <div>
         <Span text="Strength training" size="small" />
         <Heading text={title} level="1" />
@@ -101,6 +102,6 @@ export const Toolbar = ({
           </div>
         )}
       </div>
-    </div>
+    </Row>
   );
 };

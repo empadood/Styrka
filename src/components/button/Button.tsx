@@ -1,4 +1,4 @@
-import "./Button.css";
+import "./Button.scss";
 
 import type { LucideIcon } from "lucide-react";
 

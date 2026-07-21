@@ -1,8 +1,8 @@
-import "./BodyWeight.css";
+import "./BodyWeight.scss";
 
 import { useState } from "react";
 
-import { Button, Heading, Input, Section } from "../../components";
+import { Button, Card, Heading, Input, Row, Stack } from "../../components";
 import { SingleLineChart } from "../../components/chart/SingleLineChart";
 import { buildBodyWeightTrendData } from "../../helpers/bodyweight.helper";
 import type { BodyWeightEntry } from "../../types";
@@ -17,16 +17,16 @@ export const BodyWeight = ({ log, onLog }: Props) => {
   const trendData = buildBodyWeightTrendData(log);
 
   return (
-    <div className="bodyweight__container">
-      <Section>
+    <Stack gap="lg" className="bodyweight__container">
+      <Card>
         <Heading text="Log today's weight" level="3" />
-        <div className="bodyweight__form">
+        <Row gap="sm" className="bodyweight__form">
           <Input value={draft} size="medium" onChange={setDraft} />
           <Button label="Log weight" onClick={() => onLog(draft)} />
-        </div>
-      </Section>
+        </Row>
+      </Card>
 
-      <Section>
+      <Card>
         <Heading text="Bodyweight over time" level="3" />
         <SingleLineChart
           data={trendData}
@@ -35,7 +35,7 @@ export const BodyWeight = ({ log, onLog }: Props) => {
           unit="kg"
           color="var(--primary)"
         />
-      </Section>
-    </div>
+      </Card>
+    </Stack>
   );
 };

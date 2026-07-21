@@ -24,3 +24,5 @@ dist-ssr
 
 
 .claude
+*storybook.log
+storybook-static

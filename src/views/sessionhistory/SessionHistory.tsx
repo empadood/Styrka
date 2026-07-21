@@ -1,8 +1,8 @@
-import "./SessionHistory.css";
+import "./SessionHistory.scss";
 
 import { useState } from "react";
 
-import { Button, Heading, Span } from "../../components";
+import { Button, Card, Heading, Row, Span, Stack } from "../../components";
 import type { WorkoutHistoryEntry } from "../../types";
 
 type Props = {
@@ -21,13 +21,13 @@ export const SessionHistory = ({ sessions }: Props) => {
 
   if (selectedSession) {
     return (
-      <div className="session-history">
+      <Stack gap="lg" className="session-history">
         <Button
           label="Back to sessions"
           onClick={() => setSelectedSession(null)}
           variant="secondary"
         />
-        <div className="session-history__detail-heading">
+        <Row justify="between" className="session-history__detail-heading">
           <div>
             <Span text={selectedSession.sessionLabel} size="small" />
             <Heading text="Workout details" level="2" />
@@ -35,7 +35,7 @@ export const SessionHistory = ({ sessions }: Props) => {
           <time dateTime={selectedSession.date}>
             {formatDate(selectedSession.date)}
           </time>
-        </div>
+        </Row>
         {selectedSession.checkIn && (
           <section className="session-history__checkin">
             <Span text={`RPE ${selectedSession.checkIn.rpe}/10`} size="small" />
@@ -44,16 +44,16 @@ export const SessionHistory = ({ sessions }: Props) => {
             )}
           </section>
         )}
-        <div className="session-history__exercise-list">
+        <Stack gap="lg" className="session-history__exercise-list">
           {selectedSession.exercises.map((exercise, index) => (
-            <section className="session-history__exercise" key={index}>
-              <div className="session-history__exercise-heading">
+            <Card padding="md" key={index}>
+              <Row justify="between" className="session-history__exercise-heading">
                 <Heading text={exercise.label} level="3" />
                 <Span
                   text={exercise.completed ? "Completed" : "Incomplete"}
                   size="small"
                 />
-              </div>
+              </Row>
               <div className="session-history__sets">
                 {exercise.sets.map((set, index) => (
                   <div className="session-history__set" key={index}>
@@ -63,10 +63,10 @@ export const SessionHistory = ({ sessions }: Props) => {
                   </div>
                 ))}
               </div>
-            </section>
+            </Card>
           ))}
-        </div>
-      </div>
+        </Stack>
+      </Stack>
     );
   }
 
@@ -75,9 +75,11 @@ export const SessionHistory = ({ sessions }: Props) => {
       {sessions.length === 0 ? (
         <Span text="No completed workouts yet." size="small" />
       ) : (
-        <div className="session-history__list">
+        <Stack gap="lg" as="ul" className="session-history__list">
           {[...sessions].reverse().map((session) => (
-            <button
+            <Card
+              as="button"
+              padding="md"
               className="session-history__item"
               key={session.id}
               onClick={() => setSelectedSession(session)}
@@ -87,9 +89,9 @@ export const SessionHistory = ({ sessions }: Props) => {
                 <small>{session.exercises.length} exercises</small>
               </span>
               <time dateTime={session.date}>{formatDate(session.date)}</time>
-            </button>
+            </Card>
           ))}
-        </div>
+        </Stack>
       )}
     </div>
   );

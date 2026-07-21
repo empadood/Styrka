@@ -1,4 +1,4 @@
-import "./Heading.css";
+import "./Heading.scss";
 type Level = "1" | "2" | "3" | "4" | "5" | "6";
 type Props = {
   level?: Level;

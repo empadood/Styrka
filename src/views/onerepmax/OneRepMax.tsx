@@ -1,6 +1,6 @@
-import "./OneRepMax.css";
+import "./OneRepMax.scss";
 
-import { Button, Heading } from "../../components";
+import { Button, Heading, Row, Stack } from "../../components";
 import { Span } from "../../components/text/Span";
 import { Weight } from "../../components/text/Weight";
 import type { OneRepMaxResult } from "../../helpers/one-rep-max.helper";
@@ -33,22 +33,22 @@ const Difference = ({ result }: { result: OneRepMaxResult }) => {
 
 export const OneRepMax = ({ results, onContinue }: Props) => {
   return (
-    <div className="onerepmax__container">
+    <Stack gap="lg" className="onerepmax__container">
       <Heading text="Estimated One Rep Max" />
       {results.map((result) => (
-        <div className="onerepmax__exercise" key={result.exerciseId}>
+        <Row justify="between" className="onerepmax__exercise" key={result.exerciseId}>
           <Span text={result.label} capitalize />
           {result.oneRepMax !== null ? (
-            <div className="onerepmax__values">
+            <Row gap="sm" className="onerepmax__values">
               <Weight weight={Math.round(result.oneRepMax * 10) / 10} />
               <Difference result={result} />
-            </div>
+            </Row>
           ) : (
             <Span text="No reps logged" size="small" />
           )}
-        </div>
+        </Row>
       ))}
       <Button label="Continue" onClick={onContinue} />
-    </div>
+    </Stack>
   );
 };

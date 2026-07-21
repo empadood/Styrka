@@ -1,10 +1,11 @@
-import "./Span.css";
+import "./Span.scss";
 type Props = {
   text: string | number;
   size?: "small" | "normal" | "large";
+  tone?: "default" | "secondary";
   capitalize?: boolean;
 };
-export const Span = ({ text, capitalize, size = "normal" }: Props) => {
+export const Span = ({ text, capitalize, size = "normal", tone = "default" }: Props) => {
   const fontSize = {
     small: "0.875rem",
     normal: "1rem",
@@ -13,7 +14,7 @@ export const Span = ({ text, capitalize, size = "normal" }: Props) => {
 
   return (
     <span
-      className="span"
+      className={`span span--${tone}`}
       style={{
         textTransform: capitalize ? "capitalize" : "",
         fontSize: fontSize[size],

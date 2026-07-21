@@ -1,8 +1,8 @@
-import "./Programs.css";
+import "./Programs.scss";
 
 import { useNavigate } from "react-router-dom";
 
-import { Button, Heading, Section, Span } from "../../components";
+import { Badge, Button, Card, Heading, PageContainer, Row, Span, Stack } from "../../components";
 import type { WorkoutStore } from "../../data/storage";
 import type { Program } from "../../types";
 
@@ -33,31 +33,32 @@ export const BrowsePrograms = ({ store, update }: Props) => {
   };
 
   return (
-    <main className="programs">
-      <div className="programs__header">
+    <PageContainer className="programs">
+      <Row justify="start" gap="md">
         <Button label="Back" variant="secondary" onClick={() => navigate("/")} />
         <Heading text="Programs" level="1" />
-      </div>
+      </Row>
 
-      <Section>
-        <div className="card__heading">
+      <Card>
+        <Row justify="between" align="start" mb="md">
           <Heading text="Your programs" level="2" />
           <Button label="New program" onClick={() => navigate("/programs/new")} />
-        </div>
-        <div className="programs__list">
+        </Row>
+        <Stack gap="sm" as="ul" className="programs__list">
           {sortPrograms(store.programs).map((program) => (
-            <div className="programs__item" key={program.id}>
+            <Card padding="sm" as="li" className="programs__item" key={program.id}>
               <div className="programs__item-info">
                 <div className="programs__item-title">
                   <Span text={program.name} />
-                  {program.isBuiltIn && <span className="programs__badge">Built-in</span>}
+                  {program.isBuiltIn && <Badge size="sm">Built-in</Badge>}
                   {program.id === store.activeProgramId && (
-                    <span className="programs__badge programs__badge--active">Active</span>
+                    <Badge tone="primary" size="sm">Active</Badge>
                   )}
                 </div>
                 <Span
                   text={`${program.sessions.length} ${program.sessions.length === 1 ? "session" : "sessions"}`}
                   size="small"
+                  tone="secondary"
                 />
               </div>
               <div className="programs__item-actions">
@@ -76,10 +77,10 @@ export const BrowsePrograms = ({ store, update }: Props) => {
                   />
                 )}
               </div>
-            </div>
+            </Card>
           ))}
-        </div>
-      </Section>
-    </main>
+        </Stack>
+      </Card>
+    </PageContainer>
   );
 };

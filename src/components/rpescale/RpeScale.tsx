@@ -1,4 +1,4 @@
-import "./RpeScale.css";
+import "./RpeScale.scss";
 
 type Props = {
   value: number;

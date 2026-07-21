@@ -1,6 +1,6 @@
-import "./Session.css";
+import "./Session.scss";
 
-import { Button, Heading } from "../../components";
+import { Button, Heading, Row, Stack } from "../../components";
 import { AddExerciseForm } from "../../components/addexercise/AddExerciseForm";
 import { Input } from "../../components/input/Input";
 import { ExerciseWithWeight } from "../../components/text/ExerciseWithWeight";
@@ -92,14 +92,14 @@ export const WorkoutSession = ({
   };
 
   return (
-    <div className="session__container">
+    <Stack gap="lg" className="session__container">
       <div className="session__intro">
         <span>{sessionLabel}</span>
         <Heading text="Today's workout" level="2" />
       </div>
       {exercises.map((exercise, exerciseIndex) => (
         <section className="session__exercise" key={exerciseIndex}>
-          <div className="session__exercise-header">
+          <Row justify="between" className="session__exercise-header">
             <ExerciseWithWeight
               label={exercise.label}
               weight={exercise.weightUsed}
@@ -108,7 +108,7 @@ export const WorkoutSession = ({
               text={`${exercise.sets.length} ${exercise.sets.length < 2 ? "set" : "sets"}`}
               size="small"
             />
-          </div>
+          </Row>
           <div className="session__sets">
             <div className="session__set session__set--header">
               <span />
@@ -164,6 +164,6 @@ export const WorkoutSession = ({
         submitLabel="Add exercise to this workout"
       />
       <Button label="Finish workout" onClick={handleFinish} />
-    </div>
+    </Stack>
   );
 };

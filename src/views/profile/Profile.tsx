@@ -1,8 +1,8 @@
-import "./Profile.css";
+import "./Profile.scss";
 
 import { useState } from "react";
 
-import { Button, Heading, Input, Section, Span } from "../../components";
+import { Button, Card, Heading, Input, Row, Span, Stack } from "../../components";
 import { ExerciseWithWeight } from "../../components/text/ExerciseWithWeight";
 import { EXERCISE, EXERCISE_LABELS, type TrackedLiftId } from "../../types";
 
@@ -23,8 +23,8 @@ export const Profile = ({
     useState<Record<TrackedLiftId, number>>(workingWeights);
 
   return (
-    <div className="profile__container">
-      <Section>
+    <Stack gap="lg" className="profile__container">
+      <Card>
         <Heading text="Current Working Weight" />
         <Span
           text="Lower a weight to reduce next session's starting point — for deloads, bad sessions, or illness."
@@ -32,9 +32,9 @@ export const Profile = ({
         />
         <div className="profile__configure profile__configure--editable">
           {Object.values(EXERCISE).map((exercise) => (
-            <div className="profile__weight-row" key={exercise}>
+            <Row justify="between" className="profile__weight-row" key={exercise}>
               <Span text={EXERCISE_LABELS[exercise]} capitalize />
-              <div className="profile__weight-edit">
+              <Row gap="sm" className="profile__weight-edit">
                 <Input
                   value={drafts[exercise]}
                   size="small"
@@ -47,13 +47,13 @@ export const Profile = ({
                   variant="secondary"
                   onClick={() => onOverrideWeight(exercise, drafts[exercise])}
                 />
-              </div>
-            </div>
+              </Row>
+            </Row>
           ))}
         </div>
-      </Section>
+      </Card>
 
-      <Section>
+      <Card>
         <Heading text="Current Estimated One Rep Max" />
         {estimatedOneRepMax && (
           <div className="profile__configure">
@@ -66,9 +66,9 @@ export const Profile = ({
             ))}
           </div>
         )}
-      </Section>
+      </Card>
 
-      <Section>
+      <Card>
         <Heading text="Current Incremenation Per Session" />
         <div className="profile__configure">
           <ExerciseWithWeight
@@ -88,15 +88,15 @@ export const Profile = ({
             weight={increments[EXERCISE.squat]}
           />
         </div>
-      </Section>
+      </Card>
 
-      <Section>
+      <Card>
         <Heading text="Privacy" />
         <Span
           text="We use cookie-free, aggregate analytics to understand app usage. Workout data and personal identifiers are never collected."
           size="small"
         />
-      </Section>
-    </div>
+      </Card>
+    </Stack>
   );
 };

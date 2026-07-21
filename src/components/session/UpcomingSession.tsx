@@ -1,7 +1,8 @@
 import { type Overview } from "../../data/workout-session";
 import type { ProgramSession } from "../../types";
 import { Button } from "../button/Button";
-import { Section } from "../section/Section";
+import { Card } from "../card/Card";
+import { Row } from "../row/Row";
 import { Heading } from "../text/Heading";
 import { Span } from "../text/Span";
 
@@ -28,32 +29,33 @@ export const UpcomingSession = ({
   }));
 
   return (
-    <Section className="upcoming-session">
-      <div className="card__heading">
+    <Card tone="primary" className="upcoming-session">
+      <Row justify="between" align="start" mb="md">
         <div>
-          <Span text="Ready when you are" size="small" />
+          <Span text="Ready when you are" size="small" tone="secondary" />
           <Heading
             text={isUpcoming && !isWorkoutActive ? "Upcoming workout" : "Today's workout"}
             level="2"
           />
         </div>
-        <Span text={`${exercises.length} exercises`} size="small" />
-      </div>
+        <Span text={`${exercises.length} exercises`} size="small" tone="secondary" />
+      </Row>
       {nextSession ? (
         <div className="upcoming-session__exercises">
           {exercises.map(({ definition, overview }) => (
-            <div className="upcoming-session__exercise" key={definition.exerciseId}>
+            <Card padding="sm" key={definition.exerciseId}>
               <div>
                 <Span text={definition.label} />
                 <Span
                   text={`${definition.sets} × ${definition.reps} reps`}
                   size="small"
+                  tone="secondary"
                 />
               </div>
               {overview && (
-                <Span text={`${overview.value} ${overview.unit}`} size="small" />
+                <Span text={`${overview.value} ${overview.unit}`} size="small" tone="secondary" />
               )}
-            </div>
+            </Card>
           ))}
         </div>
       ) : (
@@ -72,6 +74,6 @@ export const UpcomingSession = ({
           onClick={onStartWorkout}
         />
       </div>
-    </Section>
+    </Card>
   );
 };

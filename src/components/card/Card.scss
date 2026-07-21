@@ -1,0 +1,25 @@
+.card {
+  border: 0.0625rem solid var(--border);
+  background: var(--surface);
+
+  &--padding-sm {
+    padding: var(--space-3);
+    border-radius: var(--radius-md);
+  }
+
+  &--padding-md {
+    padding: var(--space-4);
+    border-radius: var(--radius-md);
+  }
+
+  &--padding-lg {
+    padding: var(--space-5);
+    border-radius: 1rem;
+    box-shadow: var(--shadow);
+  }
+
+  &--primary {
+    border-color: var(--primary);
+    background: var(--primary-soft);
+  }
+}

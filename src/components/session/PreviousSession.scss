@@ -1,0 +1,20 @@
+.previous-session__exercise {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--space-4);
+  padding-bottom: var(--space-3);
+  border-bottom: 0.0625rem solid var(--border);
+}
+
+.previous-session__exercise:last-child {
+  padding-bottom: 0;
+  border-bottom: 0;
+}
+
+.previous-session__exercise .span:last-child {
+  text-align: right;
+}
+
+.previous-session__footer {
+  margin-top: var(--space-4);
+}

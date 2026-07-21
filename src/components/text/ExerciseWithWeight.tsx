@@ -1,4 +1,4 @@
-import "./ExcerciseWithWeight.css";
+import "./ExcerciseWithWeight.scss";
 
 import { Span } from "./Span";
 import { Weight } from "./Weight";

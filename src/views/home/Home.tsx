@@ -1,9 +1,18 @@
-import "./Home.css";
+import "./Home.scss";
 
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-import { ChartComponent, Heading, Section, Toolbar } from "../../components";
+import {
+  Badge,
+  Card,
+  ChartComponent,
+  Heading,
+  PageContainer,
+  Row,
+  Span,
+  Toolbar,
+} from "../../components";
 import { SingleLineChart } from "../../components/chart/SingleLineChart";
 import { Dialog } from "../../components/dialog/Dialog";
 import { PreviousSession } from "../../components/session/PreviousSession";
@@ -41,6 +50,17 @@ const STATUS_LABELS: Record<TrainingStatus | "insufficient-data", string> = {
   maintaining: "Maintaining",
   declining: "Declining",
   "insufficient-data": "Not enough data yet",
+};
+
+const STATUS_TONES: Record<
+  TrainingStatus | "insufficient-data",
+  "neutral" | "primary" | "success" | "danger"
+> = {
+  comeback: "primary",
+  gaining: "success",
+  maintaining: "neutral",
+  declining: "danger",
+  "insufficient-data": "neutral",
 };
 
 export const Home = ({ store, update, workout }: Props) => {
@@ -104,14 +124,14 @@ export const Home = ({ store, update, workout }: Props) => {
 
   if (!store.hasConfiguredOneRepMax) {
     return (
-      <main className="home">
+      <PageContainer>
         <SetupOneRepMax onComplete={handleCompleteOneRepMaxSetup} />
-      </main>
+      </PageContainer>
     );
   }
 
   return (
-    <main className="home">
+    <PageContainer className="home">
       <Toolbar
         title="Good morning"
         onShowProfile={() => setShowProfile(true)}
@@ -134,25 +154,23 @@ export const Home = ({ store, update, workout }: Props) => {
           session={items}
           onViewAllSessions={() => setShowSessionHistory(true)}
         />
-        <Section className="home__trends">
-          <div className="card__heading">
+        <Card className="home__trends">
+          <Row justify="between" align="start" mb="md">
             <div>
               <Heading text="Progress" level="2" />
-              <span className="card__description">Working weight by completed workout</span>
+              <Span text="Working weight by completed workout" size="small" tone="secondary" />
             </div>
-            <span className={`status-badge status-badge--${trainingStatus}`}>
-              {STATUS_LABELS[trainingStatus]}
-            </span>
-          </div>
+            <Badge tone={STATUS_TONES[trainingStatus]}>{STATUS_LABELS[trainingStatus]}</Badge>
+          </Row>
           <ChartComponent data={trendData} />
-        </Section>
-        <Section className="home__trends">
-          <div className="card__heading">
+        </Card>
+        <Card className="home__trends">
+          <Row justify="between" align="start" mb="md">
             <div>
               <Heading text="Body weight" level="2" />
-              <span className="card__description">Logged body weight over time</span>
+              <Span text="Logged body weight over time" size="small" tone="secondary" />
             </div>
-          </div>
+          </Row>
           <SingleLineChart
             data={bodyWeightTrendData}
             dataKey="weight"
@@ -160,7 +178,7 @@ export const Home = ({ store, update, workout }: Props) => {
             unit="kg"
             color="var(--warning)"
           />
-        </Section>
+        </Card>
       </div>
       <Dialog
         title="Profile"
@@ -190,6 +208,6 @@ export const Home = ({ store, update, workout }: Props) => {
       >
         <SessionHistory sessions={store.history} />
       </Dialog>
-    </main>
+    </PageContainer>
   );
 };

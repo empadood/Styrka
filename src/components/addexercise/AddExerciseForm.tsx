@@ -1,10 +1,12 @@
-import "./AddExerciseForm.css";
+import "./AddExerciseForm.scss";
 
 import { useState } from "react";
 
 import type { ExerciseCatalogEntry, ExerciseId } from "../../types";
 import { Button } from "../button/Button";
 import { Input } from "../input/Input";
+import { Row } from "../row/Row";
+import { Stack } from "../stack/Stack";
 import { Span } from "../text/Span";
 import { TextField } from "../textfield/TextField";
 
@@ -59,8 +61,8 @@ export const AddExerciseForm = ({
   };
 
   return (
-    <div className="add-exercise-form">
-      <div className="add-exercise-form__mode">
+    <Stack gap="md" className="add-exercise-form">
+      <Row gap="sm" className="add-exercise-form__mode">
         <Button
           label="Pick from catalog"
           variant={mode === "catalog" ? "primary" : "secondary"}
@@ -71,7 +73,7 @@ export const AddExerciseForm = ({
           variant={mode === "custom" ? "primary" : "secondary"}
           onClick={() => setMode("custom")}
         />
-      </div>
+      </Row>
 
       {mode === "catalog" ? (
         <label className="add-exercise-form__field">
@@ -113,7 +115,7 @@ export const AddExerciseForm = ({
         </label>
       )}
 
-      <div className="add-exercise-form__row">
+      <Row gap="md" className="add-exercise-form__row">
         <label className="add-exercise-form__field">
           <Span text="Sets" size="small" />
           <Input value={sets} onChange={setSets} size="small" />
@@ -128,9 +130,9 @@ export const AddExerciseForm = ({
             <Input value={startingWeight} onChange={setStartingWeight} size="small" />
           </label>
         )}
-      </div>
+      </Row>
 
       <Button label={submitLabel} onClick={handleSubmit} />
-    </div>
+    </Stack>
   );
 };
