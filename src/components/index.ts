@@ -4,6 +4,7 @@ export { Button } from "./button/Button";
 export { Card } from "./card/Card";
 export { ChartComponent } from "./chart/Chart";
 export { Dialog } from "./dialog/Dialog";
+export { Expandable } from "./expandable/Expandable";
 export { Input } from "./input/Input";
 export { PageContainer } from "./page-container/PageContainer";
 export { Row } from "./row/Row";

@@ -1,6 +1,8 @@
 import "./Session.scss";
 
-import { Button, Heading, Row, Stack } from "../../components";
+import { Plus, Trash2 } from "lucide-react";
+
+import { Button, Expandable, Heading, Row, Stack } from "../../components";
 import { AddExerciseForm } from "../../components/addexercise/AddExerciseForm";
 import { Input } from "../../components/input/Input";
 import { ExerciseWithWeight } from "../../components/text/ExerciseWithWeight";
@@ -59,6 +61,10 @@ export const WorkoutSession = ({
     });
   };
 
+  const handleRemoveExercise = (exerciseIndex: number) => {
+    onExercisesChange(exercises.filter((_, index) => index !== exerciseIndex));
+  };
+
   const handleAddExercise = (input: {
     exerciseId?: string;
     customName?: string;
@@ -104,10 +110,21 @@ export const WorkoutSession = ({
               label={exercise.label}
               weight={exercise.weightUsed}
             />
-            <Span
-              text={`${exercise.sets.length} ${exercise.sets.length < 2 ? "set" : "sets"}`}
-              size="small"
-            />
+            <Row gap="sm" align="center">
+              <Span
+                text={`${exercise.sets.length} ${exercise.sets.length < 2 ? "set" : "sets"}`}
+                size="small"
+              />
+              {exercise.isAdHoc && (
+                <Button
+                  icon={Trash2}
+                  variant="danger"
+                  size="icon"
+                  ariaLabel={`Remove ${exercise.label}`}
+                  onClick={() => handleRemoveExercise(exerciseIndex)}
+                />
+              )}
+            </Row>
           </Row>
           <div className="session__sets">
             <div className="session__set session__set--header">
@@ -157,12 +174,14 @@ export const WorkoutSession = ({
           </div>
         </section>
       ))}
-      <AddExerciseForm
-        catalog={catalog}
-        onSubmit={handleAddExercise}
-        showStartingWeight
-        submitLabel="Add exercise to this workout"
-      />
+      <Expandable icon={Plus} label="Add exercise">
+        <AddExerciseForm
+          catalog={catalog}
+          onSubmit={handleAddExercise}
+          showStartingWeight
+          submitLabel="Add exercise to this workout"
+        />
+      </Expandable>
       <Button label="Finish workout" onClick={handleFinish} />
     </Stack>
   );

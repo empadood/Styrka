@@ -1,0 +1,39 @@
+.expandable {
+  border: 0.0625rem solid var(--border);
+  border-radius: var(--radius-md);
+  background: var(--surface);
+  overflow: hidden;
+}
+
+.expandable__header {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  padding: var(--space-3);
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--text);
+  font-size: 0.875rem;
+  font-weight: 600;
+}
+
+.expandable__label {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.expandable__chevron {
+  transition: transform 150ms ease;
+}
+
+.expandable__chevron--open {
+  transform: rotate(180deg);
+}
+
+.expandable__content {
+  padding: 0 var(--space-3) var(--space-3);
+}
