@@ -97,10 +97,10 @@ const saveStore = (store: WorkoutStore): void => {
 };
 
 export {
+  type ActiveWorkout,
   DEFAULT_STORE,
   loadStore,
   saveStore,
   STORAGE_KEY,
-  type ActiveWorkout,
   type WorkoutStore,
 };

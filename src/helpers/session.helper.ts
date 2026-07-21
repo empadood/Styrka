@@ -1,5 +1,3 @@
-import { findCatalogEntry, getLastLoggedWeight } from "./exercise-catalog.helper";
-import type { ProgramExercisePrescription, ProgramSession } from "../types/program.type";
 import type {
   ExerciseCatalogEntry,
   ExerciseId,
@@ -7,6 +5,8 @@ import type {
   TrackedLiftId,
   WorkoutHistoryEntry,
 } from "../types";
+import type { ProgramExercisePrescription, ProgramSession } from "../types/program.type";
+import { findCatalogEntry, getLastLoggedWeight } from "./exercise-catalog.helper";
 
 const buildLoggedExerciseFromPrescription = (
   prescription: ProgramExercisePrescription,

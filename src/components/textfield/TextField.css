@@ -1,0 +1,31 @@
+.textfield {
+  width: 100%;
+  color: var(--text);
+  background: var(--surface);
+  border: 0.0625rem solid var(--border);
+  border-radius: 0.5rem;
+  padding: 0 0.75rem;
+  transition:
+    border-color 150ms ease,
+    box-shadow 150ms ease;
+}
+
+.textfield:hover {
+  border-color: var(--border-strong);
+}
+
+.textfield:focus {
+  border-color: var(--primary);
+}
+
+.textfield--small {
+  min-height: 2rem;
+}
+
+.textfield--medium {
+  min-height: 2rem;
+}
+
+.textfield--large {
+  min-height: 2.5rem;
+}

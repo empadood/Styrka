@@ -9,6 +9,7 @@ type Props = {
   session: Overview[];
   nextSession: ProgramSession | null;
   onStartWorkout: () => void;
+  onStartFreestanding: () => void;
   isWorkoutActive?: boolean;
   isUpcoming?: boolean;
 };
@@ -17,6 +18,7 @@ export const UpcomingSession = ({
   session,
   nextSession,
   onStartWorkout,
+  onStartFreestanding,
   isWorkoutActive = false,
   isUpcoming = false,
 }: Props) => {
@@ -58,6 +60,13 @@ export const UpcomingSession = ({
         <Span text="No program enrolled — browse programs to get started." size="small" />
       )}
       <div className="upcoming-session__footer">
+        {!isWorkoutActive && (
+          <Button
+            label="Start free-standing workout"
+            variant="secondary"
+            onClick={onStartFreestanding}
+          />
+        )}
         <Button
           label={isWorkoutActive ? "Resume workout" : "Start workout"}
           onClick={onStartWorkout}

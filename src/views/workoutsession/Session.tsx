@@ -1,23 +1,33 @@
 import "./Session.css";
 
 import { Button, Heading } from "../../components";
+import { AddExerciseForm } from "../../components/addexercise/AddExerciseForm";
 import { Input } from "../../components/input/Input";
 import { ExerciseWithWeight } from "../../components/text/ExerciseWithWeight";
 import { Span } from "../../components/text/Span";
+import {
+  findCatalogEntry,
+  resolveCustomExercise,
+} from "../../helpers/exercise-catalog.helper";
 import { isExerciseCompleted } from "../../helpers/progression.helper";
-import type { LoggedExercise } from "../../types";
+import { buildAdHocLoggedExercise } from "../../helpers/session.helper";
+import type { ExerciseCatalogEntry, LoggedExercise } from "../../types";
 
 type Props = {
   sessionLabel: string;
   exercises: LoggedExercise[];
+  catalog: ExerciseCatalogEntry[];
   onExercisesChange: (exercises: LoggedExercise[]) => void;
+  onRegisterCustomExercise: (entry: ExerciseCatalogEntry) => void;
   onFinish: (result: { exercises: LoggedExercise[] }) => void;
 };
 
 export const WorkoutSession = ({
   sessionLabel,
   exercises,
+  catalog,
   onExercisesChange,
+  onRegisterCustomExercise,
   onFinish,
 }: Props) => {
   const updateSet = (
@@ -47,6 +57,38 @@ export const WorkoutSession = ({
         completed: isExerciseCompleted(exercise.sets),
       })),
     });
+  };
+
+  const handleAddExercise = (input: {
+    exerciseId?: string;
+    customName?: string;
+    sets: number;
+    reps: number;
+    startingWeight?: number;
+  }) => {
+    const entry = input.exerciseId
+      ? findCatalogEntry(catalog, input.exerciseId)
+      : resolveCustomExercise(catalog, input.customName ?? "");
+
+    if (!entry) {
+      return;
+    }
+
+    if (entry.custom && !catalog.some((c) => c.id === entry.id)) {
+      onRegisterCustomExercise(entry);
+    }
+
+    onExercisesChange([
+      ...exercises,
+      buildAdHocLoggedExercise(
+        entry.id,
+        entry.label,
+        entry.tracked,
+        input.sets,
+        input.reps,
+        input.startingWeight ?? 0,
+      ),
+    ]);
   };
 
   return (
@@ -115,6 +157,12 @@ export const WorkoutSession = ({
           </div>
         </section>
       ))}
+      <AddExerciseForm
+        catalog={catalog}
+        onSubmit={handleAddExercise}
+        showStartingWeight
+        submitLabel="Add exercise to this workout"
+      />
       <Button label="Finish workout" onClick={handleFinish} />
     </div>
   );

@@ -1,4 +1,3 @@
-import type { Program, ProgramSession } from "../types/program.type";
 import type {
   ExerciseId,
   LoggedExercise,
@@ -6,6 +5,7 @@ import type {
   TrackedLiftId,
   WorkoutHistoryEntry,
 } from "../types";
+import type { Program, ProgramSession } from "../types/program.type";
 
 interface ProgressionResult {
   exerciseId: ExerciseId;
@@ -104,6 +104,6 @@ export {
   getActualWeight,
   getNextProgramSession,
   isExerciseCompleted,
-  wasTrainedRecently,
   type ProgressionResult,
+  wasTrainedRecently,
 };

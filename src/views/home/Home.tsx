@@ -1,56 +1,38 @@
 import "./Home.css";
 
-import { Minimize2 } from "lucide-react";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 import { ChartComponent, Heading, Section, Toolbar } from "../../components";
+import { SingleLineChart } from "../../components/chart/SingleLineChart";
 import { Dialog } from "../../components/dialog/Dialog";
 import { PreviousSession } from "../../components/session/PreviousSession";
 import { Summary } from "../../components/session/Summary";
 import { UpcomingSession } from "../../components/session/UpcomingSession";
+import type { WorkoutStore } from "../../data/storage";
 import { trackAnalyticsEvent } from "../../helpers/analytics.helper";
-import { getCombinedCatalog } from "../../helpers/exercise-catalog.helper";
-import { calculateSessionOneRepMax } from "../../helpers/one-rep-max.helper";
-import { buildOverviewFromStore } from "../../helpers/overview.helper";
-import {
-  calculateSessionProgression,
-  getNextProgramSession,
-  wasTrainedRecently,
-  type ProgressionResult,
-} from "../../helpers/progression.helper";
 import {
   buildBodyWeightTrendData,
   upsertBodyWeightEntry,
 } from "../../helpers/bodyweight.helper";
-import { buildInitialExercises } from "../../helpers/session.helper";
+import { buildOverviewFromStore } from "../../helpers/overview.helper";
+import { wasTrainedRecently } from "../../helpers/progression.helper";
 import { buildStartingWeights } from "../../helpers/starting-weight.helper";
-import { buildTrendData } from "../../helpers/trends.helper";
 import { computeTrainingStatus, type TrainingStatus } from "../../helpers/status.helper";
-import { SingleLineChart } from "../../components/chart/SingleLineChart";
-import { useWorkoutStore } from "../../hooks/useWorkoutStore";
-import type {
-  LoggedExercise,
-  SessionCheckIn,
-  TrackedLiftId,
-} from "../../types";
+import { buildTrendData } from "../../helpers/trends.helper";
+import type { ActiveWorkoutState } from "../../hooks/useActiveWorkout";
+import type { TrackedLiftId } from "../../types";
 import { BodyWeight } from "../bodyweight/BodyWeight";
-import { OneRepMax } from "../onerepmax/OneRepMax";
-import { PostWorkout } from "../postworkout/PostWorkout";
 import { Profile } from "../profile/Profile";
 import { SessionHistory } from "../sessionhistory/SessionHistory";
 import { SetupOneRepMax } from "../setuponepmax/SetupOneRepMax";
-import { WorkoutSession } from "../workoutsession/Session";
 
-type PendingSession = {
-  exercises: LoggedExercise[];
-};
+type UpdateFn = (updater: (prev: WorkoutStore) => WorkoutStore) => void;
 
-type Stage = "workout" | "onerepmax" | "summary";
-
-const DIALOG_TITLES: Record<Stage, string> = {
-  workout: "Workout",
-  onerepmax: "Estimated 1RM",
-  summary: "Workout Summary",
+type Props = {
+  store: WorkoutStore;
+  update: UpdateFn;
+  workout: ActiveWorkoutState;
 };
 
 const STATUS_LABELS: Record<TrainingStatus | "insufficient-data", string> = {
@@ -61,27 +43,12 @@ const STATUS_LABELS: Record<TrainingStatus | "insufficient-data", string> = {
   "insufficient-data": "Not enough data yet",
 };
 
-export const Home = () => {
+export const Home = ({ store, update, workout }: Props) => {
+  const navigate = useNavigate();
   const [showProfile, setShowProfile] = useState(false);
   const [showBodyWeight, setShowBodyWeight] = useState(false);
   const [showSessionHistory, setShowSessionHistory] = useState(false);
-  const [workoutOpen, setWorkoutOpen] = useState(false);
-  const [pendingSession, setPendingSession] = useState<PendingSession | null>(
-    null,
-  );
-  const [pendingResults, setPendingResults] = useState<
-    ProgressionResult[] | null
-  >(null);
 
-  const { store, update } = useWorkoutStore();
-  const catalog = getCombinedCatalog(store);
-  const activeProgram =
-    store.programs.find((program) => program.id === store.activeProgramId) ??
-    null;
-  const nextSession = activeProgram
-    ? getNextProgramSession(activeProgram, store.lastCompletedSessionId)
-    : null;
-  const workoutActive = store.activeWorkout !== null;
   const items = buildOverviewFromStore(store);
   const trendData = buildTrendData(store.history);
   const bodyWeightTrendData = buildBodyWeightTrendData(store.bodyWeightLog);
@@ -120,130 +87,19 @@ export const Home = () => {
     trackAnalyticsEvent("Onboarding completed");
   };
 
-  const stage: Stage = pendingResults
-    ? "summary"
-    : pendingSession
-      ? "onerepmax"
-      : "workout";
-
   const startWorkout = () => {
-    setPendingSession(null);
-    setPendingResults(null);
-    update((previousStore) => ({
-      ...previousStore,
-      activeWorkout: {
-        programId: activeProgram?.id ?? null,
-        sessionId: nextSession?.id ?? null,
-        sessionLabel: nextSession?.name ?? "Workout",
-        exercises: buildInitialExercises(
-          nextSession,
-          catalog,
-          previousStore.workingWeights,
-          previousStore.history,
-        ),
-      },
-    }));
+    workout.startWorkout("program");
     trackAnalyticsEvent("Workout started");
-    setWorkoutOpen(true);
   };
 
-  const closeWorkout = () => {
-    setWorkoutOpen(false);
-    setPendingSession(null);
-    setPendingResults(null);
-    update((previousStore) => ({ ...previousStore, activeWorkout: null }));
-  };
-
-  const minimizeWorkout = () => {
-    setWorkoutOpen(false);
+  const startFreestandingWorkout = () => {
+    workout.startWorkout("freestanding");
+    trackAnalyticsEvent("Freestanding workout started");
   };
 
   const resumeWorkout = () => {
     trackAnalyticsEvent("Workout resumed");
-    setWorkoutOpen(true);
-  };
-
-  const handleFinishWorkout = (result: PendingSession) => {
-    setPendingSession(result);
-  };
-
-  const handleBackToWorkout = () => {
-    if (!pendingSession || !store.activeWorkout) {
-      return;
-    }
-
-    update((previousStore) =>
-      previousStore.activeWorkout
-        ? {
-            ...previousStore,
-            activeWorkout: {
-              ...previousStore.activeWorkout,
-              exercises: pendingSession.exercises,
-            },
-          }
-        : previousStore,
-    );
-    setPendingResults(null);
-    setPendingSession(null);
-  };
-
-  const handleContinueFromOneRepMax = () => {
-    if (!pendingSession) {
-      return;
-    }
-
-    setPendingResults(
-      calculateSessionProgression(pendingSession.exercises, store.increments),
-    );
-  };
-
-  const handleConfirmPostWorkout = (
-    finalIncrements: Record<TrackedLiftId, number>,
-    checkIn: SessionCheckIn,
-  ) => {
-    if (!pendingResults || !pendingSession || !store.activeWorkout) {
-      return;
-    }
-
-    update((prev) => {
-      if (!prev.activeWorkout) {
-        return prev;
-      }
-
-      const workingWeights = { ...prev.workingWeights };
-      pendingResults.forEach((result) => {
-        if (result.tracked && result.completed) {
-          workingWeights[result.exerciseId as TrackedLiftId] =
-            result.previousWeight +
-            (finalIncrements[result.exerciseId as TrackedLiftId] ??
-              result.proposedIncrement!);
-        }
-      });
-
-      return {
-        ...prev,
-        workingWeights,
-        increments: { ...prev.increments, ...finalIncrements },
-        lastCompletedSessionId:
-          prev.activeWorkout.sessionId ?? prev.lastCompletedSessionId,
-        history: [
-          ...prev.history,
-          {
-            id: crypto.randomUUID(),
-            date: new Date().toISOString(),
-            programId: prev.activeWorkout.programId,
-            sessionId: prev.activeWorkout.sessionId,
-            sessionLabel: prev.activeWorkout.sessionLabel,
-            exercises: pendingSession.exercises,
-            checkIn,
-          },
-        ],
-        activeWorkout: null,
-      };
-    });
-    trackAnalyticsEvent("Workout completed");
-
-    closeWorkout();
+    workout.resumeWorkout();
   };
 
   if (!store.hasConfiguredOneRepMax) {
@@ -261,14 +117,16 @@ export const Home = () => {
         onShowProfile={() => setShowProfile(true)}
         onShowBodyWeight={() => setShowBodyWeight(true)}
         onResumeWorkout={resumeWorkout}
-        hasActiveWorkout={workoutActive}
+        onBrowsePrograms={() => navigate("/programs")}
+        hasActiveWorkout={workout.workoutActive}
       />
       <div className="home__dashboard">
         <UpcomingSession
           session={items}
-          nextSession={nextSession}
-          onStartWorkout={workoutActive ? resumeWorkout : startWorkout}
-          isWorkoutActive={workoutActive}
+          nextSession={workout.nextSession}
+          onStartWorkout={workout.workoutActive ? resumeWorkout : startWorkout}
+          onStartFreestanding={startFreestandingWorkout}
+          isWorkoutActive={workout.workoutActive}
           isUpcoming={wasTrainedRecently(store.history)}
         />
         <Summary items={items} />
@@ -331,57 +189,6 @@ export const Home = () => {
         onClose={() => setShowSessionHistory(false)}
       >
         <SessionHistory sessions={store.history} />
-      </Dialog>
-
-      <Dialog
-        title={DIALOG_TITLES[stage]}
-        isOpen={workoutOpen}
-        onClose={minimizeWorkout}
-        actionLabel="Minimize"
-        actionAriaLabel="Minimize workout"
-        actionIcon={Minimize2}
-        destructiveAction={{
-          label: "Discard workout",
-          onClick: closeWorkout,
-          ariaLabel: "Discard active workout",
-        }}
-      >
-        {stage === "workout" && (
-          <WorkoutSession
-            sessionLabel={store.activeWorkout?.sessionLabel ?? ""}
-            exercises={store.activeWorkout?.exercises ?? []}
-            onExercisesChange={(exercises) =>
-              update((previousStore) =>
-                previousStore.activeWorkout
-                  ? {
-                      ...previousStore,
-                      activeWorkout: {
-                        ...previousStore.activeWorkout,
-                        exercises,
-                      },
-                    }
-                  : previousStore,
-              )
-            }
-            onFinish={handleFinishWorkout}
-          />
-        )}
-        {stage === "onerepmax" && pendingSession && (
-          <OneRepMax
-            results={calculateSessionOneRepMax(
-              pendingSession.exercises,
-              store,
-            )}
-            onContinue={handleContinueFromOneRepMax}
-          />
-        )}
-        {stage === "summary" && pendingResults && (
-          <PostWorkout
-            results={pendingResults}
-            onConfirm={handleConfirmPostWorkout}
-            onBack={handleBackToWorkout}
-          />
-        )}
       </Dialog>
     </main>
   );

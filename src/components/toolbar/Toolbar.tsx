@@ -12,6 +12,7 @@ type Props = {
   onShowProfile: () => void;
   onShowBodyWeight: () => void;
   onResumeWorkout: () => void;
+  onBrowsePrograms: () => void;
   hasActiveWorkout?: boolean;
 };
 export const Toolbar = ({
@@ -19,6 +20,7 @@ export const Toolbar = ({
   onShowProfile,
   onShowBodyWeight,
   onResumeWorkout,
+  onBrowsePrograms,
   hasActiveWorkout = false,
 }: Props) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -53,6 +55,11 @@ export const Toolbar = ({
     onResumeWorkout();
   };
 
+  const browsePrograms = () => {
+    setIsMenuOpen(false);
+    onBrowsePrograms();
+  };
+
   return (
     <div className="toolbar">
       <div>
@@ -78,6 +85,9 @@ export const Toolbar = ({
             </button>
             <button className="toolbar__menu-item" onClick={showBodyWeight} role="menuitem">
               Log weight
+            </button>
+            <button className="toolbar__menu-item" onClick={browsePrograms} role="menuitem">
+              Browse programs
             </button>
             {hasActiveWorkout && (
               <button

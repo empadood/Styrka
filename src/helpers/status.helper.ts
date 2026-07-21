@@ -1,5 +1,5 @@
-import { getExerciseWeight } from "./trends.helper";
 import type { WorkoutHistoryEntry } from "../types";
+import { getExerciseWeight } from "./trends.helper";
 
 type TrainingStatus = "comeback" | "gaining" | "maintaining" | "declining";
 

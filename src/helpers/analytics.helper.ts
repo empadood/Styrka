@@ -1,6 +1,7 @@
 type AnalyticsEvent =
   | "Onboarding completed"
   | "Workout started"
+  | "Freestanding workout started"
   | "Workout resumed"
   | "Workout completed";
 

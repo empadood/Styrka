@@ -1,6 +1,6 @@
 import { EXERCISE_LABELS } from "../types/exercise.type";
-import type { LoggedExercise, WorkoutHistoryEntry } from "../types/workout-session.type";
 import type { Program } from "../types/program.type";
+import type { LoggedExercise, WorkoutHistoryEntry } from "../types/workout-session.type";
 import { BUILT_IN_PROGRAMS, STARTING_STRENGTH_PROGRAM_ID } from "./built-in-programs";
 import type { ActiveWorkout } from "./storage";
 
@@ -41,9 +41,11 @@ const resolveLastCompletedSessionId = (parsed: {
   return null;
 };
 
-const migrateLegacyLoggedExercise = (raw: any): LoggedExercise => {
+const migrateLegacyLoggedExercise = (
+  raw: Record<string, unknown>,
+): LoggedExercise => {
   if (raw.exerciseId !== undefined) {
-    return raw as LoggedExercise;
+    return raw as unknown as LoggedExercise;
   }
 
   const legacyName = raw.name as string;
@@ -52,33 +54,41 @@ const migrateLegacyLoggedExercise = (raw: any): LoggedExercise => {
     label: EXERCISE_LABELS[legacyName as keyof typeof EXERCISE_LABELS] ?? legacyName,
     tracked: true,
     isAdHoc: false,
-    sets: raw.sets,
-    completed: raw.completed,
-    weightUsed: raw.weightUsed,
+    sets: raw.sets as LoggedExercise["sets"],
+    completed: raw.completed as boolean,
+    weightUsed: raw.weightUsed as number,
   };
 };
 
-const migrateLegacyHistoryEntry = (raw: any): WorkoutHistoryEntry => {
+const migrateLegacyHistoryEntry = (
+  raw: Record<string, unknown>,
+): WorkoutHistoryEntry => {
   if (raw.sessionId !== undefined) {
     return {
       ...raw,
-      exercises: raw.exercises.map(migrateLegacyLoggedExercise),
-    } as WorkoutHistoryEntry;
+      exercises: (raw.exercises as Record<string, unknown>[]).map(
+        migrateLegacyLoggedExercise,
+      ),
+    } as unknown as WorkoutHistoryEntry;
   }
 
   const legacySessionType = raw.sessionType as string;
   return {
-    id: raw.id,
-    date: raw.date,
+    id: raw.id as string,
+    date: raw.date as string,
     programId: STARTING_STRENGTH_PROGRAM_ID,
     sessionId: legacySessionType,
     sessionLabel: legacySessionType === "A" ? "Session A" : "Session B",
-    exercises: raw.exercises.map(migrateLegacyLoggedExercise),
-    checkIn: raw.checkIn,
+    exercises: (raw.exercises as Record<string, unknown>[]).map(
+      migrateLegacyLoggedExercise,
+    ),
+    checkIn: raw.checkIn as WorkoutHistoryEntry["checkIn"],
   };
 };
 
-const migrateLegacyActiveWorkout = (raw: any): ActiveWorkout | null => {
+const migrateLegacyActiveWorkout = (
+  raw: Record<string, unknown> | null,
+): ActiveWorkout | null => {
   if (!raw) {
     return null;
   }
@@ -89,14 +99,18 @@ const migrateLegacyActiveWorkout = (raw: any): ActiveWorkout | null => {
       programId: STARTING_STRENGTH_PROGRAM_ID,
       sessionId: legacySessionType,
       sessionLabel: legacySessionType === "A" ? "Session A" : "Session B",
-      exercises: raw.exercises.map(migrateLegacyLoggedExercise),
+      exercises: (raw.exercises as Record<string, unknown>[]).map(
+        migrateLegacyLoggedExercise,
+      ),
     };
   }
 
   return {
     ...raw,
-    exercises: raw.exercises.map(migrateLegacyLoggedExercise),
-  } as ActiveWorkout;
+    exercises: (raw.exercises as Record<string, unknown>[]).map(
+      migrateLegacyLoggedExercise,
+    ),
+  } as unknown as ActiveWorkout;
 };
 
 export {
