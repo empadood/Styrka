@@ -2,6 +2,19 @@ const BAR_WEIGHT_KG = 20;
 const PLATE_WEIGHTS_KG = [25, 20, 15, 10, 5, 2.5, 1.25] as const;
 const EPSILON = 0.001;
 
+type PlateColor = "red" | "blue" | "yellow" | "green";
+type PlateSize = "lg" | "sm";
+
+const PLATE_STYLES: Record<(typeof PLATE_WEIGHTS_KG)[number], { color: PlateColor; size: PlateSize }> = {
+  25: { color: "red", size: "lg" },
+  20: { color: "blue", size: "lg" },
+  15: { color: "yellow", size: "lg" },
+  10: { color: "green", size: "lg" },
+  5: { color: "red", size: "sm" },
+  2.5: { color: "blue", size: "sm" },
+  1.25: { color: "yellow", size: "sm" },
+};
+
 type PlateCount = { weight: number; count: number };
 
 type PlateBreakdown = {
@@ -47,4 +60,10 @@ const calculatePlateBreakdown = (targetWeightKg: number): PlateBreakdown => {
   };
 };
 
-export { BAR_WEIGHT_KG, calculatePlateBreakdown, PLATE_WEIGHTS_KG, type PlateBreakdown };
+export {
+  BAR_WEIGHT_KG,
+  calculatePlateBreakdown,
+  PLATE_STYLES,
+  PLATE_WEIGHTS_KG,
+  type PlateBreakdown,
+};
