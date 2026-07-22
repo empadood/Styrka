@@ -16,6 +16,7 @@ import {
   buildBodyWeightTrendData,
   getBodyWeightChartDomain,
 } from "../../helpers/bodyweight.helper";
+import { useWeightUnit } from "../../hooks/useWeightUnit";
 import type { BodyWeightEntry } from "../../types";
 
 type Props = {
@@ -26,8 +27,14 @@ type Props = {
 export const BodyWeight = ({ log, onLog }: Props) => {
   const [draft, setDraft] = useState(0);
   const [fatDraft, setFatDraft] = useState(0);
-  const trendData = buildBodyWeightTrendData(log);
-  const chartDomain = getBodyWeightChartDomain(log);
+  const { unit, toDisplay, toStorage } = useWeightUnit();
+  const trendData = buildBodyWeightTrendData(log).map((entry) => ({
+    ...entry,
+    weight: toDisplay(entry.weight),
+  }));
+  const chartDomain = getBodyWeightChartDomain(log)?.map((value) =>
+    toDisplay(value),
+  ) as [number, number] | undefined;
   const hasBodyFatData = log.some(
     (entry) => entry.bodyFatPercent !== undefined,
   );
@@ -38,7 +45,7 @@ export const BodyWeight = ({ log, onLog }: Props) => {
         <Heading text="Log today's weight" level="3" />
         <Row gap="sm" align="end" className="bodyweight__form">
           <label className="bodyweight__field">
-            <Span text="Weight (kg)" size="small" tone="secondary" />
+            <Span text={`Weight (${unit})`} size="small" tone="secondary" />
             <Input value={draft} size="medium" onChange={setDraft} />
           </label>
           <label className="bodyweight__field">
@@ -47,7 +54,9 @@ export const BodyWeight = ({ log, onLog }: Props) => {
           </label>
           <Button
             label="Log weight"
-            onClick={() => onLog(draft, fatDraft > 0 ? fatDraft : undefined)}
+            onClick={() =>
+              onLog(toStorage(draft), fatDraft > 0 ? fatDraft : undefined)
+            }
           />
         </Row>
       </Card>
@@ -58,7 +67,7 @@ export const BodyWeight = ({ log, onLog }: Props) => {
           data={trendData}
           dataKey="weight"
           label="Bodyweight"
-          unit="kg"
+          unit={unit}
           color="var(--primary)"
           domain={chartDomain}
           secondary={

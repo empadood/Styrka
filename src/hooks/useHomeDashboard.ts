@@ -13,6 +13,7 @@ import { getTrainingStatusDetails } from "../helpers/status.helper";
 import { buildTrendData } from "../helpers/trends.helper";
 import type { TrackedLiftId } from "../types";
 import type { ActiveWorkoutState } from "./useActiveWorkout";
+import { useWeightUnit } from "./useWeightUnit";
 
 type UpdateFn = (updater: (prev: WorkoutStore) => WorkoutStore) => void;
 
@@ -21,16 +22,37 @@ export const useHomeDashboard = (
   update: UpdateFn,
   workout: ActiveWorkoutState,
 ) => {
-  const items = useMemo(() => buildOverviewFromStore(store), [store]);
-  const trendData = useMemo(() => buildTrendData(store.history), [store.history]);
+  const { unit, toDisplay } = useWeightUnit();
+  const roundingStep = store.weightRounding[unit];
+  const items = useMemo(
+    () => buildOverviewFromStore(store, unit, roundingStep),
+    [store, unit, roundingStep],
+  );
+  const trendData = useMemo(
+    () =>
+      buildTrendData(store.history).map((entry) => {
+        const converted: typeof entry = { ...entry };
+        (["squat", "deadlift", "ohp", "benchpress"] as const).forEach((lift) => {
+          if (converted[lift] !== undefined) {
+            converted[lift] = toDisplay(converted[lift] as number);
+          }
+        });
+        return converted;
+      }),
+    [store.history, toDisplay],
+  );
   const bodyWeightTrendData = useMemo(
-    () => buildBodyWeightTrendData(store.bodyWeightLog),
-    [store.bodyWeightLog],
+    () =>
+      buildBodyWeightTrendData(store.bodyWeightLog).map((entry) => ({
+        ...entry,
+        weight: toDisplay(entry.weight),
+      })),
+    [store.bodyWeightLog, toDisplay],
   );
-  const bodyWeightChartDomain = useMemo(
-    () => getBodyWeightChartDomain(store.bodyWeightLog),
-    [store.bodyWeightLog],
-  );
+  const bodyWeightChartDomain = useMemo(() => {
+    const domain = getBodyWeightChartDomain(store.bodyWeightLog);
+    return domain ? ([toDisplay(domain[0]), toDisplay(domain[1])] as [number, number]) : undefined;
+  }, [store.bodyWeightLog, toDisplay]);
   const trainingStatusDetails = useMemo(
     () => getTrainingStatusDetails(store.history),
     [store.history],

@@ -26,6 +26,7 @@ import { type TrainingStatus, type TrainingStatusDetails } from "../../helpers/s
 import type { ActiveWorkoutState } from "../../hooks/useActiveWorkout";
 import type { DriveSyncState } from "../../hooks/useDriveSync";
 import { useHomeDashboard } from "../../hooks/useHomeDashboard";
+import { useWeightUnit } from "../../hooks/useWeightUnit";
 import { BodyWeight } from "../bodyweight/BodyWeight";
 import { Profile } from "../profile/Profile";
 import { SetupOneRepMax } from "../setuponepmax/SetupOneRepMax";
@@ -58,11 +59,13 @@ const STATUS_TONES: Record<
   "insufficient-data": "neutral",
 };
 
-const formatWeight = (value: number): string => `${value.toFixed(1)} kg`;
 const formatPercent = (value: number): string =>
   `${value > 0 ? "+" : ""}${value.toFixed(1)}%`;
 
 const TrendExplanation = ({ details }: { details: TrainingStatusDetails }) => {
+  const { format } = useWeightUnit();
+  const formatWeight = (kg: number): string => format(kg);
+
   if (details.status === "insufficient-data") {
     return (
       <Span
@@ -133,6 +136,7 @@ const TrendExplanation = ({ details }: { details: TrainingStatusDetails }) => {
 
 export const Home = ({ store, update, workout, drive }: Props) => {
   const navigate = useNavigate();
+  const { unit } = useWeightUnit();
   const [showProfile, setShowProfile] = useState(false);
   const [showBodyWeight, setShowBodyWeight] = useState(false);
   const [showTrendExplanation, setShowTrendExplanation] = useState(false);
@@ -184,7 +188,7 @@ export const Home = ({ store, update, workout, drive }: Props) => {
               {STATUS_LABELS[dashboard.trainingStatus]}
             </Badge>
           </Row>
-          <ChartComponent data={dashboard.trendData} />
+          <ChartComponent data={dashboard.trendData} unit={unit} />
         </Card>
         <Card className="home__trends">
           <Row justify="between" align="start" mb="md">
@@ -197,7 +201,7 @@ export const Home = ({ store, update, workout, drive }: Props) => {
             data={dashboard.bodyWeightTrendData}
             dataKey="weight"
             label="Weight"
-            unit="kg"
+            unit={unit}
             color="var(--warning)"
             domain={dashboard.bodyWeightChartDomain}
             secondary={

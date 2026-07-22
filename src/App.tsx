@@ -3,6 +3,7 @@ import { HashRouter, Route, Routes } from "react-router-dom";
 import { useActiveWorkout } from "./hooks/useActiveWorkout";
 import { useDriveSync } from "./hooks/useDriveSync";
 import { useWorkoutStore } from "./hooks/useWorkoutStore";
+import { WeightUnitProvider } from "./hooks/WeightUnitProvider";
 import { ActiveWorkoutOverlay } from "./views/activeworkout/ActiveWorkoutOverlay";
 import { Home } from "./views/home/Home";
 import { BrowsePrograms } from "./views/programs/BrowsePrograms";
@@ -15,30 +16,32 @@ export const App = () => {
   const drive = useDriveSync(store, update);
 
   return (
-    <HashRouter>
-      <Routes>
-        <Route
-          path="/"
-          element={<Home store={store} update={update} workout={workout} drive={drive} />}
-        />
-        <Route
-          path="/programs"
-          element={<BrowsePrograms store={store} update={update} />}
-        />
-        <Route
-          path="/programs/new"
-          element={<ProgramBuilder store={store} update={update} />}
-        />
-        <Route
-          path="/programs/:programId/edit"
-          element={<ProgramBuilder store={store} update={update} />}
-        />
-        <Route
-          path="/sessions"
-          element={<Sessions sessions={store.history} programs={store.programs} />}
-        />
-      </Routes>
-      <ActiveWorkoutOverlay store={store} workout={workout} drive={drive} />
-    </HashRouter>
+    <WeightUnitProvider unit={store.weightUnit} roundingStep={store.weightRounding[store.weightUnit]}>
+      <HashRouter>
+        <Routes>
+          <Route
+            path="/"
+            element={<Home store={store} update={update} workout={workout} drive={drive} />}
+          />
+          <Route
+            path="/programs"
+            element={<BrowsePrograms store={store} update={update} />}
+          />
+          <Route
+            path="/programs/new"
+            element={<ProgramBuilder store={store} update={update} />}
+          />
+          <Route
+            path="/programs/:programId/edit"
+            element={<ProgramBuilder store={store} update={update} />}
+          />
+          <Route
+            path="/sessions"
+            element={<Sessions sessions={store.history} programs={store.programs} />}
+          />
+        </Routes>
+        <ActiveWorkoutOverlay store={store} workout={workout} drive={drive} />
+      </HashRouter>
+    </WeightUnitProvider>
   );
 };

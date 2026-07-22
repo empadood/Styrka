@@ -1,3 +1,4 @@
+import { ROUNDING_STEPS, type RoundingStep, type WeightUnit } from "../helpers/weight-unit.helper";
 import type {
   BodyWeightEntry,
   ExerciseCatalogEntry,
@@ -44,6 +45,8 @@ interface WorkoutStore {
   history: WorkoutHistoryEntry[];
   activeWorkout: ActiveWorkout | null;
   bodyWeightLog: BodyWeightEntry[];
+  weightUnit: WeightUnit;
+  weightRounding: Record<WeightUnit, RoundingStep>;
   updatedAt: string;
 }
 
@@ -61,6 +64,8 @@ const DEFAULT_STORE: WorkoutStore = {
   history: [],
   activeWorkout: null,
   bodyWeightLog: [],
+  weightUnit: "kg",
+  weightRounding: { kg: 2.5, lbs: 2.5 },
   updatedAt: new Date(0).toISOString(),
 };
 
@@ -99,6 +104,15 @@ const parseStore = (raw: string | null): WorkoutStore => {
       bodyWeightLog: Array.isArray(parsed.bodyWeightLog)
         ? parsed.bodyWeightLog
         : [],
+      weightUnit: parsed.weightUnit === "lbs" ? "lbs" : "kg",
+      weightRounding: {
+        kg: ROUNDING_STEPS.includes(parsed.weightRounding?.kg)
+          ? parsed.weightRounding.kg
+          : DEFAULT_STORE.weightRounding.kg,
+        lbs: ROUNDING_STEPS.includes(parsed.weightRounding?.lbs)
+          ? parsed.weightRounding.lbs
+          : DEFAULT_STORE.weightRounding.lbs,
+      },
       updatedAt:
         typeof parsed.updatedAt === "string"
           ? parsed.updatedAt

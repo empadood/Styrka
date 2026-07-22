@@ -4,19 +4,22 @@ import { Button, Heading, Row, Stack } from "../../components";
 import { Span } from "../../components/text/Span";
 import { Weight } from "../../components/text/Weight";
 import type { OneRepMaxResult } from "../../helpers/one-rep-max.helper";
+import { useWeightUnit } from "../../hooks/useWeightUnit";
 
 type Props = {
   results: OneRepMaxResult[];
   onContinue: () => void;
 };
 
-const formatSignedWeight = (difference: number): string => {
-  const rounded = Math.round(difference * 10) / 10 || 0;
+const formatSignedWeight = (displayDifference: number): string => {
+  const rounded = displayDifference || 0;
   const sign = rounded > 0 ? "+" : "";
   return `${sign}${rounded}`;
 };
 
 const Difference = ({ result }: { result: OneRepMaxResult }) => {
+  const { toDisplay } = useWeightUnit();
+
   if (result.difference === null) {
     return (
       <Span
@@ -27,7 +30,7 @@ const Difference = ({ result }: { result: OneRepMaxResult }) => {
   }
 
   return (
-    <Weight weight={formatSignedWeight(result.difference)} size="small" />
+    <Weight weight={formatSignedWeight(toDisplay(result.difference))} size="small" />
   );
 };
 

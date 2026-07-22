@@ -1,5 +1,6 @@
 import { useState } from "react";
 
+import { useWeightUnit } from "../../hooks/useWeightUnit";
 import { EXERCISE, EXERCISE_LABELS, type TrackedLiftId } from "../../types";
 import { Button } from "../button/Button";
 import { Card } from "../card/Card";
@@ -15,6 +16,7 @@ type Props = {
 
 export const WorkingWeightSection = ({ workingWeights, onOverrideWeight }: Props) => {
   const [drafts, setDrafts] = useState<Record<TrackedLiftId, number>>(workingWeights);
+  const { toDisplay, toStorage } = useWeightUnit();
 
   return (
     <Card>
@@ -29,9 +31,11 @@ export const WorkingWeightSection = ({ workingWeights, onOverrideWeight }: Props
             <Span text={EXERCISE_LABELS[exercise]} capitalize />
             <Row gap="sm" className="profile__weight-edit">
               <Input
-                value={drafts[exercise]}
+                value={toDisplay(drafts[exercise])}
                 size="small"
-                onChange={(value) => setDrafts((prev) => ({ ...prev, [exercise]: value }))}
+                onChange={(value) =>
+                  setDrafts((prev) => ({ ...prev, [exercise]: toStorage(value) }))
+                }
               />
               <Button
                 label="Save"

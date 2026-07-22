@@ -3,6 +3,7 @@ import "./SetupOneRepMax.scss";
 import { useState } from "react";
 
 import { Button, Heading, Input, Span } from "../../components";
+import { useWeightUnit } from "../../hooks/useWeightUnit";
 import { EXERCISE, EXERCISE_LABELS, type TrackedLiftId } from "../../types";
 
 type Props = {
@@ -19,21 +20,22 @@ const INITIAL_ONE_REP_MAX: Record<TrackedLiftId, number> = {
 };
 
 export const SetupOneRepMax = ({ onComplete }: Props) => {
+  const { unit, toDisplay, toStorage } = useWeightUnit();
   const [estimatedOneRepMax, setEstimatedOneRepMax] = useState(
     INITIAL_ONE_REP_MAX,
   );
   const [error, setError] = useState("");
 
-  const updateOneRepMax = (exercise: TrackedLiftId, value: number) => {
+  const updateOneRepMax = (exercise: TrackedLiftId, displayValue: number) => {
     setEstimatedOneRepMax((previousOneRepMax) => ({
       ...previousOneRepMax,
-      [exercise]: value,
+      [exercise]: toStorage(displayValue),
     }));
   };
 
   const completeSetup = () => {
     if (EXERCISES.some((exercise) => estimatedOneRepMax[exercise] <= 0)) {
-      setError("Enter an estimated 1RM above 0 kg for each lift.");
+      setError(`Enter an estimated 1RM above 0 ${unit} for each lift.`);
       return;
     }
 
@@ -56,11 +58,11 @@ export const SetupOneRepMax = ({ onComplete }: Props) => {
             <Span text={EXERCISE_LABELS[exercise]} />
             <div>
               <Input
-                value={estimatedOneRepMax[exercise]}
+                value={toDisplay(estimatedOneRepMax[exercise])}
                 onChange={(value) => updateOneRepMax(exercise, value)}
                 size="large"
               />
-              <Span text="kg" size="small" />
+              <Span text={unit} size="small" />
             </div>
           </label>
         ))}

@@ -1,3 +1,4 @@
+import type { WeightUnit } from "../helpers/weight-unit.helper";
 import type { TrackedLiftId } from "../types";
 
 interface WorkingSet {
@@ -16,7 +17,7 @@ interface Overview {
   label: string;
   id: TrackedLiftId;
   value: number;
-  unit: "kg";
+  unit: WeightUnit;
   lastSession?: Session;
 }
 export type { Overview, Session, WorkingSet };

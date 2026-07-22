@@ -10,11 +10,13 @@ import {
   YAxis,
 } from "recharts";
 
+import type { WeightUnit } from "../../helpers/weight-unit.helper";
 import { type ChartData, EXERCISE_LABELS } from "../../types";
 import { Span } from "../text/Span";
 
 type Props = {
   data: ChartData[];
+  unit: WeightUnit;
 };
 
 const formatDate = (date: string): string =>
@@ -23,7 +25,7 @@ const formatDate = (date: string): string =>
     month: "short",
   }).format(new Date(date));
 
-export const ChartComponent = ({ data }: Props) => {
+export const ChartComponent = ({ data, unit }: Props) => {
   if (data.length === 0) {
     return (
       <div>
@@ -60,7 +62,7 @@ export const ChartComponent = ({ data }: Props) => {
           tickMargin={8}
           padding={{ left: 16, right: 16 }}
         />
-        <YAxis unit=" kg" tick={{ fill: "var(--text-secondary)", fontSize: 12 }} />
+        <YAxis unit={` ${unit}`} tick={{ fill: "var(--text-secondary)", fontSize: 12 }} />
 
         <Tooltip
           labelFormatter={(label) => formatDate(String(label))}

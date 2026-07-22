@@ -1,6 +1,7 @@
 import "./PlateIndicator.scss";
 
 import { calculatePlateBreakdown, PLATE_STYLES } from "../../helpers/plate-calculator.helper";
+import { useWeightUnit } from "../../hooks/useWeightUnit";
 
 type Props = {
   weight: number;
@@ -9,10 +10,12 @@ type Props = {
 };
 
 export const PlateIndicator = ({ weight, onClick, ariaLabel }: Props) => {
-  const breakdown = calculatePlateBreakdown(weight);
+  const { unit, toDisplay } = useWeightUnit();
+  const breakdown = calculatePlateBreakdown(toDisplay(weight), unit);
   const plates = breakdown.perSide.flatMap((plate) =>
     Array.from({ length: plate.count }, () => plate.weight),
   );
+  const styles = PLATE_STYLES[unit];
 
   return (
     <button
@@ -26,7 +29,7 @@ export const PlateIndicator = ({ weight, onClick, ariaLabel }: Props) => {
         <span className="plate-indicator__empty" aria-hidden="true" />
       ) : (
         plates.map((plateWeight, index) => {
-          const style = PLATE_STYLES[plateWeight as keyof typeof PLATE_STYLES];
+          const style = styles[plateWeight];
           return (
             <span
               key={index}

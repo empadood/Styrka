@@ -1,3 +1,4 @@
+import { useWeightUnit } from "../../hooks/useWeightUnit";
 import { Input } from "../input/Input";
 import { PlateIndicator } from "../platebreakdown/PlateIndicator";
 import { Row } from "../row/Row";
@@ -23,31 +24,39 @@ export const SetInputRow = ({
   onWeightChange,
   onShowPlates,
   variant = "default",
-}: Props) => (
-  <div
-    className={`session__set ${variant === "warmup" ? "session__set--warmup" : ""}`}
-  >
-    <Span text={label} size="small" />
-    <div className="session__set__inputs">
-      <div className="session__input-group">
-        <div className="session__input-label">
-          <Span text={targetRepsLabel} size="small" />
+}: Props) => {
+  const { unit, label: unitLabel, toDisplay, toStorage } = useWeightUnit();
+
+  return (
+    <div
+      className={`session__set ${variant === "warmup" ? "session__set--warmup" : ""}`}
+    >
+      <Span text={label} size="small" />
+      <div className="session__set__inputs">
+        <div className="session__input-group">
+          <div className="session__input-label">
+            <Span text={targetRepsLabel} size="small" />
+          </div>
+          <Input value={reps} size="medium" onChange={onRepsChange} />
         </div>
-        <Input value={reps} size="medium" onChange={onRepsChange} />
-      </div>
-      <div className="session__input-group">
-        <div className="session__input-label">
-          <Span text="Weight (kg)" size="small" />
+        <div className="session__input-group">
+          <div className="session__input-label">
+            <Span text={`Weight (${unit})`} size="small" />
+          </div>
+          <Row gap="sm" align="center">
+            <Input
+              size="medium"
+              value={toDisplay(weight)}
+              onChange={(value) => onWeightChange(toStorage(value))}
+            />
+            <PlateIndicator
+              weight={weight}
+              ariaLabel={`Show plates for ${toDisplay(weight)} ${unitLabel}`}
+              onClick={() => onShowPlates(weight)}
+            />
+          </Row>
         </div>
-        <Row gap="sm" align="center">
-          <Input size="medium" value={weight} onChange={onWeightChange} />
-          <PlateIndicator
-            weight={weight}
-            ariaLabel={`Show plates for ${weight} kg`}
-            onClick={() => onShowPlates(weight)}
-          />
-        </Row>
       </div>
     </div>
-  </div>
-);
+  );
+};

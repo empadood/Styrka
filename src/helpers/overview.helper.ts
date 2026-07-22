@@ -6,6 +6,7 @@ import {
   type LoggedExercise,
   type TrackedLiftId,
 } from "../types";
+import { type RoundingStep, toDisplayWeight, type WeightUnit } from "./weight-unit.helper";
 
 const EXERCISE_NAMES: TrackedLiftId[] = [
   EXERCISE.squat,
@@ -32,7 +33,11 @@ const findLastLoggedExercises = (
   return lastLogged;
 };
 
-const buildOverviewFromStore = (store: WorkoutStore): Overview[] => {
+const buildOverviewFromStore = (
+  store: WorkoutStore,
+  unit: WeightUnit,
+  roundingStep: RoundingStep,
+): Overview[] => {
   const lastLoggedByExercise = findLastLoggedExercises(store);
 
   return EXERCISE_NAMES.map((name) => {
@@ -40,18 +45,18 @@ const buildOverviewFromStore = (store: WorkoutStore): Overview[] => {
     return {
       label: EXERCISE_LABELS[name],
       id: name,
-      value: store.workingWeights[name],
-      unit: "kg" as const,
+      value: toDisplayWeight(store.workingWeights[name], unit, roundingStep),
+      unit,
       lastSession: lastLogged
         ? {
             exercises: {
               name,
               sets: lastLogged.sets.map((s) => ({
                 reps: s.reps,
-                weight: s.weight,
+                weight: toDisplayWeight(s.weight, unit, roundingStep),
               })),
             },
-            increase: store.increments[name],
+            increase: toDisplayWeight(store.increments[name], unit, roundingStep),
           }
         : undefined,
     };
