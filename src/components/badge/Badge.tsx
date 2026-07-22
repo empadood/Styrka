@@ -7,6 +7,8 @@ type Props = {
   tone?: "neutral" | "primary" | "success" | "danger";
   size?: "sm" | "md";
   className?: string;
+  onClick?: () => void;
+  ariaLabel?: string;
 };
 
 export const Badge = ({
@@ -14,10 +16,23 @@ export const Badge = ({
   tone = "neutral",
   size = "md",
   className = "",
+  onClick,
+  ariaLabel,
 }: Props) => {
-  return (
-    <span className={`badge badge--${tone} badge--${size} ${className}`}>
-      {children}
-    </span>
-  );
+  const badgeClassName = `badge badge--${tone} badge--${size} ${className}`;
+
+  if (onClick) {
+    return (
+      <button
+        type="button"
+        className={`${badgeClassName} badge--clickable`}
+        onClick={onClick}
+        aria-label={ariaLabel}
+      >
+        {children}
+      </button>
+    );
+  }
+
+  return <span className={badgeClassName}>{children}</span>;
 };

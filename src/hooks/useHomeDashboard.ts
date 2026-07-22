@@ -5,7 +5,7 @@ import { trackAnalyticsEvent } from "../helpers/analytics.helper";
 import { buildBodyWeightTrendData, upsertBodyWeightEntry } from "../helpers/bodyweight.helper";
 import { buildOverviewFromStore } from "../helpers/overview.helper";
 import { buildStartingWeights } from "../helpers/starting-weight.helper";
-import { computeTrainingStatus } from "../helpers/status.helper";
+import { getTrainingStatusDetails } from "../helpers/status.helper";
 import { buildTrendData } from "../helpers/trends.helper";
 import type { TrackedLiftId } from "../types";
 import type { ActiveWorkoutState } from "./useActiveWorkout";
@@ -23,7 +23,11 @@ export const useHomeDashboard = (
     () => buildBodyWeightTrendData(store.bodyWeightLog),
     [store.bodyWeightLog],
   );
-  const trainingStatus = useMemo(() => computeTrainingStatus(store.history), [store.history]);
+  const trainingStatusDetails = useMemo(
+    () => getTrainingStatusDetails(store.history),
+    [store.history],
+  );
+  const trainingStatus = trainingStatusDetails.status;
 
   const handleLogBodyWeight = (weight: number) => {
     update((previousStore) => ({
@@ -73,6 +77,7 @@ export const useHomeDashboard = (
     trendData,
     bodyWeightTrendData,
     trainingStatus,
+    trainingStatusDetails,
     handleLogBodyWeight,
     handleOverrideWorkingWeight,
     handleCompleteOneRepMaxSetup,

@@ -33,4 +33,15 @@
     color: var(--danger);
     background: color-mix(in srgb, var(--danger) 15%, transparent);
   }
+
+  &--clickable {
+    border: none;
+    cursor: pointer;
+    font: inherit;
+
+    &:hover,
+    &:focus-visible {
+      filter: brightness(1.08);
+    }
+  }
 }
