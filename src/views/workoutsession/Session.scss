@@ -48,6 +48,18 @@
   margin-bottom: var(--space-1);
 }
 
+.session__cardio-controls {
+  margin-top: var(--space-4);
+  flex-wrap: wrap;
+}
+
+.session__cardio-timer {
+  font-variant-numeric: tabular-nums;
+  font-size: var(--font-size-lg);
+  font-weight: 600;
+  min-width: 4.5rem;
+}
+
 @media (max-width: 30rem) {
   .session__set {
     grid-template-columns: 1fr;

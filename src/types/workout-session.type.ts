@@ -1,3 +1,4 @@
+import type { LoggedCardioSession } from "./cardio.type";
 import type { ExerciseId } from "./exercise-catalog.type";
 
 interface LoggedSet {
@@ -28,6 +29,7 @@ interface WorkoutHistoryEntry {
   sessionId: string | null;
   sessionLabel: string;
   exercises: LoggedExercise[];
+  cardio: LoggedCardioSession[];
   checkIn?: SessionCheckIn;
 }
 

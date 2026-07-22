@@ -15,8 +15,9 @@ import {
   Stack,
   TextField,
 } from "../../components";
+import { formatDuration } from "../../helpers/cardio.helper";
 import { findPersonalRecords, isPersonalRecordSet } from "../../helpers/personal-records.helper";
-import type { Program, WorkoutHistoryEntry } from "../../types";
+import { CARDIO_ACTIVITY_LABELS, type Program, type WorkoutHistoryEntry } from "../../types";
 
 const PAGE_SIZE_OPTIONS = [10, 25, 50] as const;
 
@@ -35,7 +36,7 @@ const formatDate = (date: string): string => {
   return `${lookup.year}-${lookup.month}-${lookup.day}`;
 };
 
-type SortKey = "sessionLabel" | "programName" | "date" | "exercises";
+type SortKey = "sessionLabel" | "programName" | "date" | "exercises" | "cardio";
 type SortDirection = "asc" | "desc";
 
 const COLUMNS: { key: SortKey; label: string }[] = [
@@ -43,6 +44,7 @@ const COLUMNS: { key: SortKey; label: string }[] = [
   { key: "programName", label: "Program" },
   { key: "date", label: "Date" },
   { key: "exercises", label: "Exercises" },
+  { key: "cardio", label: "Cardio" },
 ];
 
 export const Sessions = ({ sessions, programs }: Props) => {
@@ -105,6 +107,7 @@ export const Sessions = ({ sessions, programs }: Props) => {
         session.sessionLabel,
         getProgramName(session.programId),
         ...session.exercises.map((exercise) => exercise.label),
+        ...session.cardio.map((entry) => entry.label),
       ]
         .join(" ")
         .toLowerCase();
@@ -126,6 +129,8 @@ export const Sessions = ({ sessions, programs }: Props) => {
           return getProgramName(a.programId).localeCompare(getProgramName(b.programId)) * direction;
         case "exercises":
           return (a.exercises.length - b.exercises.length) * direction;
+        case "cardio":
+          return (a.cardio.length - b.cardio.length) * direction;
         case "date":
         default:
           return (new Date(a.date).getTime() - new Date(b.date).getTime()) * direction;
@@ -264,6 +269,15 @@ export const Sessions = ({ sessions, programs }: Props) => {
                         <time dateTime={session.date}>{formatDate(session.date)}</time>
                       </td>
                       <td>{session.exercises.length}</td>
+                      <td>
+                        {session.cardio.length > 0 ? (
+                          <Badge tone="primary" size="sm">
+                            {session.cardio.length}
+                          </Badge>
+                        ) : (
+                          <Span text="—" size="small" tone="secondary" />
+                        )}
+                      </td>
                       <td className="sessions__chevron-cell">
                         <ChevronDown
                           aria-hidden="true"
@@ -275,7 +289,7 @@ export const Sessions = ({ sessions, programs }: Props) => {
                     </tr>
                     {isExpanded && (
                       <tr className="sessions__detail-row">
-                        <td colSpan={5}>
+                        <td colSpan={6}>
                           <Stack gap="md" className="sessions__detail">
                             {session.checkIn && (
                               <section className="sessions__checkin">
@@ -284,6 +298,19 @@ export const Sessions = ({ sessions, programs }: Props) => {
                                   <Span text={session.checkIn.notes} size="small" />
                                 )}
                               </section>
+                            )}
+                            {session.cardio.length > 0 && (
+                              <Stack gap="md" className="sessions__cardio-list">
+                                {session.cardio.map((entry) => (
+                                  <div className="sessions__exercise" key={entry.id}>
+                                    <Row justify="between" className="sessions__exercise-heading">
+                                      <Heading text={CARDIO_ACTIVITY_LABELS[entry.activityId]} level="3" />
+                                      <Span text={formatDuration(entry.durationSeconds)} size="small" />
+                                    </Row>
+                                    <Span text={`${entry.kcal} kcal`} size="small" />
+                                  </div>
+                                ))}
+                              </Stack>
                             )}
                             <Stack gap="md" className="sessions__exercise-list">
                               {session.exercises.map((exercise, index) => (

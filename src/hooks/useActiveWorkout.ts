@@ -6,6 +6,7 @@ import { calculateSessionProgression, getNextProgramSession, type ProgressionRes
 import { buildInitialExercises } from "../helpers/session.helper";
 import type {
   ExerciseCatalogEntry,
+  LoggedCardioSession,
   LoggedExercise,
   Program,
   ProgramSession,
@@ -15,7 +16,7 @@ import type {
 
 type Stage = "workout" | "onerepmax" | "summary";
 
-type PendingSession = { exercises: LoggedExercise[] };
+type PendingSession = { exercises: LoggedExercise[]; cardio: LoggedCardioSession[] };
 
 type UpdateFn = (updater: (prev: WorkoutStore) => WorkoutStore) => void;
 
@@ -54,6 +55,7 @@ export const useActiveWorkout = (store: WorkoutStore, update: UpdateFn) => {
               sessionId: null,
               sessionLabel: "Free workout",
               exercises: [],
+              cardio: [],
             }
           : {
               programId: activeProgram?.id ?? null,
@@ -65,6 +67,7 @@ export const useActiveWorkout = (store: WorkoutStore, update: UpdateFn) => {
                 previousStore.workingWeights,
                 previousStore.history,
               ),
+              cardio: [],
             },
     }));
     setWorkoutOpen(true);
@@ -84,6 +87,13 @@ export const useActiveWorkout = (store: WorkoutStore, update: UpdateFn) => {
     update((prev) =>
       prev.activeWorkout
         ? { ...prev, activeWorkout: { ...prev.activeWorkout, exercises } }
+        : prev,
+    );
+
+  const onCardioChange = (cardio: LoggedCardioSession[]) =>
+    update((prev) =>
+      prev.activeWorkout
+        ? { ...prev, activeWorkout: { ...prev.activeWorkout, cardio } }
         : prev,
     );
 
@@ -107,6 +117,7 @@ export const useActiveWorkout = (store: WorkoutStore, update: UpdateFn) => {
             activeWorkout: {
               ...prev.activeWorkout,
               exercises: pendingSession.exercises,
+              cardio: pendingSession.cardio,
             },
           }
         : prev,
@@ -165,6 +176,7 @@ export const useActiveWorkout = (store: WorkoutStore, update: UpdateFn) => {
             sessionId: prev.activeWorkout.sessionId,
             sessionLabel: prev.activeWorkout.sessionLabel,
             exercises: pendingSession.exercises,
+            cardio: pendingSession.cardio,
             checkIn,
           },
         ],
@@ -188,6 +200,7 @@ export const useActiveWorkout = (store: WorkoutStore, update: UpdateFn) => {
     minimizeWorkout,
     resumeWorkout,
     onExercisesChange,
+    onCardioChange,
     onRegisterCustomExercise,
     onFinish,
     onBackToWorkout,

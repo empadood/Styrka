@@ -46,8 +46,10 @@ export const ActiveWorkoutOverlay = ({ store, workout, drive }: Props) => {
         <WorkoutSession
           sessionLabel={store.activeWorkout?.sessionLabel ?? ""}
           exercises={store.activeWorkout?.exercises ?? []}
+          cardio={store.activeWorkout?.cardio ?? []}
           catalog={workout.catalog}
           onExercisesChange={workout.onExercisesChange}
+          onCardioChange={workout.onCardioChange}
           onRegisterCustomExercise={workout.onRegisterCustomExercise}
           onFinish={workout.onFinish}
         />

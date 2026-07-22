@@ -1,6 +1,7 @@
 import type {
   BodyWeightEntry,
   ExerciseCatalogEntry,
+  LoggedCardioSession,
   LoggedExercise,
   Program,
   TrackedLiftId,
@@ -22,6 +23,7 @@ interface ActiveWorkout {
   sessionId: string | null;
   sessionLabel: string;
   exercises: LoggedExercise[];
+  cardio: LoggedCardioSession[];
 }
 
 interface WorkoutStore {

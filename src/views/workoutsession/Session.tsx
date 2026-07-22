@@ -1,9 +1,10 @@
 import "./Session.scss";
 
-import { Plus, Trash2 } from "lucide-react";
+import { Pause, Play, Plus, Trash2 } from "lucide-react";
 import { useState } from "react";
 
 import {
+  AddCardioForm,
   Button,
   Dialog,
   Expandable,
@@ -14,6 +15,7 @@ import {
   Stack,
 } from "../../components";
 import { AddExerciseForm } from "../../components/addexercise/AddExerciseForm";
+import { CardioTimerDisplay } from "../../components/cardiotimer/CardioTimerDisplay";
 import { Input } from "../../components/input/Input";
 import { ExerciseWithWeight } from "../../components/text/ExerciseWithWeight";
 import { Span } from "../../components/text/Span";
@@ -24,27 +26,54 @@ import {
 import { isExerciseCompleted } from "../../helpers/progression.helper";
 import { buildAdHocLoggedExercise } from "../../helpers/session.helper";
 import { generateWarmupSets } from "../../helpers/warmup.helper";
-import type { ExerciseCatalogEntry, LoggedExercise } from "../../types";
+import { useCardioTimer } from "../../hooks/useCardioTimer";
+import {
+  CARDIO_ACTIVITY_LABELS,
+  type CardioActivityId,
+  type ExerciseCatalogEntry,
+  type LoggedCardioSession,
+  type LoggedExercise,
+} from "../../types";
 
 type Props = {
   sessionLabel: string;
   exercises: LoggedExercise[];
+  cardio: LoggedCardioSession[];
   catalog: ExerciseCatalogEntry[];
   onExercisesChange: (exercises: LoggedExercise[]) => void;
+  onCardioChange: (cardio: LoggedCardioSession[]) => void;
   onRegisterCustomExercise: (entry: ExerciseCatalogEntry) => void;
-  onFinish: (result: { exercises: LoggedExercise[] }) => void;
+  onFinish: (result: { exercises: LoggedExercise[]; cardio: LoggedCardioSession[] }) => void;
 };
 
 export const WorkoutSession = ({
   sessionLabel,
   exercises,
+  cardio,
   catalog,
   onExercisesChange,
+  onCardioChange,
   onRegisterCustomExercise,
   onFinish,
 }: Props) => {
   const [plateDialogWeight, setPlateDialogWeight] = useState<number | null>(null);
   const [warmupEntries, setWarmupEntries] = useState<Record<string, { reps: number; weight: number }>>({});
+  const cardioTimer = useCardioTimer(cardio, onCardioChange);
+
+  const handleAddCardio = (activityId: CardioActivityId) => {
+    onCardioChange([
+      ...cardio,
+      {
+        id: crypto.randomUUID(),
+        activityId,
+        label: CARDIO_ACTIVITY_LABELS[activityId],
+        durationSeconds: 0,
+        kcal: 0,
+        isRunning: false,
+        startedAt: null,
+      },
+    ]);
+  };
 
   const warmupKey = (exerciseIndex: number, warmupIndex: number) =>
     `${exerciseIndex}-${warmupIndex}`;
@@ -95,6 +124,16 @@ export const WorkoutSession = ({
         ...exercise,
         completed: isExerciseCompleted(exercise.sets),
       })),
+      cardio: cardio.map((entry) =>
+        entry.isRunning
+          ? {
+              ...entry,
+              isRunning: false,
+              startedAt: null,
+              durationSeconds: cardioTimer.elapsedSeconds(entry),
+            }
+          : entry,
+      ),
     });
   };
 
@@ -268,6 +307,45 @@ export const WorkoutSession = ({
           </section>
         );
       })}
+      {cardio.map((entry) => (
+        <section className="session__exercise session__cardio" key={entry.id}>
+          <Row justify="between" className="session__exercise-header">
+            <Heading text={entry.label} level="3" />
+            <Button
+              icon={Trash2}
+              variant="danger"
+              size="icon"
+              ariaLabel={`Remove ${entry.label}`}
+              onClick={() => cardioTimer.remove(entry.id)}
+            />
+          </Row>
+          <Row gap="md" align="center" className="session__cardio-controls">
+            <Button
+              icon={entry.isRunning ? Pause : Play}
+              variant={entry.isRunning ? "secondary" : "primary"}
+              size="icon"
+              ariaLabel={entry.isRunning ? `Pause ${entry.label}` : `Start ${entry.label}`}
+              onClick={() =>
+                entry.isRunning ? cardioTimer.pause(entry.id) : cardioTimer.start(entry.id)
+              }
+            />
+            <CardioTimerDisplay entry={entry} />
+            <div className="session__input-group">
+              <div className="session__input-label">
+                <Span text="Kcal burned" size="small" />
+              </div>
+              <Input
+                size="medium"
+                value={entry.kcal}
+                onChange={(value) => cardioTimer.setKcal(entry.id, value)}
+              />
+            </div>
+          </Row>
+        </section>
+      ))}
+      <Expandable icon={Plus} label="Add cardio">
+        <AddCardioForm onSubmit={handleAddCardio} />
+      </Expandable>
       <Expandable icon={Plus} label="Add exercise">
         <AddExerciseForm
           catalog={catalog}

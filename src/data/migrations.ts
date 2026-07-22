@@ -1,3 +1,4 @@
+import type { LoggedCardioSession } from "../types/cardio.type";
 import { EXERCISE_LABELS } from "../types/exercise.type";
 import type { Program } from "../types/program.type";
 import type { LoggedExercise, WorkoutHistoryEntry } from "../types/workout-session.type";
@@ -60,6 +61,9 @@ const migrateLegacyLoggedExercise = (
   };
 };
 
+const migrateLegacyCardio = (raw: unknown): LoggedCardioSession[] =>
+  Array.isArray(raw) ? (raw as LoggedCardioSession[]) : [];
+
 const migrateLegacyHistoryEntry = (
   raw: Record<string, unknown>,
 ): WorkoutHistoryEntry => {
@@ -69,6 +73,7 @@ const migrateLegacyHistoryEntry = (
       exercises: (raw.exercises as Record<string, unknown>[]).map(
         migrateLegacyLoggedExercise,
       ),
+      cardio: migrateLegacyCardio(raw.cardio),
     } as unknown as WorkoutHistoryEntry;
   }
 
@@ -82,6 +87,7 @@ const migrateLegacyHistoryEntry = (
     exercises: (raw.exercises as Record<string, unknown>[]).map(
       migrateLegacyLoggedExercise,
     ),
+    cardio: migrateLegacyCardio(raw.cardio),
     checkIn: raw.checkIn as WorkoutHistoryEntry["checkIn"],
   };
 };
@@ -102,6 +108,7 @@ const migrateLegacyActiveWorkout = (
       exercises: (raw.exercises as Record<string, unknown>[]).map(
         migrateLegacyLoggedExercise,
       ),
+      cardio: migrateLegacyCardio(raw.cardio),
     };
   }
 
@@ -110,6 +117,7 @@ const migrateLegacyActiveWorkout = (
     exercises: (raw.exercises as Record<string, unknown>[]).map(
       migrateLegacyLoggedExercise,
     ),
+    cardio: migrateLegacyCardio(raw.cardio),
   } as unknown as ActiveWorkout;
 };
 

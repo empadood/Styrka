@@ -1,3 +1,4 @@
+export { AddCardioForm } from "./addcardio/AddCardioForm";
 export { AddExerciseForm } from "./addexercise/AddExerciseForm";
 export { Badge } from "./badge/Badge";
 export { Button } from "./button/Button";
