@@ -215,6 +215,8 @@ export const Home = ({ store, update, workout, drive }: Props) => {
       </div>
       <Dialog title="Profile" isOpen={showProfile} onClose={() => setShowProfile(false)}>
         <Profile
+          store={store}
+          update={update}
           increments={store.increments}
           estimatedOneRepMax={store.estimatedOneRepMax}
           workingWeights={store.workingWeights}

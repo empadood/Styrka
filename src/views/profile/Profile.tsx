@@ -3,13 +3,19 @@ import "./Profile.scss";
 import { Card, Heading, Span, Stack } from "../../components";
 import { DangerZoneSection } from "../../components/profile/DangerZoneSection";
 import { DriveSyncSection } from "../../components/profile/DriveSyncSection";
+import { ExportImportSection } from "../../components/profile/ExportImportSection";
 import { IncrementsSection } from "../../components/profile/IncrementsSection";
 import { OneRepMaxSection } from "../../components/profile/OneRepMaxSection";
 import { WorkingWeightSection } from "../../components/profile/WorkingWeightSection";
+import type { WorkoutStore } from "../../data/storage";
 import { DRIVE_SYNC_UI_ENABLED, type DriveSyncState } from "../../hooks/useDriveSync";
 import type { TrackedLiftId } from "../../types";
 
+type UpdateFn = (updater: (prev: WorkoutStore) => WorkoutStore) => void;
+
 type Props = {
+  store: WorkoutStore;
+  update: UpdateFn;
   increments: Record<TrackedLiftId, number>;
   estimatedOneRepMax: Record<TrackedLiftId, number> | null;
   workingWeights: Record<TrackedLiftId, number>;
@@ -19,6 +25,8 @@ type Props = {
 };
 
 export const Profile = ({
+  store,
+  update,
   increments,
   estimatedOneRepMax,
   workingWeights,
@@ -31,6 +39,7 @@ export const Profile = ({
     <OneRepMaxSection estimatedOneRepMax={estimatedOneRepMax} />
     <IncrementsSection increments={increments} />
     {DRIVE_SYNC_UI_ENABLED && <DriveSyncSection drive={drive} />}
+    <ExportImportSection store={store} update={update} />
     <Card>
       <Heading text="Privacy" />
       <Span
