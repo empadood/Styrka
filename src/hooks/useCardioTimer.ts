@@ -30,6 +30,29 @@ export const useCardioTimer = (cardio: LoggedCardioSession[], onChange: OnChange
     );
   };
 
+  const stop = (id: string) => {
+    const now = Date.now();
+    onChange(
+      cardio.map((entry) =>
+        entry.id === id
+          ? {
+              ...entry,
+              isRunning: false,
+              startedAt: null,
+              durationSeconds: getElapsedSeconds(entry, now),
+              isFinished: true,
+            }
+          : entry,
+      ),
+    );
+  };
+
+  const save = (id: string) => {
+    onChange(
+      cardio.map((entry) => (entry.id === id ? { ...entry, isSaved: true } : entry)),
+    );
+  };
+
   const setKcal = (id: string, kcal: number) => {
     onChange(cardio.map((entry) => (entry.id === id ? { ...entry, kcal } : entry)));
   };
@@ -42,6 +65,8 @@ export const useCardioTimer = (cardio: LoggedCardioSession[], onChange: OnChange
     elapsedSeconds: (entry: LoggedCardioSession) => getElapsedSeconds(entry, Date.now()),
     start,
     pause,
+    stop,
+    save,
     setKcal,
     remove,
   };

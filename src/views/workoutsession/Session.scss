@@ -51,15 +51,36 @@
 }
 
 .session__cardio-controls {
-  margin-top: var(--space-4);
   flex-wrap: wrap;
+  justify-content: center;
+}
+
+.session__cardio-timer-block {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-3);
+  margin-top: var(--space-4);
+}
+
+.session__cardio-buttons {
+  justify-content: center;
 }
 
 .session__cardio-timer {
+  display: inline-block;
+  font-family: "Courier New", ui-monospace, Consolas, monospace;
   font-variant-numeric: tabular-nums;
-  font-size: var(--font-size-lg);
-  font-weight: 600;
-  min-width: 4.5rem;
+  font-size: 2rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  min-width: 8rem;
+  text-align: center;
+  color: #6fe3a1;
+  background: #16241d;
+  padding: var(--space-2) var(--space-4);
+  border-radius: var(--radius-sm);
+  text-shadow: 0 0 0.5rem rgba(111, 227, 161, 0.6);
 }
 
 @include mobile-down {

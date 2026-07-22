@@ -64,6 +64,8 @@ export const WorkoutSession = ({
         kcal: 0,
         isRunning: false,
         startedAt: null,
+        isFinished: false,
+        isSaved: false,
       },
     ]);
   };
@@ -164,6 +166,8 @@ export const WorkoutSession = ({
           entry={entry}
           onStart={() => cardioTimer.start(entry.id)}
           onPause={() => cardioTimer.pause(entry.id)}
+          onStop={() => cardioTimer.stop(entry.id)}
+          onSave={() => cardioTimer.save(entry.id)}
           onKcalChange={(value) => cardioTimer.setKcal(entry.id, value)}
           onRemove={() => cardioTimer.remove(entry.id)}
         />

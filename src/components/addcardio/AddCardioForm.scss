@@ -1,8 +1,15 @@
+@use "../../styles/breakpoints" as *;
+
 .add-cardio-form {
   display: flex;
-  align-items: flex-end;
+  align-items: last baseline;
   gap: var(--space-3);
   flex-wrap: wrap;
+
+  @include desktop-up {
+    max-width: 50%;
+    margin: auto;
+  }
 }
 
 .add-cardio-form__field {

@@ -26,6 +26,8 @@ interface LoggedCardioSession {
   kcal: number;
   isRunning: boolean;
   startedAt: string | null;
+  isFinished: boolean;
+  isSaved: boolean;
 }
 
 export {
