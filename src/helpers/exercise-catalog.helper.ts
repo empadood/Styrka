@@ -44,6 +44,31 @@ const resolveCustomExercise = (
   };
 };
 
+type ExerciseSelectionInput = {
+  exerciseId?: ExerciseId;
+  customName?: string;
+};
+
+const resolveExerciseSelection = (
+  catalog: ExerciseCatalogEntry[],
+  input: ExerciseSelectionInput,
+  onRegisterCustomExercise: (entry: ExerciseCatalogEntry) => void,
+): ExerciseCatalogEntry | undefined => {
+  const entry = input.exerciseId
+    ? findCatalogEntry(catalog, input.exerciseId)
+    : resolveCustomExercise(catalog, input.customName ?? "");
+
+  if (!entry) {
+    return undefined;
+  }
+
+  if (entry.custom && !catalog.some((c) => c.id === entry.id)) {
+    onRegisterCustomExercise(entry);
+  }
+
+  return entry;
+};
+
 const getLastLoggedWeight = (
   history: WorkoutHistoryEntry[],
   exerciseId: ExerciseId,
@@ -64,5 +89,6 @@ export {
   getCombinedCatalog,
   getLastLoggedWeight,
   resolveCustomExercise,
+  resolveExerciseSelection,
   slugify,
 };
