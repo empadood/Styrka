@@ -197,6 +197,17 @@ export const Home = ({ store, update, workout, drive }: Props) => {
             label="Weight"
             unit="kg"
             color="var(--warning)"
+            domain={dashboard.bodyWeightChartDomain}
+            secondary={
+              dashboard.bodyWeightTrendData.some((entry) => entry.bodyFatPercent !== undefined)
+                ? {
+                    dataKey: "bodyFatPercent",
+                    label: "Body fat",
+                    unit: "%",
+                    color: "var(--primary)",
+                  }
+                : undefined
+            }
           />
         </Card>
       </div>

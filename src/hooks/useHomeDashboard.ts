@@ -2,7 +2,11 @@ import { useMemo } from "react";
 
 import type { WorkoutStore } from "../data/storage";
 import { trackAnalyticsEvent } from "../helpers/analytics.helper";
-import { buildBodyWeightTrendData, upsertBodyWeightEntry } from "../helpers/bodyweight.helper";
+import {
+  buildBodyWeightTrendData,
+  getBodyWeightChartDomain,
+  upsertBodyWeightEntry,
+} from "../helpers/bodyweight.helper";
 import { buildOverviewFromStore } from "../helpers/overview.helper";
 import { buildStartingWeights } from "../helpers/starting-weight.helper";
 import { getTrainingStatusDetails } from "../helpers/status.helper";
@@ -23,19 +27,24 @@ export const useHomeDashboard = (
     () => buildBodyWeightTrendData(store.bodyWeightLog),
     [store.bodyWeightLog],
   );
+  const bodyWeightChartDomain = useMemo(
+    () => getBodyWeightChartDomain(store.bodyWeightLog),
+    [store.bodyWeightLog],
+  );
   const trainingStatusDetails = useMemo(
     () => getTrainingStatusDetails(store.history),
     [store.history],
   );
   const trainingStatus = trainingStatusDetails.status;
 
-  const handleLogBodyWeight = (weight: number) => {
+  const handleLogBodyWeight = (weight: number, bodyFatPercent?: number) => {
     update((previousStore) => ({
       ...previousStore,
       bodyWeightLog: upsertBodyWeightEntry(
         previousStore.bodyWeightLog,
         new Date().toISOString(),
         weight,
+        bodyFatPercent,
       ),
     }));
   };
@@ -76,6 +85,7 @@ export const useHomeDashboard = (
     items,
     trendData,
     bodyWeightTrendData,
+    bodyWeightChartDomain,
     trainingStatus,
     trainingStatusDetails,
     handleLogBodyWeight,

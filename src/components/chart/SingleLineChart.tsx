@@ -2,6 +2,7 @@ import "./Chart.scss";
 
 import {
   CartesianGrid,
+  Legend,
   Line,
   LineChart,
   Tooltip,
@@ -11,13 +12,22 @@ import {
 
 import { Span } from "../text/Span";
 
-type Props = {
-  data: Record<string, string | number>[];
+type SecondarySeries = {
   dataKey: string;
   label: string;
   unit?: string;
   color: string;
   domain?: [number, number];
+};
+
+type Props = {
+  data: Record<string, string | number | undefined>[];
+  dataKey: string;
+  label: string;
+  unit?: string;
+  color: string;
+  domain?: [number, number];
+  secondary?: SecondarySeries;
 };
 
 const formatDate = (date: string): string =>
@@ -33,6 +43,7 @@ export const SingleLineChart = ({
   unit,
   color,
   domain,
+  secondary,
 }: Props) => {
   if (data.length === 0) {
     return (
@@ -72,10 +83,20 @@ export const SingleLineChart = ({
           padding={{ left: 16, right: 16 }}
         />
         <YAxis
+          yAxisId="left"
           unit={unit ? ` ${unit}` : undefined}
           domain={domain}
           tick={{ fill: "var(--text-secondary)", fontSize: 12 }}
         />
+        {secondary && (
+          <YAxis
+            yAxisId="right"
+            orientation="right"
+            unit={secondary.unit ? ` ${secondary.unit}` : undefined}
+            domain={secondary.domain}
+            tick={{ fill: "var(--text-secondary)", fontSize: 12 }}
+          />
+        )}
 
         <Tooltip
           labelFormatter={(label) => formatDate(String(label))}
@@ -89,8 +110,10 @@ export const SingleLineChart = ({
             boxShadow: "0 0.5rem 1.5rem rgba(31, 41, 51, 0.12)",
           }}
         />
+        {secondary && <Legend wrapperStyle={{ fontSize: 12, paddingTop: 12 }} />}
 
         <Line
+          yAxisId="left"
           type="monotone"
           dataKey={dataKey}
           name={label}
@@ -98,6 +121,17 @@ export const SingleLineChart = ({
           strokeWidth={2}
           connectNulls
         />
+        {secondary && (
+          <Line
+            yAxisId="right"
+            type="monotone"
+            dataKey={secondary.dataKey}
+            name={secondary.label}
+            stroke={secondary.color}
+            strokeWidth={2}
+            connectNulls
+          />
+        )}
       </LineChart>
     </div>
   );
