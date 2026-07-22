@@ -1,3 +1,5 @@
+@use "../../styles/breakpoints" as *;
+
 .session__intro > span,
 .session__exercise-header > .span {
   color: var(--text-secondary);
@@ -60,7 +62,7 @@
   min-width: 4.5rem;
 }
 
-@media (max-width: 30rem) {
+@include mobile-down {
   .session__set {
     grid-template-columns: 1fr;
   }

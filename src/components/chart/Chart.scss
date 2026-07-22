@@ -6,7 +6,7 @@
   min-height: 15rem;
 }
 
-@media (min-width: $bp-tablet) {
+@include tablet-up {
   .chart__container {
     justify-content: center;
     > div {

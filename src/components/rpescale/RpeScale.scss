@@ -1,10 +1,12 @@
+@use "../../styles/breakpoints" as *;
+
 .rpe-scale {
   display: grid;
   grid-template-columns: repeat(5, minmax(0, 1fr));
   gap: var(--space-2);
 }
 
-@media (min-width: 30rem) {
+@include mobile-up {
   .rpe-scale {
     grid-template-columns: repeat(10, minmax(0, 1fr));
   }

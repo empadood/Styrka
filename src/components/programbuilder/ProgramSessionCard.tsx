@@ -29,22 +29,38 @@ export const ProgramSessionCard = ({
   onAddExercise,
 }: Props) => (
   <Card>
-    <Row justify="between" align="start" mb="md">
+    <Row justify="between" align="end" mb="md">
       <label className="programs__field">
         <Span text="Session name" size="small" />
         <TextField value={session.name} onChange={onNameChange} />
       </label>
-      <Button label="Remove session" variant="danger" onClick={onRemoveSession} />
+      <Button
+        label="Remove session"
+        variant="danger"
+        onClick={onRemoveSession}
+      />
     </Row>
     <div className="programs__exercise-list">
       {session.exercises.map((exercise, index) => (
         <div className="programs__exercise-row" key={index}>
           <Span text={exercise.label} />
-          <Span text={`${exercise.sets} × ${exercise.reps} reps`} size="small" tone="secondary" />
-          <Button label="Remove" variant="secondary" onClick={() => onRemoveExercise(index)} />
+          <Span
+            text={`${exercise.sets} × ${exercise.reps} reps`}
+            size="small"
+            tone="secondary"
+          />
+          <Button
+            label="Remove"
+            variant="secondary"
+            onClick={() => onRemoveExercise(index)}
+          />
         </div>
       ))}
     </div>
-    <AddExerciseForm catalog={catalog} onSubmit={onAddExercise} submitLabel="Add to session" />
+    <AddExerciseForm
+      catalog={catalog}
+      onSubmit={onAddExercise}
+      submitLabel="Add to session"
+    />
   </Card>
 );

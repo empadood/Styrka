@@ -5,7 +5,7 @@ import type { ReactNode } from "react";
 type Props = {
   children: ReactNode;
   justify?: "start" | "between";
-  align?: "center" | "start";
+  align?: "center" | "start" | "end";
   gap?: "sm" | "md";
   mb?: "none" | "md";
   className?: string;

@@ -196,7 +196,7 @@
   width: 2rem;
 }
 
-@media (max-width: $bp-tablet) {
+@include tablet-down {
   .sessions__table thead {
     display: none;
   }
