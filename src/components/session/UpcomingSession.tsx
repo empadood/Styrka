@@ -36,32 +36,47 @@ export const UpcomingSession = ({
         <div>
           <Span text="Ready when you are" size="small" tone="secondary" />
           <Heading
-            text={isUpcoming && !isWorkoutActive ? "Upcoming workout" : "Today's workout"}
+            text={
+              isUpcoming && !isWorkoutActive
+                ? "Upcoming workout"
+                : "Today's workout"
+            }
             level="2"
           />
         </div>
-        <Span text={`${exercises.length} exercises`} size="small" tone="secondary" />
+        <Span
+          text={`${exercises.length} exercises`}
+          size="small"
+          tone="secondary"
+        />
       </Row>
       {nextSession ? (
         <div className="upcoming-session__exercises">
           {exercises.map(({ definition, overview }) => (
             <Card padding="sm" key={definition.exerciseId}>
-              <div>
+              <Row gap="sm">
                 <Span text={definition.label} />
                 <Span
                   text={`${definition.sets} × ${definition.reps} reps`}
                   size="small"
                   tone="secondary"
                 />
-              </div>
+              </Row>
               {overview && (
-                <Span text={`${overview.value} ${overview.unit}`} size="small" tone="secondary" />
+                <Span
+                  text={`${overview.value} ${overview.unit}`}
+                  size="small"
+                  tone="secondary"
+                />
               )}
             </Card>
           ))}
         </div>
       ) : (
-        <Span text="No program enrolled — browse programs to get started." size="small" />
+        <Span
+          text="No program enrolled — browse programs to get started."
+          size="small"
+        />
       )}
       <div className="upcoming-session__footer">
         {!isWorkoutActive && (

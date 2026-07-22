@@ -127,7 +127,11 @@ export const AddExerciseForm = ({
         {showStartingWeight && (
           <label className="add-exercise-form__field">
             <Span text="Weight (kg)" size="small" />
-            <Input value={startingWeight} onChange={setStartingWeight} size="small" />
+            <Input
+              value={startingWeight}
+              onChange={setStartingWeight}
+              size="small"
+            />
           </label>
         )}
       </Row>
