@@ -11,12 +11,13 @@ import type {
 
 type UpdateFn = (updater: (prev: WorkoutStore) => WorkoutStore) => void;
 
-const buildEmptyProgram = (): Program => ({
+const buildEmptyProgram = (type: Program["type"]): Program => ({
   id: crypto.randomUUID(),
   name: "",
   sessions: [],
   isBuiltIn: false,
   createdAt: new Date().toISOString(),
+  type,
 });
 
 const buildEmptySession = (index: number): ProgramSession => ({
@@ -29,8 +30,11 @@ export const useProgramDraft = (
   existingProgram: Program | undefined,
   catalog: ExerciseCatalogEntry[],
   update: UpdateFn,
+  newProgramType: Program["type"] = "main",
 ) => {
-  const [draft, setDraft] = useState<Program>(() => existingProgram ?? buildEmptyProgram());
+  const [draft, setDraft] = useState<Program>(
+    () => existingProgram ?? buildEmptyProgram(newProgramType),
+  );
   const [error, setError] = useState("");
 
   const setName = (name: string) => setDraft((prev) => ({ ...prev, name }));

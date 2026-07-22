@@ -9,6 +9,7 @@ export const STARTING_STRENGTH_PROGRAM: Program = {
   description: "Classic barbell A/B linear-progression split.",
   isBuiltIn: true,
   createdAt: "2024-01-01T00:00:00.000Z",
+  type: "main",
   sessions: [
     {
       id: "A",

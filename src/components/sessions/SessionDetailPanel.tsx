@@ -37,7 +37,10 @@ export const SessionDetailPanel = ({ session, personalRecords }: Props) => (
       {session.exercises.map((exercise, index) => (
         <div className="sessions__exercise" key={index}>
           <Row justify="between" className="sessions__exercise-heading">
-            <Heading text={exercise.label} level="3" />
+            <Row gap="sm" align="center">
+              <Heading text={exercise.label} level="3" />
+              {exercise.sourceLabel && <Badge size="sm">{exercise.sourceLabel}</Badge>}
+            </Row>
             <Span text={exercise.completed ? "Completed" : "Incomplete"} size="small" />
           </Row>
           <div className="sessions__sets">

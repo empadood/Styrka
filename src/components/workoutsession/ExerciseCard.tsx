@@ -2,6 +2,7 @@ import { Trash2 } from "lucide-react";
 
 import { generateWarmupSets } from "../../helpers/warmup.helper";
 import type { LoggedExercise } from "../../types";
+import { Badge } from "../badge/Badge";
 import { Button } from "../button/Button";
 import { Row } from "../row/Row";
 import { ExerciseWithWeight } from "../text/ExerciseWithWeight";
@@ -40,6 +41,7 @@ export const ExerciseCard = ({
       <Row justify="between" className="session__exercise-header">
         <ExerciseWithWeight label={exercise.label} weight={exercise.weightUsed} />
         <Row gap="sm" align="center">
+          {exercise.sourceLabel && <Badge size="sm">{exercise.sourceLabel}</Badge>}
           <Span
             text={`${exercise.sets.length} ${exercise.sets.length < 2 ? "set" : "sets"}`}
             size="small"

@@ -7,10 +7,17 @@ import type { ActiveWorkout } from "./storage";
 
 const mergeBuiltInPrograms = (existingPrograms: unknown): Program[] => {
   const userPrograms = Array.isArray(existingPrograms)
-    ? existingPrograms.filter(
-        (program): program is Program =>
-          program && typeof program === "object" && !program.isBuiltIn,
-      )
+    ? existingPrograms
+        .filter(
+          (program): program is Program =>
+            program && typeof program === "object" && !program.isBuiltIn,
+        )
+        .map(
+          (program): Program => ({
+            ...program,
+            type: program.type === "sub" ? "sub" : "main",
+          }),
+        )
     : [];
 
   return [...BUILT_IN_PROGRAMS, ...userPrograms];
@@ -29,6 +36,21 @@ const resolveActiveProgramId = (
   return STARTING_STRENGTH_PROGRAM_ID;
 };
 
+const resolveActiveSubProgramId = (
+  parsed: { activeSubProgramId?: unknown },
+  mergedPrograms: Program[],
+): string | null => {
+  if (
+    typeof parsed.activeSubProgramId === "string" &&
+    mergedPrograms.some(
+      (program) => program.id === parsed.activeSubProgramId && program.type === "sub",
+    )
+  ) {
+    return parsed.activeSubProgramId;
+  }
+  return null;
+};
+
 const resolveLastCompletedSessionId = (parsed: {
   lastCompletedSessionId?: unknown;
   lastCompletedSession?: unknown;
@@ -41,6 +63,13 @@ const resolveLastCompletedSessionId = (parsed: {
   }
   return null;
 };
+
+const resolveLastCompletedSubSessionId = (parsed: {
+  lastCompletedSubSessionId?: unknown;
+}): string | null =>
+  typeof parsed.lastCompletedSubSessionId === "string"
+    ? parsed.lastCompletedSubSessionId
+    : null;
 
 const migrateLegacyLoggedExercise = (
   raw: Record<string, unknown>,
@@ -69,6 +98,8 @@ const migrateLegacyHistoryEntry = (
 ): WorkoutHistoryEntry => {
   if (raw.sessionId !== undefined) {
     return {
+      subProgramId: null,
+      subSessionId: null,
       ...raw,
       exercises: (raw.exercises as Record<string, unknown>[]).map(
         migrateLegacyLoggedExercise,
@@ -83,6 +114,8 @@ const migrateLegacyHistoryEntry = (
     date: raw.date as string,
     programId: STARTING_STRENGTH_PROGRAM_ID,
     sessionId: legacySessionType,
+    subProgramId: null,
+    subSessionId: null,
     sessionLabel: legacySessionType === "A" ? "Session A" : "Session B",
     exercises: (raw.exercises as Record<string, unknown>[]).map(
       migrateLegacyLoggedExercise,
@@ -104,6 +137,8 @@ const migrateLegacyActiveWorkout = (
     return {
       programId: STARTING_STRENGTH_PROGRAM_ID,
       sessionId: legacySessionType,
+      subProgramId: null,
+      subSessionId: null,
       sessionLabel: legacySessionType === "A" ? "Session A" : "Session B",
       exercises: (raw.exercises as Record<string, unknown>[]).map(
         migrateLegacyLoggedExercise,
@@ -113,6 +148,8 @@ const migrateLegacyActiveWorkout = (
   }
 
   return {
+    subProgramId: null,
+    subSessionId: null,
     ...raw,
     exercises: (raw.exercises as Record<string, unknown>[]).map(
       migrateLegacyLoggedExercise,
@@ -127,5 +164,7 @@ export {
   migrateLegacyHistoryEntry,
   migrateLegacyLoggedExercise,
   resolveActiveProgramId,
+  resolveActiveSubProgramId,
   resolveLastCompletedSessionId,
+  resolveLastCompletedSubSessionId,
 };

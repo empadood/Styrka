@@ -13,6 +13,7 @@ const buildLoggedExerciseFromPrescription = (
   catalog: ExerciseCatalogEntry[],
   workingWeights: Record<TrackedLiftId, number>,
   history: WorkoutHistoryEntry[],
+  sourceLabel?: string,
 ): LoggedExercise => {
   const catalogEntry = findCatalogEntry(catalog, prescription.exerciseId);
   const tracked = catalogEntry?.tracked ?? false;
@@ -27,6 +28,7 @@ const buildLoggedExerciseFromPrescription = (
     isAdHoc: false,
     weightUsed: defaultWeight,
     completed: false,
+    sourceLabel,
     sets: Array.from({ length: prescription.sets }, () => ({
       targetReps: prescription.reps,
       reps: 0,
@@ -40,6 +42,7 @@ const buildInitialExercises = (
   catalog: ExerciseCatalogEntry[],
   workingWeights: Record<TrackedLiftId, number>,
   history: WorkoutHistoryEntry[],
+  sourceLabel?: string,
 ): LoggedExercise[] =>
   session
     ? session.exercises.map((prescription) =>
@@ -48,6 +51,7 @@ const buildInitialExercises = (
           catalog,
           workingWeights,
           history,
+          sourceLabel,
         ),
       )
     : [];

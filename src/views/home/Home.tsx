@@ -161,6 +161,8 @@ export const Home = ({ store, update, workout, drive }: Props) => {
         <UpcomingSession
           session={dashboard.items}
           nextSession={workout.nextSession}
+          nextSubSession={workout.nextSubSession}
+          subProgramName={workout.activeSubProgram?.name}
           onStartWorkout={workout.workoutActive ? dashboard.resumeWorkout : dashboard.startWorkout}
           onStartFreestanding={dashboard.startFreestandingWorkout}
           isWorkoutActive={workout.workoutActive}

@@ -36,6 +36,12 @@ export const useActiveWorkout = (store: WorkoutStore, update: UpdateFn) => {
   const nextSession: ProgramSession | null = activeProgram
     ? getNextProgramSession(activeProgram, store.lastCompletedSessionId)
     : null;
+  const activeSubProgram: Program | null =
+    store.programs.find((program) => program.id === store.activeSubProgramId) ??
+    null;
+  const nextSubSession: ProgramSession | null = activeSubProgram
+    ? getNextProgramSession(activeSubProgram, store.lastCompletedSubSessionId)
+    : null;
   const workoutActive = store.activeWorkout !== null;
   const stage: Stage = pendingResults
     ? "summary"
@@ -53,6 +59,8 @@ export const useActiveWorkout = (store: WorkoutStore, update: UpdateFn) => {
           ? {
               programId: null,
               sessionId: null,
+              subProgramId: null,
+              subSessionId: null,
               sessionLabel: "Free workout",
               exercises: [],
               cardio: [],
@@ -60,13 +68,24 @@ export const useActiveWorkout = (store: WorkoutStore, update: UpdateFn) => {
           : {
               programId: activeProgram?.id ?? null,
               sessionId: nextSession?.id ?? null,
+              subProgramId: activeSubProgram?.id ?? null,
+              subSessionId: nextSubSession?.id ?? null,
               sessionLabel: nextSession?.name ?? "Workout",
-              exercises: buildInitialExercises(
-                nextSession,
-                catalog,
-                previousStore.workingWeights,
-                previousStore.history,
-              ),
+              exercises: [
+                ...buildInitialExercises(
+                  nextSession,
+                  catalog,
+                  previousStore.workingWeights,
+                  previousStore.history,
+                ),
+                ...buildInitialExercises(
+                  nextSubSession,
+                  catalog,
+                  previousStore.workingWeights,
+                  previousStore.history,
+                  activeSubProgram?.name,
+                ),
+              ],
               cardio: [],
             },
     }));
@@ -167,6 +186,9 @@ export const useActiveWorkout = (store: WorkoutStore, update: UpdateFn) => {
         lastCompletedSessionId: isFreestanding
           ? prev.lastCompletedSessionId
           : (prev.activeWorkout.sessionId ?? prev.lastCompletedSessionId),
+        lastCompletedSubSessionId: isFreestanding
+          ? prev.lastCompletedSubSessionId
+          : (prev.activeWorkout.subSessionId ?? prev.lastCompletedSubSessionId),
         history: [
           ...prev.history,
           {
@@ -174,6 +196,8 @@ export const useActiveWorkout = (store: WorkoutStore, update: UpdateFn) => {
             date: new Date().toISOString(),
             programId: prev.activeWorkout.programId,
             sessionId: prev.activeWorkout.sessionId,
+            subProgramId: prev.activeWorkout.subProgramId,
+            subSessionId: prev.activeWorkout.subSessionId,
             sessionLabel: prev.activeWorkout.sessionLabel,
             exercises: pendingSession.exercises,
             cardio: pendingSession.cardio,
@@ -193,6 +217,8 @@ export const useActiveWorkout = (store: WorkoutStore, update: UpdateFn) => {
     catalog,
     activeProgram,
     nextSession,
+    activeSubProgram,
+    nextSubSession,
     pendingSession,
     pendingResults,
     startWorkout,

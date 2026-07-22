@@ -13,7 +13,9 @@ import {
   migrateLegacyActiveWorkout,
   migrateLegacyHistoryEntry,
   resolveActiveProgramId,
+  resolveActiveSubProgramId,
   resolveLastCompletedSessionId,
+  resolveLastCompletedSubSessionId,
 } from "./migrations";
 
 const STORAGE_KEY = "styrka.workout-store.v1";
@@ -21,6 +23,8 @@ const STORAGE_KEY = "styrka.workout-store.v1";
 interface ActiveWorkout {
   programId: string | null;
   sessionId: string | null;
+  subProgramId: string | null;
+  subSessionId: string | null;
   sessionLabel: string;
   exercises: LoggedExercise[];
   cardio: LoggedCardioSession[];
@@ -34,6 +38,8 @@ interface WorkoutStore {
   programs: Program[];
   activeProgramId: string | null;
   lastCompletedSessionId: string | null;
+  activeSubProgramId: string | null;
+  lastCompletedSubSessionId: string | null;
   customExerciseCatalog: ExerciseCatalogEntry[];
   history: WorkoutHistoryEntry[];
   activeWorkout: ActiveWorkout | null;
@@ -49,6 +55,8 @@ const DEFAULT_STORE: WorkoutStore = {
   programs: [STARTING_STRENGTH_PROGRAM],
   activeProgramId: STARTING_STRENGTH_PROGRAM.id,
   lastCompletedSessionId: null,
+  activeSubProgramId: null,
+  lastCompletedSubSessionId: null,
   customExerciseCatalog: [],
   history: [],
   activeWorkout: null,
@@ -81,6 +89,8 @@ const parseStore = (raw: string | null): WorkoutStore => {
       programs,
       activeProgramId: resolveActiveProgramId(parsed, programs),
       lastCompletedSessionId: resolveLastCompletedSessionId(parsed),
+      activeSubProgramId: resolveActiveSubProgramId(parsed, programs),
+      lastCompletedSubSessionId: resolveLastCompletedSubSessionId(parsed),
       customExerciseCatalog: Array.isArray(parsed.customExerciseCatalog)
         ? parsed.customExerciseCatalog
         : [],

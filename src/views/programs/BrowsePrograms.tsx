@@ -32,6 +32,25 @@ export const BrowsePrograms = ({ store, update }: Props) => {
     }));
   };
 
+  const enrollSub = (programId: string) => {
+    update((prev) => ({
+      ...prev,
+      activeSubProgramId: programId,
+      lastCompletedSubSessionId: null,
+    }));
+  };
+
+  const leaveSub = () => {
+    update((prev) => ({
+      ...prev,
+      activeSubProgramId: null,
+      lastCompletedSubSessionId: null,
+    }));
+  };
+
+  const mainPrograms = sortPrograms(store.programs.filter((program) => program.type !== "sub"));
+  const subPrograms = sortPrograms(store.programs.filter((program) => program.type === "sub"));
+
   return (
     <PageContainer className="programs">
       <Row justify="start" gap="md">
@@ -45,7 +64,7 @@ export const BrowsePrograms = ({ store, update }: Props) => {
           <Button label="New program" onClick={() => navigate("/programs/new")} />
         </Row>
         <Stack gap="sm" as="ul" className="programs__list">
-          {sortPrograms(store.programs).map((program) => (
+          {mainPrograms.map((program) => (
             <Card padding="sm" as="li" className="programs__item" key={program.id}>
               <div className="programs__item-info">
                 <div className="programs__item-title">
@@ -76,6 +95,56 @@ export const BrowsePrograms = ({ store, update }: Props) => {
                     onClick={() => navigate(`/programs/${program.id}/edit`)}
                   />
                 )}
+              </div>
+            </Card>
+          ))}
+        </Stack>
+      </Card>
+
+      <Card>
+        <Row justify="between" align="start" mb="md">
+          <Heading text="Sub-programs" level="2" />
+          <Button
+            label="New sub-program"
+            onClick={() => navigate("/programs/new?type=sub")}
+          />
+        </Row>
+        <Span
+          text="Optional add-on exercises layered onto every workout alongside your main program."
+          size="small"
+          tone="secondary"
+        />
+        <Stack gap="sm" as="ul" className="programs__list">
+          {subPrograms.map((program) => (
+            <Card padding="sm" as="li" className="programs__item" key={program.id}>
+              <div className="programs__item-info">
+                <div className="programs__item-title">
+                  <Span text={program.name} />
+                  {program.id === store.activeSubProgramId && (
+                    <Badge tone="primary" size="sm">Active</Badge>
+                  )}
+                </div>
+                <Span
+                  text={`${program.sessions.length} ${program.sessions.length === 1 ? "session" : "sessions"}`}
+                  size="small"
+                  tone="secondary"
+                />
+              </div>
+              <div className="programs__item-actions">
+                {program.id === store.activeSubProgramId ? (
+                  <Button label="Leave" variant="secondary" onClick={leaveSub} />
+                ) : (
+                  <Button
+                    label="Enroll"
+                    variant="secondary"
+                    onClick={() => enrollSub(program.id)}
+                  />
+                )}
+                <Button
+                  label="Edit"
+                  variant="secondary"
+                  onClick={() => navigate(`/programs/${program.id}/edit`)}
+                />
               </div>
             </Card>
           ))}

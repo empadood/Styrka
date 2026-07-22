@@ -1,6 +1,6 @@
 import "./Programs.scss";
 
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 
 import { Button, Card, Heading, PageContainer, Row, Span } from "../../components";
 import { ProgramSessionCard } from "../../components/programbuilder/ProgramSessionCard";
@@ -19,6 +19,8 @@ type Props = {
 export const ProgramBuilder = ({ store, update }: Props) => {
   const navigate = useNavigate();
   const { programId } = useParams<{ programId?: string }>();
+  const [searchParams] = useSearchParams();
+  const newProgramType = searchParams.get("type") === "sub" ? "sub" : "main";
   const existingProgram = programId
     ? store.programs.find((program) => program.id === programId)
     : undefined;
@@ -34,13 +36,26 @@ export const ProgramBuilder = ({ store, update }: Props) => {
     removeExercise,
     addExerciseToSession,
     save,
-  } = useProgramDraft(existingProgram, catalog, update);
+  } = useProgramDraft(existingProgram, catalog, update, newProgramType);
+
+  const isSubProgram = draft.type === "sub";
 
   return (
     <PageContainer className="programs">
       <Row justify="start" gap="md">
         <Button label="Back" variant="secondary" onClick={() => navigate("/programs")} />
-        <Heading text={programId ? "Edit program" : "New program"} level="1" />
+        <Heading
+          text={
+            programId
+              ? isSubProgram
+                ? "Edit sub-program"
+                : "Edit program"
+              : isSubProgram
+                ? "New sub-program"
+                : "New program"
+          }
+          level="1"
+        />
       </Row>
 
       <Card>
@@ -70,7 +85,10 @@ export const ProgramBuilder = ({ store, update }: Props) => {
 
       {error && <p className="programs__error">{error}</p>}
 
-      <Button label="Save program" onClick={() => save(() => navigate("/programs"))} />
+      <Button
+        label={isSubProgram ? "Save sub-program" : "Save program"}
+        onClick={() => save(() => navigate("/programs"))}
+      />
     </PageContainer>
   );
 };

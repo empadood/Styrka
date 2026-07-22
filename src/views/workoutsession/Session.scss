@@ -7,6 +7,28 @@
   font-weight: 500;
 }
 
+.session__divider {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  margin: var(--space-2) 0;
+
+  &::before,
+  &::after {
+    content: "";
+    flex: 1;
+    height: 0.0625rem;
+    background: var(--border);
+  }
+}
+
+.session__divider-label {
+  flex-shrink: 0;
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+
 .session__exercise {
   padding: var(--space-4);
   border: 0.0625rem solid var(--border);

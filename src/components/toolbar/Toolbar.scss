@@ -7,6 +7,10 @@
   position: relative;
 }
 
+.toolbar__action button[aria-expanded="true"] {
+  background-color: var(--primary-soft);
+}
+
 .toolbar__active-indicator {
   position: absolute;
   top: 0.125rem;
@@ -25,7 +29,7 @@
   z-index: 10;
   display: flex;
   flex-direction: column;
-  min-width: 10rem;
+  min-width: 12rem;
   padding: 0.375rem;
   border: 0.0625rem solid var(--border);
   border-radius: var(--radius-md);

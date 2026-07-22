@@ -1,7 +1,7 @@
 import "./Session.scss";
 
 import { Plus } from "lucide-react";
-import { useState } from "react";
+import { Fragment, useState } from "react";
 
 import {
   AddCardioForm,
@@ -52,6 +52,9 @@ export const WorkoutSession = ({
   const [plateDialogWeight, setPlateDialogWeight] = useState<number | null>(null);
   const warmupEntries = useWarmupEntries();
   const cardioTimer = useCardioTimer(cardio, onCardioChange);
+
+  const firstSubExerciseIndex = exercises.findIndex((exercise) => Boolean(exercise.sourceLabel));
+  const subProgramStartIndex = firstSubExerciseIndex > 0 ? firstSubExerciseIndex : -1;
 
   const handleAddCardio = (activityId: CardioActivityId) => {
     onCardioChange([
@@ -146,19 +149,25 @@ export const WorkoutSession = ({
         <Heading text="Today's workout" level="2" />
       </div>
       {exercises.map((exercise, exerciseIndex) => (
-        <ExerciseCard
-          key={exerciseIndex}
-          exercise={exercise}
-          getWarmupEntry={(warmupIndex, defaultWeight) =>
-            warmupEntries.getEntry(exerciseIndex, warmupIndex, defaultWeight)
-          }
-          onWarmupChange={(warmupIndex, field, value, defaultWeight) =>
-            warmupEntries.updateEntry(exerciseIndex, warmupIndex, field, value, defaultWeight)
-          }
-          onSetChange={(setIndex, field, value) => updateSet(exerciseIndex, setIndex, field, value)}
-          onShowPlates={setPlateDialogWeight}
-          onRemove={() => handleRemoveExercise(exerciseIndex)}
-        />
+        <Fragment key={exerciseIndex}>
+          {exerciseIndex === subProgramStartIndex && (
+            <div className="session__divider">
+              <span className="session__divider-label">{exercise.sourceLabel}</span>
+            </div>
+          )}
+          <ExerciseCard
+            exercise={exercise}
+            getWarmupEntry={(warmupIndex, defaultWeight) =>
+              warmupEntries.getEntry(exerciseIndex, warmupIndex, defaultWeight)
+            }
+            onWarmupChange={(warmupIndex, field, value, defaultWeight) =>
+              warmupEntries.updateEntry(exerciseIndex, warmupIndex, field, value, defaultWeight)
+            }
+            onSetChange={(setIndex, field, value) => updateSet(exerciseIndex, setIndex, field, value)}
+            onShowPlates={setPlateDialogWeight}
+            onRemove={() => handleRemoveExercise(exerciseIndex)}
+          />
+        </Fragment>
       ))}
       {cardio.map((entry) => (
         <CardioEntryCard

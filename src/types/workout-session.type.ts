@@ -15,6 +15,7 @@ interface LoggedExercise {
   sets: LoggedSet[];
   completed: boolean;
   weightUsed: number;
+  sourceLabel?: string;
 }
 
 interface SessionCheckIn {
@@ -27,6 +28,8 @@ interface WorkoutHistoryEntry {
   date: string;
   programId: string | null;
   sessionId: string | null;
+  subProgramId: string | null;
+  subSessionId: string | null;
   sessionLabel: string;
   exercises: LoggedExercise[];
   cardio: LoggedCardioSession[];

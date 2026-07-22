@@ -20,6 +20,7 @@ interface Program {
   sessions: ProgramSession[];
   isBuiltIn: boolean;
   createdAt: string;
+  type: "main" | "sub";
 }
 
 export type { Program, ProgramExercisePrescription, ProgramSession };
