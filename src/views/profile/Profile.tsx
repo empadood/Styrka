@@ -1,6 +1,7 @@
 import "./Profile.scss";
 
 import { Card, Heading, Span, Stack } from "../../components";
+import { DangerZoneSection } from "../../components/profile/DangerZoneSection";
 import { DriveSyncSection } from "../../components/profile/DriveSyncSection";
 import { IncrementsSection } from "../../components/profile/IncrementsSection";
 import { OneRepMaxSection } from "../../components/profile/OneRepMaxSection";
@@ -13,6 +14,7 @@ type Props = {
   estimatedOneRepMax: Record<TrackedLiftId, number> | null;
   workingWeights: Record<TrackedLiftId, number>;
   onOverrideWeight: (exercise: TrackedLiftId, weight: number) => void;
+  onClearHistory: () => void;
   drive: DriveSyncState;
 };
 
@@ -21,6 +23,7 @@ export const Profile = ({
   estimatedOneRepMax,
   workingWeights,
   onOverrideWeight,
+  onClearHistory,
   drive,
 }: Props) => (
   <Stack gap="lg" className="profile__container">
@@ -35,5 +38,6 @@ export const Profile = ({
         size="small"
       />
     </Card>
+    <DangerZoneSection onClearHistory={onClearHistory} />
   </Stack>
 );

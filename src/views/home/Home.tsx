@@ -19,7 +19,7 @@ import { Dialog } from "../../components/dialog/Dialog";
 import { PreviousSession } from "../../components/session/PreviousSession";
 import { Summary } from "../../components/session/Summary";
 import { UpcomingSession } from "../../components/session/UpcomingSession";
-import type { WorkoutStore } from "../../data/storage";
+import { DEFAULT_STORE, type WorkoutStore } from "../../data/storage";
 import { wasTrainedRecently } from "../../helpers/progression.helper";
 import { type TrainingStatus } from "../../helpers/status.helper";
 import type { ActiveWorkoutState } from "../../hooks/useActiveWorkout";
@@ -127,6 +127,7 @@ export const Home = ({ store, update, workout, drive }: Props) => {
           estimatedOneRepMax={store.estimatedOneRepMax}
           workingWeights={store.workingWeights}
           onOverrideWeight={dashboard.handleOverrideWorkingWeight}
+          onClearHistory={() => update(() => DEFAULT_STORE)}
           drive={drive}
         />
       </Dialog>
