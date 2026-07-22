@@ -11,8 +11,7 @@ import { WorkoutSession } from "../workoutsession/Session";
 
 type Stage = "workout" | "onerepmax" | "summary";
 
-const DIALOG_TITLES: Record<Stage, string> = {
-  workout: "Workout",
+const DIALOG_TITLES: Record<Exclude<Stage, "workout">, string> = {
   onerepmax: "Estimated 1RM",
   summary: "Workout Summary",
 };
@@ -28,9 +27,15 @@ export const ActiveWorkoutOverlay = ({ store, workout, drive }: Props) => {
     return null;
   }
 
+  const sessionLabel = store.activeWorkout?.sessionLabel;
+  const workoutTitle = [sessionLabel].filter(Boolean).join(" · ");
+
+  const title =
+    workout.stage === "workout" ? workoutTitle : DIALOG_TITLES[workout.stage];
+
   return (
     <Dialog
-      title={DIALOG_TITLES[workout.stage as Stage]}
+      title={title}
       isOpen={workout.workoutOpen}
       onClose={workout.minimizeWorkout}
       actionLabel="Minimize"
@@ -44,7 +49,6 @@ export const ActiveWorkoutOverlay = ({ store, workout, drive }: Props) => {
     >
       {workout.stage === "workout" && (
         <WorkoutSession
-          sessionLabel={store.activeWorkout?.sessionLabel ?? ""}
           exercises={store.activeWorkout?.exercises ?? []}
           cardio={store.activeWorkout?.cardio ?? []}
           catalog={workout.catalog}

@@ -8,7 +8,6 @@ import {
   Button,
   Dialog,
   Expandable,
-  Heading,
   PlateBreakdown,
   Stack,
 } from "../../components";
@@ -29,7 +28,6 @@ import {
 } from "../../types";
 
 type Props = {
-  sessionLabel: string;
   exercises: LoggedExercise[];
   cardio: LoggedCardioSession[];
   catalog: ExerciseCatalogEntry[];
@@ -40,7 +38,6 @@ type Props = {
 };
 
 export const WorkoutSession = ({
-  sessionLabel,
   exercises,
   cardio,
   catalog,
@@ -144,10 +141,6 @@ export const WorkoutSession = ({
 
   return (
     <Stack gap="lg" className="session__container">
-      <div className="session__intro">
-        <span>{sessionLabel}</span>
-        <Heading text="Today's workout" level="2" />
-      </div>
       {exercises.map((exercise, exerciseIndex) => (
         <Fragment key={exerciseIndex}>
           {exerciseIndex === subProgramStartIndex && (
