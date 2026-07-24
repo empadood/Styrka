@@ -5,6 +5,7 @@ interface ProgramExercisePrescription {
   label: string;
   sets: number;
   reps: number;
+  showWeightIndicator: boolean;
 }
 
 interface ProgramSession {

@@ -17,6 +17,7 @@ type Props = {
     customName?: string;
     sets: number;
     reps: number;
+    showWeightIndicator: boolean;
   }) => void;
 };
 

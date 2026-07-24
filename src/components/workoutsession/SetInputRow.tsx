@@ -13,6 +13,7 @@ type Props = {
   onWeightChange: (value: number) => void;
   onShowPlates: (weight: number) => void;
   variant?: "default" | "warmup";
+  showWeightIndicator?: boolean;
 };
 
 export const SetInputRow = ({
@@ -24,6 +25,7 @@ export const SetInputRow = ({
   onWeightChange,
   onShowPlates,
   variant = "default",
+  showWeightIndicator = true,
 }: Props) => {
   const { unit, label: unitLabel, toDisplay, toStorage } = useWeightUnit();
 
@@ -49,11 +51,13 @@ export const SetInputRow = ({
               value={toDisplay(weight)}
               onChange={(value) => onWeightChange(toStorage(value))}
             />
-            <PlateIndicator
-              weight={weight}
-              ariaLabel={`Show plates for ${toDisplay(weight)} ${unitLabel}`}
-              onClick={() => onShowPlates(weight)}
-            />
+            {showWeightIndicator && (
+              <PlateIndicator
+                weight={weight}
+                ariaLabel={`Show plates for ${toDisplay(weight)} ${unitLabel}`}
+                onClick={() => onShowPlates(weight)}
+              />
+            )}
           </Row>
         </div>
       </div>

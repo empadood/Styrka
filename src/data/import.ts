@@ -83,14 +83,17 @@ const parseWorkoutHistoryCsv = (records: Record<string, string>[]): WorkoutHisto
             weight: Number(row.weight),
           }));
 
+        const tracked = toBool(exFirst.tracked);
         return {
           exerciseId: exFirst.exerciseId,
           label: exFirst.exerciseLabel,
-          tracked: toBool(exFirst.tracked),
+          tracked,
           isAdHoc: toBool(exFirst.isAdHoc),
           sets,
           completed: toBool(exFirst.exerciseCompleted),
           weightUsed: Number(exFirst.weightUsed),
+          showWeightIndicator:
+            exFirst.showWeightIndicator !== undefined ? toBool(exFirst.showWeightIndicator) : tracked,
           sourceLabel: toOptionalString(exFirst.sourceLabel),
         };
       });

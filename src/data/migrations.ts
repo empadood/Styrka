@@ -75,7 +75,10 @@ const migrateLegacyLoggedExercise = (
   raw: Record<string, unknown>,
 ): LoggedExercise => {
   if (raw.exerciseId !== undefined) {
-    return raw as unknown as LoggedExercise;
+    return {
+      ...raw,
+      showWeightIndicator: (raw.showWeightIndicator as boolean | undefined) ?? Boolean(raw.tracked),
+    } as unknown as LoggedExercise;
   }
 
   const legacyName = raw.name as string;
@@ -87,6 +90,7 @@ const migrateLegacyLoggedExercise = (
     sets: raw.sets as LoggedExercise["sets"],
     completed: raw.completed as boolean,
     weightUsed: raw.weightUsed as number,
+    showWeightIndicator: true,
   };
 };
 

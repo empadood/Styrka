@@ -6,6 +6,14 @@
   font-weight: 500;
 }
 
+.session__exercise-header .button--icon svg {
+  transition: transform 150ms ease;
+}
+
+.session__exercise-header .button[aria-expanded="true"] svg {
+  transform: rotate(180deg);
+}
+
 .session__divider {
   display: flex;
   align-items: center;

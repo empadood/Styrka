@@ -16,6 +16,7 @@ type SubmitInput = {
   sets: number;
   reps: number;
   startingWeight?: number;
+  showWeightIndicator: boolean;
 };
 
 type Props = {
@@ -37,9 +38,24 @@ export const AddExerciseForm = ({
   const [sets, setSets] = useState(3);
   const [reps, setReps] = useState(8);
   const [startingWeight, setStartingWeight] = useState(0);
+  const [showWeightIndicator, setShowWeightIndicator] = useState(
+    catalog[0]?.tracked ?? false,
+  );
 
   const trackedLifts = catalog.filter((entry) => entry.tracked);
   const accessories = catalog.filter((entry) => !entry.tracked);
+
+  const handleSelectExercise = (id: ExerciseId) => {
+    setSelectedId(id);
+    setShowWeightIndicator(catalog.find((entry) => entry.id === id)?.tracked ?? false);
+  };
+
+  const handleModeChange = (nextMode: "catalog" | "custom") => {
+    setMode(nextMode);
+    setShowWeightIndicator(
+      nextMode === "catalog" ? (catalog.find((entry) => entry.id === selectedId)?.tracked ?? false) : false,
+    );
+  };
 
   const handleSubmit = () => {
     if (mode === "custom" && !customName.trim()) {
@@ -52,6 +68,7 @@ export const AddExerciseForm = ({
       sets,
       reps,
       startingWeight: showStartingWeight ? startingWeight : undefined,
+      showWeightIndicator,
     });
 
     setCustomName("");
@@ -66,12 +83,12 @@ export const AddExerciseForm = ({
         <Button
           label="Pick from catalog"
           variant={mode === "catalog" ? "primary" : "secondary"}
-          onClick={() => setMode("catalog")}
+          onClick={() => handleModeChange("catalog")}
         />
         <Button
           label="Custom exercise"
           variant={mode === "custom" ? "primary" : "secondary"}
-          onClick={() => setMode("custom")}
+          onClick={() => handleModeChange("custom")}
         />
       </Row>
 
@@ -81,7 +98,7 @@ export const AddExerciseForm = ({
           <select
             className="add-exercise-form__select"
             value={selectedId}
-            onChange={(e) => setSelectedId(e.target.value)}
+            onChange={(e) => handleSelectExercise(e.target.value)}
           >
             {trackedLifts.length > 0 && (
               <optgroup label="Tracked lifts">
@@ -135,6 +152,15 @@ export const AddExerciseForm = ({
           </label>
         )}
       </Row>
+
+      <label className="add-exercise-form__checkbox">
+        <input
+          type="checkbox"
+          checked={showWeightIndicator}
+          onChange={(e) => setShowWeightIndicator(e.target.checked)}
+        />
+        <Span text="Show weight indicator" size="small" />
+      </label>
 
       <Button label={submitLabel} onClick={handleSubmit} />
     </Stack>

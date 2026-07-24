@@ -16,6 +16,13 @@
   gap: var(--space-1);
 }
 
+.add-exercise-form__checkbox {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  cursor: pointer;
+}
+
 .add-exercise-form__select {
   width: 100%;
   color: var(--text);

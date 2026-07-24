@@ -119,6 +119,7 @@ export const WorkoutSession = ({
     sets: number;
     reps: number;
     startingWeight?: number;
+    showWeightIndicator: boolean;
   }) => {
     const entry = resolveExerciseSelection(catalog, input, onRegisterCustomExercise);
 
@@ -135,6 +136,7 @@ export const WorkoutSession = ({
         input.sets,
         input.reps,
         input.startingWeight ?? 0,
+        input.showWeightIndicator,
       ),
     ]);
   };
@@ -162,6 +164,11 @@ export const WorkoutSession = ({
           />
         </Fragment>
       ))}
+      {cardio.length > 0 && (
+        <div className="session__divider">
+          <span className="session__divider-label">Cardio</span>
+        </div>
+      )}
       {cardio.map((entry) => (
         <CardioEntryCard
           key={entry.id}

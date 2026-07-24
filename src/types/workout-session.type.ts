@@ -15,6 +15,7 @@ interface LoggedExercise {
   sets: LoggedSet[];
   completed: boolean;
   weightUsed: number;
+  showWeightIndicator: boolean;
   sourceLabel?: string;
 }
 

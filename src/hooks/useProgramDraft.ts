@@ -75,7 +75,13 @@ export const useProgramDraft = (
 
   const addExerciseToSession = (
     sessionId: string,
-    input: { exerciseId?: string; customName?: string; sets: number; reps: number },
+    input: {
+      exerciseId?: string;
+      customName?: string;
+      sets: number;
+      reps: number;
+      showWeightIndicator: boolean;
+    },
   ) => {
     const entry = resolveExerciseSelection(catalog, input, (registered) =>
       update((prev) => ({
@@ -93,6 +99,7 @@ export const useProgramDraft = (
       label: entry.label,
       sets: input.sets,
       reps: input.reps,
+      showWeightIndicator: input.showWeightIndicator,
     };
 
     setDraft((prev) => ({

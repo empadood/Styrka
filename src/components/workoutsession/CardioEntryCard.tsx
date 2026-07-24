@@ -1,5 +1,7 @@
-import { Pause, Play, Square, Trash2 } from "lucide-react";
+import { ChevronDown, Pause, Play, Square, Trash2 } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
 
+import { getElapsedSeconds } from "../../helpers/cardio.helper";
 import type { LoggedCardioSession } from "../../types";
 import { Button } from "../button/Button";
 import { CardioTimerDisplay } from "../cardiotimer/CardioTimerDisplay";
@@ -26,50 +28,83 @@ export const CardioEntryCard = ({
   onSave,
   onKcalChange,
   onRemove,
-}: Props) => (
-  <section className="session__exercise session__cardio">
-    <Row justify="between" className="session__exercise-header">
-      <Heading text={entry.label} level="3" />
-      <Button
-        icon={Trash2}
-        variant="danger"
-        size="icon"
-        ariaLabel={`Remove ${entry.label}`}
-        onClick={onRemove}
-      />
-    </Row>
-    <div className="session__cardio-timer-block">
-      <CardioTimerDisplay entry={entry} />
-      {!entry.isFinished && (
-        <Row gap="sm" justify="start" align="center" className="session__cardio-buttons">
+}: Props) => {
+  const [open, setOpen] = useState(!entry.isSaved);
+  const wasSaved = useRef(entry.isSaved);
+
+  useEffect(() => {
+    if (entry.isSaved && !wasSaved.current) {
+      setOpen(false);
+    }
+    wasSaved.current = entry.isSaved;
+  }, [entry.isSaved]);
+
+  const minutes = Math.round(getElapsedSeconds(entry, Date.now()) / 60);
+
+  return (
+    <section className="session__exercise session__cardio">
+      <Row justify="between" className="session__exercise-header">
+        <Row gap="sm" align="center">
+          <Heading text={entry.label} level="3" />
+          {!open && (
+            <Span text={`${minutes} min | ${entry.kcal} kcal`} size="small" tone="secondary" />
+          )}
+        </Row>
+        <Row gap="sm" align="center">
           <Button
-            icon={entry.isRunning ? Pause : Play}
-            variant={entry.isRunning ? "secondary" : "primary"}
+            icon={Trash2}
+            variant="danger"
             size="icon"
-            ariaLabel={entry.isRunning ? `Pause ${entry.label}` : `Start ${entry.label}`}
-            onClick={entry.isRunning ? onPause : onStart}
+            ariaLabel={`Remove ${entry.label}`}
+            onClick={onRemove}
           />
           <Button
-            icon={Square}
+            icon={ChevronDown}
             variant="secondary"
             size="icon"
-            ariaLabel={`Stop ${entry.label}`}
-            onClick={onStop}
+            ariaLabel={open ? `Collapse ${entry.label}` : `Expand ${entry.label}`}
+            ariaExpanded={open}
+            onClick={() => setOpen((value) => !value)}
           />
         </Row>
-      )}
-      {entry.isFinished && !entry.isSaved && (
-        <Row gap="md" justify="start" align="end" className="session__cardio-controls">
-          <div className="session__input-group">
-            <div className="session__input-label">
-              <Span text="Kcal burned" size="small" />
-            </div>
-            <Input size="medium" value={entry.kcal} onChange={onKcalChange} />
+      </Row>
+      {open && (
+        <>
+          <div className="session__cardio-timer-block">
+            <CardioTimerDisplay entry={entry} />
+            {!entry.isFinished && (
+              <Row gap="sm" justify="start" align="center" className="session__cardio-buttons">
+                <Button
+                  icon={entry.isRunning ? Pause : Play}
+                  variant={entry.isRunning ? "secondary" : "primary"}
+                  size="icon"
+                  ariaLabel={entry.isRunning ? `Pause ${entry.label}` : `Start ${entry.label}`}
+                  onClick={entry.isRunning ? onPause : onStart}
+                />
+                <Button
+                  icon={Square}
+                  variant="secondary"
+                  size="icon"
+                  ariaLabel={`Stop ${entry.label}`}
+                  onClick={onStop}
+                />
+              </Row>
+            )}
+            {entry.isFinished && !entry.isSaved && (
+              <Row gap="md" justify="start" align="end" className="session__cardio-controls">
+                <div className="session__input-group">
+                  <div className="session__input-label">
+                    <Span text="Kcal burned" size="small" />
+                  </div>
+                  <Input size="medium" value={entry.kcal} onChange={onKcalChange} />
+                </div>
+                <Button label="Save" onClick={onSave} />
+              </Row>
+            )}
           </div>
-          <Button label="Save" onClick={onSave} />
-        </Row>
+          {entry.isSaved && <Span text={`${entry.kcal} kcal burned`} size="small" />}
+        </>
       )}
-    </div>
-    {entry.isSaved && <Span text={`${entry.kcal} kcal burned`} size="small" />}
-  </section>
-);
+    </section>
+  );
+};
