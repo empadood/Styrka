@@ -156,23 +156,25 @@ export const AddExerciseForm = ({
         )}
       </Row>
 
-      <label className="add-exercise-form__checkbox">
-        <input
-          type="checkbox"
-          checked={showWeightIndicator}
-          onChange={(e) => setShowWeightIndicator(e.target.checked)}
-        />
-        <Span text="Show weight indicator" size="small" />
-      </label>
+      <Row gap="sm" justify="start" className="add-exercise-form__checkboxes">
+        <label className="add-exercise-form__checkbox">
+          <input
+            type="checkbox"
+            checked={showWeightIndicator}
+            onChange={(e) => setShowWeightIndicator(e.target.checked)}
+          />
+          <Span text="Show weight indicator" size="small" />
+        </label>
 
-      <label className="add-exercise-form__checkbox">
-        <input
-          type="checkbox"
-          checked={showWarmupSets}
-          onChange={(e) => setShowWarmupSets(e.target.checked)}
-        />
-        <Span text="Show warm-up sets" size="small" />
-      </label>
+        <label className="add-exercise-form__checkbox">
+          <input
+            type="checkbox"
+            checked={showWarmupSets}
+            onChange={(e) => setShowWarmupSets(e.target.checked)}
+          />
+          <Span text="Show warm-up sets" size="small" />
+        </label>
+      </Row>
 
       <Button label={submitLabel} onClick={handleSubmit} />
     </Stack>

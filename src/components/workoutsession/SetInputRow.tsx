@@ -11,6 +11,7 @@ type Props = {
   weight: number;
   onRepsChange: (value: number) => void;
   onWeightChange: (value: number) => void;
+  onRepsBlur?: () => void;
   onShowPlates: (weight: number) => void;
   variant?: "default" | "warmup";
   showWeightIndicator?: boolean;
@@ -24,6 +25,7 @@ export const SetInputRow = ({
   weight,
   onRepsChange,
   onWeightChange,
+  onRepsBlur,
   onShowPlates,
   variant = "default",
   showWeightIndicator = true,
@@ -42,7 +44,7 @@ export const SetInputRow = ({
           <div className="session__input-label">
             <Span text={targetRepsLabel} size="small" />
           </div>
-          <Input value={reps} size="medium" onChange={onRepsChange} />
+          <Input value={reps} size="medium" onChange={onRepsChange} onBlur={onRepsBlur} />
         </div>
         <div className="session__input-group">
           <div className="session__input-label">

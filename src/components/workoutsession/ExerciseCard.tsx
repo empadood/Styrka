@@ -1,4 +1,4 @@
-import { ChevronDown, Trash2 } from "lucide-react";
+import { ChevronDown, Plus, Trash2 } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 
 import { isExerciseCompleted } from "../../helpers/progression.helper";
@@ -20,6 +20,7 @@ type Props = {
   onSetChange: (setIndex: number, field: "reps" | "weight", value: number) => void;
   onShowPlates: (weight: number) => void;
   onRemove: () => void;
+  onAddSet: () => void;
 };
 
 export const ExerciseCard = ({
@@ -29,6 +30,7 @@ export const ExerciseCard = ({
   onSetChange,
   onShowPlates,
   onRemove,
+  onAddSet,
 }: Props) => {
   const completed = isExerciseCompleted(exercise.sets);
   const [open, setOpen] = useState(!completed);
@@ -41,6 +43,49 @@ export const ExerciseCard = ({
     wasCompleted.current = completed;
   }, [completed]);
 
+  const [hiddenWarmupIndices, setHiddenWarmupIndices] = useState<Set<number>>(() => {
+    const initial = new Set<number>();
+    generateWarmupSets(exercise.weightUsed).forEach((warmupSet, warmupIndex) => {
+      if (getWarmupEntry(warmupIndex, warmupSet.weight).reps > 0) {
+        initial.add(warmupIndex);
+      }
+    });
+    return initial;
+  });
+
+  const setsContainerRef = useRef<HTMLDivElement>(null);
+  const pendingFocusIndexRef = useRef<number | null>(null);
+
+  useEffect(() => {
+    if (pendingFocusIndexRef.current === null) {
+      return;
+    }
+    const index = pendingFocusIndexRef.current;
+    pendingFocusIndexRef.current = null;
+    const container = setsContainerRef.current;
+    if (!container) {
+      return;
+    }
+    const inputs = container.querySelectorAll<HTMLElement>("input");
+    const target = inputs[index] ?? Array.from(container.querySelectorAll<HTMLElement>("button")).pop();
+    target?.focus();
+  });
+
+  const handleWarmupRepsBlur = (warmupIndex: number, position: number, reps: number) => {
+    setHiddenWarmupIndices((prev) => {
+      const next = new Set(prev);
+      if (reps > 0) {
+        next.add(warmupIndex);
+      } else {
+        next.delete(warmupIndex);
+      }
+      return next;
+    });
+    if (reps > 0) {
+      pendingFocusIndexRef.current = position * 2;
+    }
+  };
+
   const visibleWarmups = exercise.showWarmupSets
     ? generateWarmupSets(exercise.weightUsed)
         .map((warmupSet, warmupIndex) => ({
@@ -48,7 +93,7 @@ export const ExerciseCard = ({
           warmupIndex,
           entry: getWarmupEntry(warmupIndex, warmupSet.weight),
         }))
-        .filter(({ entry }) => entry.reps <= 0)
+        .filter(({ warmupIndex }) => !hiddenWarmupIndices.has(warmupIndex))
     : [];
 
   return (
@@ -81,8 +126,8 @@ export const ExerciseCard = ({
         </Row>
       </Row>
       {open && (
-        <div className="session__sets">
-          {visibleWarmups.map(({ warmupSet, warmupIndex, entry }) => (
+        <div className="session__sets" ref={setsContainerRef}>
+          {visibleWarmups.map(({ warmupSet, warmupIndex, entry }, position) => (
             <SetInputRow
               key={`warmup-${warmupIndex}`}
               variant="warmup"
@@ -91,6 +136,7 @@ export const ExerciseCard = ({
               reps={entry.reps}
               weight={entry.weight}
               onRepsChange={(value) => onWarmupChange(warmupIndex, "reps", value, warmupSet.weight)}
+              onRepsBlur={() => handleWarmupRepsBlur(warmupIndex, position, entry.reps)}
               onWeightChange={(value) => onWarmupChange(warmupIndex, "weight", value, warmupSet.weight)}
               onShowPlates={onShowPlates}
               showWeightIndicator={exercise.showWeightIndicator}
@@ -111,6 +157,13 @@ export const ExerciseCard = ({
               applyRounding={!exercise.isAdHoc}
             />
           ))}
+          <Button
+            icon={Plus}
+            variant="secondary"
+            label="Add set"
+            ariaLabel={`Add set to ${exercise.label}`}
+            onClick={onAddSet}
+          />
         </div>
       )}
     </section>

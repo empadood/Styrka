@@ -1,4 +1,4 @@
-import { Check, Minimize2 } from "lucide-react";
+import { Minimize2 } from "lucide-react";
 import { useRef } from "react";
 
 import { Dialog } from "../../components/dialog/Dialog";
@@ -40,14 +40,10 @@ export const ActiveWorkoutOverlay = ({ store, workout, drive }: Props) => {
     workout.stage === "workout"
       ? {
           actionLabel: "Finish workout",
-          actionAriaLabel: "Finish workout",
-          actionIcon: Check,
           onAction: () => finishTriggerRef.current(),
         }
       : {
           actionLabel: "Minimize",
-          actionAriaLabel: "Minimize workout",
-          actionIcon: Minimize2,
           onAction: undefined,
         };
 
@@ -56,9 +52,9 @@ export const ActiveWorkoutOverlay = ({ store, workout, drive }: Props) => {
       title={title}
       isOpen={workout.workoutOpen}
       onClose={workout.minimizeWorkout}
+      closeIcon={Minimize2}
+      closeAriaLabel="Minimize workout"
       actionLabel={action.actionLabel}
-      actionAriaLabel={action.actionAriaLabel}
-      actionIcon={action.actionIcon}
       onAction={action.onAction}
       destructiveAction={{
         label: "Discard workout",

@@ -91,6 +91,28 @@ export const WorkoutSession = ({
     );
   };
 
+  const handleAddSet = (exerciseIndex: number) => {
+    onExercisesChange(
+      exercises.map((exercise, index) => {
+        if (index !== exerciseIndex) {
+          return exercise;
+        }
+        const lastSet = exercise.sets[exercise.sets.length - 1];
+        return {
+          ...exercise,
+          sets: [
+            ...exercise.sets,
+            {
+              targetReps: lastSet?.targetReps ?? 0,
+              reps: 0,
+              weight: lastSet?.weight ?? exercise.weightUsed,
+            },
+          ],
+        };
+      }),
+    );
+  };
+
   const handleFinish = () => {
     onFinish({
       exercises: exercises.map((exercise) => ({
@@ -170,6 +192,7 @@ export const WorkoutSession = ({
             onSetChange={(setIndex, field, value) => updateSet(exerciseIndex, setIndex, field, value)}
             onShowPlates={setPlateDialogWeight}
             onRemove={() => handleRemoveExercise(exerciseIndex)}
+            onAddSet={() => handleAddSet(exerciseIndex)}
           />
         </Fragment>
       ))}
@@ -190,17 +213,22 @@ export const WorkoutSession = ({
           onRemove={() => cardioTimer.remove(entry.id)}
         />
       ))}
-      <Expandable icon={Plus} label="Add cardio">
-        <AddCardioForm onSubmit={handleAddCardio} />
-      </Expandable>
-      <Expandable icon={Plus} label="Add exercise">
-        <AddExerciseForm
-          catalog={catalog}
-          onSubmit={handleAddExercise}
-          showStartingWeight
-          submitLabel="Add exercise to this workout"
-        />
-      </Expandable>
+      <div className="session__divider">
+        <span className="session__divider-label">Add to workout</span>
+      </div>
+      <Stack gap="sm" className="session__add-section">
+        <Expandable icon={Plus} label="Add cardio">
+          <AddCardioForm onSubmit={handleAddCardio} />
+        </Expandable>
+        <Expandable icon={Plus} label="Add exercise">
+          <AddExerciseForm
+            catalog={catalog}
+            onSubmit={handleAddExercise}
+            showStartingWeight
+            submitLabel="Add exercise to this workout"
+          />
+        </Expandable>
+      </Stack>
       <Dialog
         isOpen={plateDialogWeight !== null}
         onClose={() => setPlateDialogWeight(null)}

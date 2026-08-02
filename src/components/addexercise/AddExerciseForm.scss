@@ -23,6 +23,10 @@
   cursor: pointer;
 }
 
+.add-exercise-form__checkboxes {
+  flex-wrap: wrap;
+}
+
 .add-exercise-form__select {
   width: 100%;
   color: var(--text);

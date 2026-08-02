@@ -6,11 +6,12 @@ type Props = {
   value: number;
   onChange: (val: number) => void;
   size?: "small" | "medium" | "large";
+  onBlur?: () => void;
 };
 
 const parseNumber = (raw: string): number => parseFloat(raw.replace(",", "."));
 
-export const Input = ({ value, onChange, size = "medium" }: Props) => {
+export const Input = ({ value, onChange, size = "medium", onBlur: onBlurProp }: Props) => {
   const [text, setText] = useState(String(value));
   const lastEmitted = useRef(value);
   const isFocused = useRef(false);
@@ -43,6 +44,7 @@ export const Input = ({ value, onChange, size = "medium" }: Props) => {
     isFocused.current = false;
     lastEmitted.current = value;
     setText(String(value));
+    onBlurProp?.();
   };
 
   const onFocus = (e: React.FocusEvent<HTMLInputElement>) => {

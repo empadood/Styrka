@@ -12,9 +12,9 @@ type Props = {
   isOpen: boolean;
   title: string;
   children: ReactNode;
+  closeIcon?: LucideIcon;
+  closeAriaLabel?: string;
   actionLabel?: string;
-  actionAriaLabel?: string;
-  actionIcon?: LucideIcon;
   onAction?: () => void;
   destructiveAction?: {
     label: string;
@@ -27,9 +27,9 @@ export const Dialog = ({
   children,
   title,
   isOpen,
+  closeIcon = X,
+  closeAriaLabel = "Close dialog",
   actionLabel = "Close",
-  actionAriaLabel = "Close dialog",
-  actionIcon = X,
   onAction,
   destructiveAction,
 }: Props) => {
@@ -72,11 +72,11 @@ export const Dialog = ({
         <Row justify="between" className="dialog__toolbar">
           <Heading text={title} level="2" />
           <Button
-            onClick={onAction ?? (() => dialoRef.current?.close())}
-            icon={actionIcon}
+            onClick={() => dialoRef.current?.close()}
+            icon={closeIcon}
             size="icon"
             variant="secondary"
-            ariaLabel={actionAriaLabel}
+            ariaLabel={closeAriaLabel}
           />
         </Row>
         <div className="dialog__rendered-content ">{children}</div>
