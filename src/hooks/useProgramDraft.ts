@@ -81,6 +81,7 @@ export const useProgramDraft = (
       sets: number;
       reps: number;
       showWeightIndicator: boolean;
+      showWarmupSets: boolean;
     },
   ) => {
     const entry = resolveExerciseSelection(catalog, input, (registered) =>
@@ -100,6 +101,7 @@ export const useProgramDraft = (
       sets: input.sets,
       reps: input.reps,
       showWeightIndicator: input.showWeightIndicator,
+      showWarmupSets: input.showWarmupSets,
     };
 
     setDraft((prev) => ({

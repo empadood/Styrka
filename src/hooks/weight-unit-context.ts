@@ -1,12 +1,12 @@
 import { createContext } from "react";
 
-import type { WeightUnit } from "../helpers/weight-unit.helper";
+import type { RoundingStep, WeightUnit } from "../helpers/weight-unit.helper";
 
 type WeightUnitContextValue = {
   unit: WeightUnit;
   label: string;
-  toDisplay: (kg: number) => number;
-  toStorage: (value: number) => number;
+  toDisplay: (kg: number, step?: RoundingStep | null) => number;
+  toStorage: (value: number, step?: RoundingStep | null) => number;
   format: (kg: number) => string;
 };
 

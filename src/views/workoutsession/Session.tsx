@@ -1,11 +1,10 @@
 import "./Session.scss";
 
 import { Plus } from "lucide-react";
-import { Fragment, useState } from "react";
+import { Fragment, type MutableRefObject, useEffect, useState } from "react";
 
 import {
   AddCardioForm,
-  Button,
   Dialog,
   Expandable,
   PlateBreakdown,
@@ -35,6 +34,7 @@ type Props = {
   onCardioChange: (cardio: LoggedCardioSession[]) => void;
   onRegisterCustomExercise: (entry: ExerciseCatalogEntry) => void;
   onFinish: (result: { exercises: LoggedExercise[]; cardio: LoggedCardioSession[] }) => void;
+  finishTriggerRef?: MutableRefObject<() => void>;
 };
 
 export const WorkoutSession = ({
@@ -45,6 +45,7 @@ export const WorkoutSession = ({
   onCardioChange,
   onRegisterCustomExercise,
   onFinish,
+  finishTriggerRef,
 }: Props) => {
   const [plateDialogWeight, setPlateDialogWeight] = useState<number | null>(null);
   const warmupEntries = useWarmupEntries();
@@ -109,6 +110,12 @@ export const WorkoutSession = ({
     });
   };
 
+  useEffect(() => {
+    if (finishTriggerRef) {
+      finishTriggerRef.current = handleFinish;
+    }
+  });
+
   const handleRemoveExercise = (exerciseIndex: number) => {
     onExercisesChange(exercises.filter((_, index) => index !== exerciseIndex));
   };
@@ -120,6 +127,7 @@ export const WorkoutSession = ({
     reps: number;
     startingWeight?: number;
     showWeightIndicator: boolean;
+    showWarmupSets: boolean;
   }) => {
     const entry = resolveExerciseSelection(catalog, input, onRegisterCustomExercise);
 
@@ -137,6 +145,7 @@ export const WorkoutSession = ({
         input.reps,
         input.startingWeight ?? 0,
         input.showWeightIndicator,
+        input.showWarmupSets,
       ),
     ]);
   };
@@ -192,7 +201,6 @@ export const WorkoutSession = ({
           submitLabel="Add exercise to this workout"
         />
       </Expandable>
-      <Button label="Finish workout" onClick={handleFinish} />
       <Dialog
         isOpen={plateDialogWeight !== null}
         onClose={() => setPlateDialogWeight(null)}

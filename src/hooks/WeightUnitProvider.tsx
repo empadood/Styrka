@@ -21,8 +21,8 @@ export const WeightUnitProvider = ({ unit, roundingStep, children }: ProviderPro
     () => ({
       unit,
       label: getWeightUnitLabel(unit),
-      toDisplay: (kg: number) => toDisplayWeight(kg, unit, roundingStep),
-      toStorage: (value: number) => toStorageWeight(value, unit, roundingStep),
+      toDisplay: (kg: number, step) => toDisplayWeight(kg, unit, step === undefined ? roundingStep : step),
+      toStorage: (value: number, step) => toStorageWeight(value, unit, step === undefined ? roundingStep : step),
       format: (kg: number) => formatWeight(kg, unit, roundingStep),
     }),
     [unit, roundingStep],

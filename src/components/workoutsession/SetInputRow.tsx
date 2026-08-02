@@ -14,6 +14,7 @@ type Props = {
   onShowPlates: (weight: number) => void;
   variant?: "default" | "warmup";
   showWeightIndicator?: boolean;
+  applyRounding?: boolean;
 };
 
 export const SetInputRow = ({
@@ -26,8 +27,10 @@ export const SetInputRow = ({
   onShowPlates,
   variant = "default",
   showWeightIndicator = true,
+  applyRounding = true,
 }: Props) => {
   const { unit, label: unitLabel, toDisplay, toStorage } = useWeightUnit();
+  const step = applyRounding ? undefined : null;
 
   return (
     <div
@@ -48,13 +51,13 @@ export const SetInputRow = ({
           <Row gap="sm" align="center">
             <Input
               size="medium"
-              value={toDisplay(weight)}
-              onChange={(value) => onWeightChange(toStorage(value))}
+              value={toDisplay(weight, step)}
+              onChange={(value) => onWeightChange(toStorage(value, step))}
             />
             {showWeightIndicator && (
               <PlateIndicator
                 weight={weight}
-                ariaLabel={`Show plates for ${toDisplay(weight)} ${unitLabel}`}
+                ariaLabel={`Show plates for ${toDisplay(weight, step)} ${unitLabel}`}
                 onClick={() => onShowPlates(weight)}
               />
             )}

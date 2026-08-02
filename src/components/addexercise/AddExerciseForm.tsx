@@ -17,6 +17,7 @@ type SubmitInput = {
   reps: number;
   startingWeight?: number;
   showWeightIndicator: boolean;
+  showWarmupSets: boolean;
 };
 
 type Props = {
@@ -41,6 +42,7 @@ export const AddExerciseForm = ({
   const [showWeightIndicator, setShowWeightIndicator] = useState(
     catalog[0]?.tracked ?? false,
   );
+  const [showWarmupSets, setShowWarmupSets] = useState(true);
 
   const trackedLifts = catalog.filter((entry) => entry.tracked);
   const accessories = catalog.filter((entry) => !entry.tracked);
@@ -69,6 +71,7 @@ export const AddExerciseForm = ({
       reps,
       startingWeight: showStartingWeight ? startingWeight : undefined,
       showWeightIndicator,
+      showWarmupSets,
     });
 
     setCustomName("");
@@ -160,6 +163,15 @@ export const AddExerciseForm = ({
           onChange={(e) => setShowWeightIndicator(e.target.checked)}
         />
         <Span text="Show weight indicator" size="small" />
+      </label>
+
+      <label className="add-exercise-form__checkbox">
+        <input
+          type="checkbox"
+          checked={showWarmupSets}
+          onChange={(e) => setShowWarmupSets(e.target.checked)}
+        />
+        <Span text="Show warm-up sets" size="small" />
       </label>
 
       <Button label={submitLabel} onClick={handleSubmit} />

@@ -6,6 +6,7 @@ interface ProgramExercisePrescription {
   sets: number;
   reps: number;
   showWeightIndicator: boolean;
+  showWarmupSets: boolean;
 }
 
 interface ProgramSession {

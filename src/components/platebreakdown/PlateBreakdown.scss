@@ -1,7 +1,8 @@
 .plate-visual {
   display: flex;
   align-items: center;
-  gap: 0.1875rem;
+  justify-content: center;
+  gap: 0.25rem;
   overflow-x: auto;
   padding: var(--space-2) 0;
 }
@@ -24,15 +25,15 @@
 }
 
 .plate--lg {
-  width: 1.5rem;
-  height: 3.75rem;
-  font-size: 0.6875rem;
+  width: 1.875rem;
+  height: 7.5rem;
+  font-size: 0.875rem;
 }
 
 .plate--sm {
-  width: 1.25rem;
-  height: 2.75rem;
-  font-size: 0.5rem;
+  width: 1.5625rem;
+  height: 4.25rem;
+  font-size: 0.625rem;
   writing-mode: vertical-rl;
 }
 

@@ -15,6 +15,7 @@ type Props = {
   actionLabel?: string;
   actionAriaLabel?: string;
   actionIcon?: LucideIcon;
+  onAction?: () => void;
   destructiveAction?: {
     label: string;
     onClick: () => void;
@@ -29,6 +30,7 @@ export const Dialog = ({
   actionLabel = "Close",
   actionAriaLabel = "Close dialog",
   actionIcon = X,
+  onAction,
   destructiveAction,
 }: Props) => {
   const dialoRef = useRef<HTMLDialogElement>(null);
@@ -70,7 +72,7 @@ export const Dialog = ({
         <Row justify="between" className="dialog__toolbar">
           <Heading text={title} level="2" />
           <Button
-            onClick={() => dialoRef.current?.close()}
+            onClick={onAction ?? (() => dialoRef.current?.close())}
             icon={actionIcon}
             size="icon"
             variant="secondary"
@@ -88,7 +90,7 @@ export const Dialog = ({
             />
           )}
           <Button
-            onClick={() => dialoRef.current?.close()}
+            onClick={onAction ?? (() => dialoRef.current?.close())}
             label={actionLabel}
             variant="secondary"
           />

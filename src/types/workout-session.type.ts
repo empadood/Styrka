@@ -16,6 +16,7 @@ interface LoggedExercise {
   completed: boolean;
   weightUsed: number;
   showWeightIndicator: boolean;
+  showWarmupSets: boolean;
   sourceLabel?: string;
 }
 

@@ -5,6 +5,7 @@
   align-items: last baseline;
   gap: var(--space-3);
   flex-wrap: wrap;
+  justify-content: center;
 
   @include desktop-up {
     max-width: 50%;

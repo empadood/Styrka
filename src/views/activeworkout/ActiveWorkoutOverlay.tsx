@@ -1,4 +1,5 @@
-import { Minimize2 } from "lucide-react";
+import { Check, Minimize2 } from "lucide-react";
+import { useRef } from "react";
 
 import { Dialog } from "../../components/dialog/Dialog";
 import type { WorkoutStore } from "../../data/storage";
@@ -23,6 +24,8 @@ type Props = {
 };
 
 export const ActiveWorkoutOverlay = ({ store, workout, drive }: Props) => {
+  const finishTriggerRef = useRef<() => void>(() => {});
+
   if (!store.hasConfiguredOneRepMax) {
     return null;
   }
@@ -33,14 +36,30 @@ export const ActiveWorkoutOverlay = ({ store, workout, drive }: Props) => {
   const title =
     workout.stage === "workout" ? workoutTitle : DIALOG_TITLES[workout.stage];
 
+  const action =
+    workout.stage === "workout"
+      ? {
+          actionLabel: "Finish workout",
+          actionAriaLabel: "Finish workout",
+          actionIcon: Check,
+          onAction: () => finishTriggerRef.current(),
+        }
+      : {
+          actionLabel: "Minimize",
+          actionAriaLabel: "Minimize workout",
+          actionIcon: Minimize2,
+          onAction: undefined,
+        };
+
   return (
     <Dialog
       title={title}
       isOpen={workout.workoutOpen}
       onClose={workout.minimizeWorkout}
-      actionLabel="Minimize"
-      actionAriaLabel="Minimize workout"
-      actionIcon={Minimize2}
+      actionLabel={action.actionLabel}
+      actionAriaLabel={action.actionAriaLabel}
+      actionIcon={action.actionIcon}
+      onAction={action.onAction}
       destructiveAction={{
         label: "Discard workout",
         onClick: workout.closeWorkout,
@@ -56,6 +75,7 @@ export const ActiveWorkoutOverlay = ({ store, workout, drive }: Props) => {
           onCardioChange={workout.onCardioChange}
           onRegisterCustomExercise={workout.onRegisterCustomExercise}
           onFinish={workout.onFinish}
+          finishTriggerRef={finishTriggerRef}
         />
       )}
       {workout.stage === "onerepmax" && workout.pendingSession && (

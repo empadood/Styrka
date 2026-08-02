@@ -15,13 +15,13 @@ const roundToStep = (value: number, step: RoundingStep): number => Math.round(va
 const kgToLb = (kg: number): number => kg / KG_PER_LB;
 const lbToKg = (lb: number): number => lb * KG_PER_LB;
 
-const toDisplayWeight = (kg: number, unit: WeightUnit, step: RoundingStep): number => {
+const toDisplayWeight = (kg: number, unit: WeightUnit, step: RoundingStep | null): number => {
   const raw = unit === "lbs" ? kgToLb(kg) : kg;
-  return roundToStep(raw, step);
+  return step === null ? roundTo(raw, 2) : roundToStep(raw, step);
 };
 
-const toStorageWeight = (value: number, unit: WeightUnit, step: RoundingStep): number => {
-  const snapped = roundToStep(value, step);
+const toStorageWeight = (value: number, unit: WeightUnit, step: RoundingStep | null): number => {
+  const snapped = step === null ? value : roundToStep(value, step);
   return unit === "lbs" ? roundTo(lbToKg(snapped), 2) : roundTo(snapped, 2);
 };
 

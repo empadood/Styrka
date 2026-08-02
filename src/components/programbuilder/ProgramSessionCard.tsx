@@ -18,6 +18,7 @@ type Props = {
     sets: number;
     reps: number;
     showWeightIndicator: boolean;
+    showWarmupSets: boolean;
   }) => void;
 };
 

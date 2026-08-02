@@ -41,13 +41,15 @@ export const ExerciseCard = ({
     wasCompleted.current = completed;
   }, [completed]);
 
-  const visibleWarmups = generateWarmupSets(exercise.weightUsed)
-    .map((warmupSet, warmupIndex) => ({
-      warmupSet,
-      warmupIndex,
-      entry: getWarmupEntry(warmupIndex, warmupSet.weight),
-    }))
-    .filter(({ entry }) => entry.reps <= 0);
+  const visibleWarmups = exercise.showWarmupSets
+    ? generateWarmupSets(exercise.weightUsed)
+        .map((warmupSet, warmupIndex) => ({
+          warmupSet,
+          warmupIndex,
+          entry: getWarmupEntry(warmupIndex, warmupSet.weight),
+        }))
+        .filter(({ entry }) => entry.reps <= 0)
+    : [];
 
   return (
     <section className="session__exercise">
@@ -92,6 +94,7 @@ export const ExerciseCard = ({
               onWeightChange={(value) => onWarmupChange(warmupIndex, "weight", value, warmupSet.weight)}
               onShowPlates={onShowPlates}
               showWeightIndicator={exercise.showWeightIndicator}
+              applyRounding={!exercise.isAdHoc}
             />
           ))}
           {exercise.sets.map((set, index) => (
@@ -105,6 +108,7 @@ export const ExerciseCard = ({
               onWeightChange={(value) => onSetChange(index, "weight", value)}
               onShowPlates={onShowPlates}
               showWeightIndicator={exercise.showWeightIndicator}
+              applyRounding={!exercise.isAdHoc}
             />
           ))}
         </div>
