@@ -27,6 +27,7 @@ const slugify = (raw: string): string =>
 const resolveCustomExercise = (
   catalog: ExerciseCatalogEntry[],
   rawName: string,
+  isBodyweight = false,
 ): ExerciseCatalogEntry => {
   const trimmed = rawName.trim();
   const existing = catalog.find(
@@ -41,12 +42,14 @@ const resolveCustomExercise = (
     label: trimmed,
     tracked: false,
     custom: true,
+    isBodyweight,
   };
 };
 
 type ExerciseSelectionInput = {
   exerciseId?: ExerciseId;
   customName?: string;
+  isBodyweight?: boolean;
 };
 
 const resolveExerciseSelection = (
@@ -56,7 +59,7 @@ const resolveExerciseSelection = (
 ): ExerciseCatalogEntry | undefined => {
   const entry = input.exerciseId
     ? findCatalogEntry(catalog, input.exerciseId)
-    : resolveCustomExercise(catalog, input.customName ?? "");
+    : resolveCustomExercise(catalog, input.customName ?? "", input.isBodyweight);
 
   if (!entry) {
     return undefined;

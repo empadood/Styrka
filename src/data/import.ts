@@ -96,6 +96,7 @@ const parseWorkoutHistoryCsv = (records: Record<string, string>[]): WorkoutHisto
             exFirst.showWeightIndicator !== undefined ? toBool(exFirst.showWeightIndicator) : tracked,
           showWarmupSets:
             exFirst.showWarmupSets !== undefined ? toBool(exFirst.showWarmupSets) : true,
+          isBodyweight: exFirst.isBodyweight !== undefined ? toBool(exFirst.isBodyweight) : false,
           sourceLabel: toOptionalString(exFirst.sourceLabel),
         };
       });

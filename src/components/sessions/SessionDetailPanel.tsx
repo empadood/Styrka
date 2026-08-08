@@ -6,6 +6,7 @@ import { Row } from "../row/Row";
 import { Stack } from "../stack/Stack";
 import { Heading } from "../text/Heading";
 import { Span } from "../text/Span";
+import { Weight } from "../text/Weight";
 
 type Props = {
   session: WorkoutHistoryEntry;
@@ -39,6 +40,7 @@ export const SessionDetailPanel = ({ session, personalRecords }: Props) => (
           <Row justify="between" className="sessions__exercise-heading">
             <Row gap="sm" align="center">
               <Heading text={exercise.label} level="3" />
+              {exercise.isBodyweight && <Badge size="sm">BW</Badge>}
               {exercise.sourceLabel && <Badge size="sm">{exercise.sourceLabel}</Badge>}
             </Row>
             <Span text={exercise.completed ? "Completed" : "Incomplete"} size="small" />
@@ -61,7 +63,7 @@ export const SessionDetailPanel = ({ session, personalRecords }: Props) => (
                     </Badge>
                   )}
                 </Row>
-                <Span text={`${set.weight} kg`} size="small" />
+                <Weight weight={set.weight} size="small" isBodyweight={exercise.isBodyweight} />
               </div>
             ))}
           </div>

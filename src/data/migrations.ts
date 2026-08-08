@@ -79,6 +79,7 @@ const migrateLegacyLoggedExercise = (
       ...raw,
       showWeightIndicator: (raw.showWeightIndicator as boolean | undefined) ?? Boolean(raw.tracked),
       showWarmupSets: (raw.showWarmupSets as boolean | undefined) ?? true,
+      isBodyweight: (raw.isBodyweight as boolean | undefined) ?? false,
     } as unknown as LoggedExercise;
   }
 
@@ -93,6 +94,7 @@ const migrateLegacyLoggedExercise = (
     weightUsed: raw.weightUsed as number,
     showWeightIndicator: true,
     showWarmupSets: true,
+    isBodyweight: false,
   };
 };
 

@@ -24,12 +24,14 @@ import {
   type ExerciseCatalogEntry,
   type LoggedCardioSession,
   type LoggedExercise,
+  type WorkoutHistoryEntry,
 } from "../../types";
 
 type Props = {
   exercises: LoggedExercise[];
   cardio: LoggedCardioSession[];
   catalog: ExerciseCatalogEntry[];
+  history: WorkoutHistoryEntry[];
   onExercisesChange: (exercises: LoggedExercise[]) => void;
   onCardioChange: (cardio: LoggedCardioSession[]) => void;
   onRegisterCustomExercise: (entry: ExerciseCatalogEntry) => void;
@@ -41,6 +43,7 @@ export const WorkoutSession = ({
   exercises,
   cardio,
   catalog,
+  history,
   onExercisesChange,
   onCardioChange,
   onRegisterCustomExercise,
@@ -150,6 +153,7 @@ export const WorkoutSession = ({
     startingWeight?: number;
     showWeightIndicator: boolean;
     showWarmupSets: boolean;
+    isBodyweight: boolean;
   }) => {
     const entry = resolveExerciseSelection(catalog, input, onRegisterCustomExercise);
 
@@ -168,6 +172,7 @@ export const WorkoutSession = ({
         input.startingWeight ?? 0,
         input.showWeightIndicator,
         input.showWarmupSets,
+        input.isBodyweight,
       ),
     ]);
   };
@@ -223,6 +228,7 @@ export const WorkoutSession = ({
         <Expandable icon={Plus} label="Add exercise">
           <AddExerciseForm
             catalog={catalog}
+            history={history}
             onSubmit={handleAddExercise}
             showStartingWeight
             submitLabel="Add exercise to this workout"

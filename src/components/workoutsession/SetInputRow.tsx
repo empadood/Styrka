@@ -16,6 +16,7 @@ type Props = {
   variant?: "default" | "warmup";
   showWeightIndicator?: boolean;
   applyRounding?: boolean;
+  isBodyweight?: boolean;
 };
 
 export const SetInputRow = ({
@@ -30,6 +31,7 @@ export const SetInputRow = ({
   variant = "default",
   showWeightIndicator = true,
   applyRounding = true,
+  isBodyweight = false,
 }: Props) => {
   const { unit, label: unitLabel, toDisplay, toStorage } = useWeightUnit();
   const step = applyRounding ? undefined : null;
@@ -48,9 +50,10 @@ export const SetInputRow = ({
         </div>
         <div className="session__input-group">
           <div className="session__input-label">
-            <Span text={`Weight (${unit})`} size="small" />
+            <Span text={isBodyweight ? `Added weight (${unit})` : `Weight (${unit})`} size="small" />
           </div>
           <Row gap="sm" align="center">
+            {isBodyweight && <Span text="BW +" size="small" />}
             <Input
               size="medium"
               value={toDisplay(weight, step)}

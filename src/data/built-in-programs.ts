@@ -22,6 +22,7 @@ export const STARTING_STRENGTH_PROGRAM: Program = {
           reps: 5,
           showWeightIndicator: true,
           showWarmupSets: true,
+          isBodyweight: false,
         },
         {
           exerciseId: EXERCISE.deadlift,
@@ -30,6 +31,7 @@ export const STARTING_STRENGTH_PROGRAM: Program = {
           reps: 5,
           showWeightIndicator: true,
           showWarmupSets: true,
+          isBodyweight: false,
         },
         {
           exerciseId: EXERCISE.ohp,
@@ -38,6 +40,7 @@ export const STARTING_STRENGTH_PROGRAM: Program = {
           reps: 5,
           showWeightIndicator: true,
           showWarmupSets: true,
+          isBodyweight: false,
         },
       ],
     },
@@ -52,6 +55,7 @@ export const STARTING_STRENGTH_PROGRAM: Program = {
           reps: 5,
           showWeightIndicator: true,
           showWarmupSets: true,
+          isBodyweight: false,
         },
         {
           exerciseId: EXERCISE.deadlift,
@@ -60,6 +64,7 @@ export const STARTING_STRENGTH_PROGRAM: Program = {
           reps: 5,
           showWeightIndicator: true,
           showWarmupSets: true,
+          isBodyweight: false,
         },
         {
           exerciseId: EXERCISE.benchpress,
@@ -68,6 +73,7 @@ export const STARTING_STRENGTH_PROGRAM: Program = {
           reps: 5,
           showWeightIndicator: true,
           showWarmupSets: true,
+          isBodyweight: false,
         },
       ],
     },

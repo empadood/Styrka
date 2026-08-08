@@ -7,6 +7,7 @@ interface ProgramExercisePrescription {
   reps: number;
   showWeightIndicator: boolean;
   showWarmupSets: boolean;
+  isBodyweight: boolean;
 }
 
 interface ProgramSession {

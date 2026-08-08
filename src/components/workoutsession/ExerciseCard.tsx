@@ -99,7 +99,11 @@ export const ExerciseCard = ({
   return (
     <section className="session__exercise">
       <Row justify="between" className="session__exercise-header">
-        <ExerciseWithWeight label={exercise.label} weight={exercise.weightUsed} />
+        <ExerciseWithWeight
+          label={exercise.label}
+          weight={exercise.weightUsed}
+          isBodyweight={exercise.isBodyweight}
+        />
         <Row gap="sm" align="center">
           {exercise.sourceLabel && <Badge size="sm">{exercise.sourceLabel}</Badge>}
           <Span
@@ -141,6 +145,7 @@ export const ExerciseCard = ({
               onShowPlates={onShowPlates}
               showWeightIndicator={exercise.showWeightIndicator}
               applyRounding={!exercise.isAdHoc}
+              isBodyweight={exercise.isBodyweight}
             />
           ))}
           {exercise.sets.map((set, index) => (
@@ -155,6 +160,7 @@ export const ExerciseCard = ({
               onShowPlates={onShowPlates}
               showWeightIndicator={exercise.showWeightIndicator}
               applyRounding={!exercise.isAdHoc}
+              isBodyweight={exercise.isBodyweight}
             />
           ))}
           <Button

@@ -19,6 +19,7 @@ type Props = {
     reps: number;
     showWeightIndicator: boolean;
     showWarmupSets: boolean;
+    isBodyweight: boolean;
   }) => void;
 };
 

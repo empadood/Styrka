@@ -7,7 +7,9 @@ export const BUILT_IN_EXERCISE_CATALOG: ExerciseCatalogEntry[] = [
   { id: EXERCISE.ohp, label: EXERCISE_LABELS.ohp, tracked: true },
   { id: EXERCISE.benchpress, label: EXERCISE_LABELS.benchpress, tracked: true },
   { id: "barbell-row", label: "Barbell Row", tracked: false },
-  { id: "pullup", label: "Pull-up / Lat Pulldown", tracked: false },
+  { id: "pullup", label: "Pull-up / Lat Pulldown", tracked: false, isBodyweight: true },
+  { id: "pushup", label: "Push-up", tracked: false, isBodyweight: true },
+  { id: "dip", label: "Dip", tracked: false, isBodyweight: true },
   { id: "lunge", label: "Lunge", tracked: false },
   { id: "bicep-curl", label: "Bicep Curl", tracked: false },
   { id: "triceps-extension", label: "Triceps Extension", tracked: false },
@@ -16,5 +18,5 @@ export const BUILT_IN_EXERCISE_CATALOG: ExerciseCatalogEntry[] = [
   { id: "leg-curl", label: "Leg Curl", tracked: false },
   { id: "chest-fly", label: "Chest Fly", tracked: false },
   { id: "face-pull", label: "Face Pull", tracked: false },
-  { id: "plank", label: "Plank", tracked: false },
+  { id: "plank", label: "Plank", tracked: false, isBodyweight: true },
 ];

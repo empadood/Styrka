@@ -2,7 +2,9 @@ import "./AddExerciseForm.scss";
 
 import { useState } from "react";
 
-import type { ExerciseCatalogEntry, ExerciseId } from "../../types";
+import { findCatalogEntry, getLastLoggedWeight, resolveCustomExercise } from "../../helpers/exercise-catalog.helper";
+import { useWeightUnit } from "../../hooks/useWeightUnit";
+import type { ExerciseCatalogEntry, ExerciseId, WorkoutHistoryEntry } from "../../types";
 import { Button } from "../button/Button";
 import { Input } from "../input/Input";
 import { Row } from "../row/Row";
@@ -18,10 +20,12 @@ type SubmitInput = {
   startingWeight?: number;
   showWeightIndicator: boolean;
   showWarmupSets: boolean;
+  isBodyweight: boolean;
 };
 
 type Props = {
   catalog: ExerciseCatalogEntry[];
+  history?: WorkoutHistoryEntry[];
   onSubmit: (input: SubmitInput) => void;
   showStartingWeight?: boolean;
   submitLabel?: string;
@@ -29,27 +33,54 @@ type Props = {
 
 export const AddExerciseForm = ({
   catalog,
+  history = [],
   onSubmit,
   showStartingWeight = false,
   submitLabel = "Add exercise",
 }: Props) => {
+  const { unit, toDisplay, toStorage } = useWeightUnit();
   const [mode, setMode] = useState<"catalog" | "custom">("catalog");
   const [selectedId, setSelectedId] = useState(catalog[0]?.id ?? "");
   const [customName, setCustomName] = useState("");
   const [sets, setSets] = useState(3);
   const [reps, setReps] = useState(8);
   const [startingWeight, setStartingWeight] = useState(0);
+  const [weightTouched, setWeightTouched] = useState(false);
   const [showWeightIndicator, setShowWeightIndicator] = useState(
     catalog[0]?.tracked ?? false,
   );
   const [showWarmupSets, setShowWarmupSets] = useState(true);
+  const [isBodyweight, setIsBodyweight] = useState(catalog[0]?.isBodyweight ?? false);
+  const [bodyweightTouched, setBodyweightTouched] = useState(false);
 
   const trackedLifts = catalog.filter((entry) => entry.tracked);
   const accessories = catalog.filter((entry) => !entry.tracked);
 
+  const resolvedEntry =
+    mode === "catalog"
+      ? findCatalogEntry(catalog, selectedId)
+      : customName.trim()
+        ? resolveCustomExercise(catalog, customName)
+        : undefined;
+  const suggestedWeight = resolvedEntry ? getLastLoggedWeight(history, resolvedEntry.id) : null;
+  const allowBodyweight = !(resolvedEntry?.tracked ?? false);
+
+  const [lastResolvedId, setLastResolvedId] = useState(resolvedEntry?.id);
+  if (resolvedEntry?.id !== lastResolvedId) {
+    setLastResolvedId(resolvedEntry?.id);
+    if (showStartingWeight && !weightTouched) {
+      setStartingWeight(suggestedWeight ?? 0);
+    }
+    if (!bodyweightTouched) {
+      setIsBodyweight(resolvedEntry?.isBodyweight ?? false);
+    }
+  }
+
   const handleSelectExercise = (id: ExerciseId) => {
     setSelectedId(id);
     setShowWeightIndicator(catalog.find((entry) => entry.id === id)?.tracked ?? false);
+    setWeightTouched(false);
+    setBodyweightTouched(false);
   };
 
   const handleModeChange = (nextMode: "catalog" | "custom") => {
@@ -57,6 +88,8 @@ export const AddExerciseForm = ({
     setShowWeightIndicator(
       nextMode === "catalog" ? (catalog.find((entry) => entry.id === selectedId)?.tracked ?? false) : false,
     );
+    setWeightTouched(false);
+    setBodyweightTouched(false);
   };
 
   const handleSubmit = () => {
@@ -72,12 +105,15 @@ export const AddExerciseForm = ({
       startingWeight: showStartingWeight ? startingWeight : undefined,
       showWeightIndicator,
       showWarmupSets,
+      isBodyweight,
     });
 
     setCustomName("");
     setSets(3);
     setReps(8);
     setStartingWeight(0);
+    setWeightTouched(false);
+    setBodyweightTouched(false);
   };
 
   return (
@@ -146,17 +182,42 @@ export const AddExerciseForm = ({
         </label>
         {showStartingWeight && (
           <label className="add-exercise-form__field">
-            <Span text="Weight (kg)" size="small" />
+            <Span text={isBodyweight ? `Added weight (${unit})` : `Weight (${unit})`} size="small" />
             <Input
-              value={startingWeight}
-              onChange={setStartingWeight}
+              value={toDisplay(startingWeight)}
+              onChange={(value) => {
+                setWeightTouched(true);
+                setStartingWeight(toStorage(value));
+              }}
               size="small"
             />
           </label>
         )}
       </Row>
 
+      {showStartingWeight && suggestedWeight !== null && !weightTouched && (
+        <Span
+          text={`Prefilled from your last session: ${toDisplay(suggestedWeight)} ${unit}`}
+          size="small"
+          tone="secondary"
+        />
+      )}
+
       <Row gap="sm" justify="start" className="add-exercise-form__checkboxes">
+        {allowBodyweight && (
+          <label className="add-exercise-form__checkbox">
+            <input
+              type="checkbox"
+              checked={isBodyweight}
+              onChange={(e) => {
+                setBodyweightTouched(true);
+                setIsBodyweight(e.target.checked);
+              }}
+            />
+            <Span text="Body weight exercise" size="small" />
+          </label>
+        )}
+
         <label className="add-exercise-form__checkbox">
           <input
             type="checkbox"

@@ -5,6 +5,7 @@ interface ExerciseCatalogEntry {
   label: string;
   tracked: boolean;
   custom?: boolean;
+  isBodyweight?: boolean;
 }
 
 export type { ExerciseCatalogEntry, ExerciseId };

@@ -30,6 +30,7 @@ const buildLoggedExerciseFromPrescription = (
     completed: false,
     showWeightIndicator: prescription.showWeightIndicator ?? tracked,
     showWarmupSets: prescription.showWarmupSets ?? true,
+    isBodyweight: prescription.isBodyweight ?? catalogEntry?.isBodyweight ?? false,
     sourceLabel,
     sets: Array.from({ length: prescription.sets }, () => ({
       targetReps: prescription.reps,
@@ -67,6 +68,7 @@ const buildAdHocLoggedExercise = (
   defaultWeight: number,
   showWeightIndicator: boolean,
   showWarmupSets: boolean,
+  isBodyweight: boolean,
 ): LoggedExercise => ({
   exerciseId,
   label,
@@ -76,6 +78,7 @@ const buildAdHocLoggedExercise = (
   completed: false,
   showWeightIndicator,
   showWarmupSets,
+  isBodyweight,
   sets: Array.from({ length: sets }, () => ({
     targetReps: reps,
     reps: 0,
