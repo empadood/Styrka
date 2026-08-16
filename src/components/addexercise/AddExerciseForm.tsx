@@ -2,7 +2,7 @@ import "./AddExerciseForm.scss";
 
 import { useState } from "react";
 
-import { findCatalogEntry, getLastLoggedWeight, resolveCustomExercise } from "../../helpers/exercise-catalog.helper";
+import { findCatalogEntry, getLastLoggedWeight } from "../../helpers/exercise-catalog.helper";
 import { useWeightUnit } from "../../hooks/useWeightUnit";
 import type { ExerciseCatalogEntry, ExerciseId, WorkoutHistoryEntry } from "../../types";
 import { Button } from "../button/Button";
@@ -56,12 +56,11 @@ export const AddExerciseForm = ({
   const trackedLifts = catalog.filter((entry) => entry.tracked);
   const accessories = catalog.filter((entry) => !entry.tracked);
 
+  const trimmedCustomName = customName.trim().toLowerCase();
   const resolvedEntry =
     mode === "catalog"
       ? findCatalogEntry(catalog, selectedId)
-      : customName.trim()
-        ? resolveCustomExercise(catalog, customName)
-        : undefined;
+      : catalog.find((entry) => entry.label.toLowerCase() === trimmedCustomName);
   const suggestedWeight = resolvedEntry ? getLastLoggedWeight(history, resolvedEntry.id) : null;
   const allowBodyweight = !(resolvedEntry?.tracked ?? false);
 
