@@ -1,4 +1,5 @@
 import { useWeightUnit } from "../../hooks/useWeightUnit";
+import { Field } from "../field/Field";
 import { Input } from "../input/Input";
 import { PlateIndicator } from "../platebreakdown/PlateIndicator";
 import { Row } from "../row/Row";
@@ -42,16 +43,10 @@ export const SetInputRow = ({
     >
       <Span text={label} size="small" />
       <div className="session__set__inputs">
-        <div className="session__input-group">
-          <div className="session__input-label">
-            <Span text={targetRepsLabel} size="small" />
-          </div>
+        <Field as="div" label={targetRepsLabel}>
           <Input value={reps} size="medium" onChange={onRepsChange} onBlur={onRepsBlur} />
-        </div>
-        <div className="session__input-group">
-          <div className="session__input-label">
-            <Span text={isBodyweight ? `Added weight (${unit})` : `Weight (${unit})`} size="small" />
-          </div>
+        </Field>
+        <Field as="div" label={isBodyweight ? `Added weight (${unit})` : `Weight (${unit})`}>
           <Row gap="sm" align="center">
             {isBodyweight && <Span text="BW +" size="small" />}
             <Input
@@ -67,7 +62,7 @@ export const SetInputRow = ({
               />
             )}
           </Row>
-        </div>
+        </Field>
       </div>
     </div>
   );

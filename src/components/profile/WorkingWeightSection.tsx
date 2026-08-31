@@ -3,10 +3,9 @@ import { useState } from "react";
 import { useWeightUnit } from "../../hooks/useWeightUnit";
 import { EXERCISE, EXERCISE_LABELS, type TrackedLiftId } from "../../types";
 import { Button } from "../button/Button";
-import { Card } from "../card/Card";
 import { Input } from "../input/Input";
 import { Row } from "../row/Row";
-import { Heading } from "../text/Heading";
+import { SectionCard } from "../sectioncard/SectionCard";
 import { Span } from "../text/Span";
 
 type Props = {
@@ -19,12 +18,10 @@ export const WorkingWeightSection = ({ workingWeights, onOverrideWeight }: Props
   const { toDisplay, toStorage } = useWeightUnit();
 
   return (
-    <Card>
-      <Heading text="Current Working Weight" />
-      <Span
-        text="Lower a weight to reduce next session's starting point — for deloads, bad sessions, or illness."
-        size="small"
-      />
+    <SectionCard
+      title="Current Working Weight"
+      description="Lower a weight to reduce next session's starting point — for deloads, bad sessions, or illness."
+    >
       <div className="profile__configure profile__configure--editable">
         {Object.values(EXERCISE).map((exercise) => (
           <Row justify="between" className="profile__weight-row" key={exercise}>
@@ -46,6 +43,6 @@ export const WorkingWeightSection = ({ workingWeights, onOverrideWeight }: Props
           </Row>
         ))}
       </div>
-    </Card>
+    </SectionCard>
   );
 };

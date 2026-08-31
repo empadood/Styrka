@@ -5,6 +5,9 @@ import type { Program, WorkoutHistoryEntry } from "../types";
 
 export const PAGE_SIZE_OPTIONS = [10, 25, 50] as const;
 
+export const PROGRAM_FILTER_ALL = "all";
+export const PROGRAM_FILTER_FREESTANDING = "freestanding";
+
 export type SortKey = "sessionLabel" | "programName" | "date" | "exercises" | "cardio";
 export type SortDirection = "asc" | "desc";
 
@@ -18,79 +21,99 @@ export const formatSessionDate = (date: string): string => {
   return `${lookup.year}-${lookup.month}-${lookup.day}`;
 };
 
+type SessionsSortState = { key: SortKey; direction: SortDirection };
+type SessionsFilterState = {
+  searchText: string;
+  programFilter: string;
+  dateFrom: string;
+  dateTo: string;
+};
+type SessionsPaginationState = { pageSize: number; currentPage: number };
+
 export const useSessionsFilters = (sessions: WorkoutHistoryEntry[], programs: Program[]) => {
-  const [sortKey, setSortKey] = useState<SortKey>("date");
-  const [sortDirection, setSortDirection] = useState<SortDirection>("desc");
-  const [pageSize, setPageSize] = useState<number>(PAGE_SIZE_OPTIONS[0]);
-  const [currentPage, setCurrentPage] = useState(1);
-  const [searchText, setSearchText] = useState("");
-  const [programFilter, setProgramFilter] = useState<string>("all");
-  const [dateFrom, setDateFrom] = useState("");
-  const [dateTo, setDateTo] = useState("");
+  const [sort, setSort] = useState<SessionsSortState>({ key: "date", direction: "desc" });
+  const [filters, setFilters] = useState<SessionsFilterState>({
+    searchText: "",
+    programFilter: PROGRAM_FILTER_ALL,
+    dateFrom: "",
+    dateTo: "",
+  });
+  const [pagination, setPagination] = useState<SessionsPaginationState>({
+    pageSize: PAGE_SIZE_OPTIONS[0],
+    currentPage: 1,
+  });
 
   const getProgramName = (programId: string | null): string =>
     programs.find((program) => program.id === programId)?.name ?? "Freestanding";
 
   const toggleSort = (key: SortKey) => {
-    if (key === sortKey) {
-      setSortDirection((direction) => (direction === "asc" ? "desc" : "asc"));
-    } else {
-      setSortKey(key);
-      setSortDirection("asc");
-    }
-    setCurrentPage(1);
+    setSort((prev) =>
+      key === prev.key
+        ? { key, direction: prev.direction === "asc" ? "desc" : "asc" }
+        : { key, direction: "asc" },
+    );
+    setPagination((prev) => ({ ...prev, currentPage: 1 }));
   };
 
   const changePageSize = (size: number) => {
-    setPageSize(size);
-    setCurrentPage(1);
+    setPagination({ pageSize: size, currentPage: 1 });
   };
 
   const changeSearchText = (value: string) => {
-    setSearchText(value);
-    setCurrentPage(1);
+    setFilters((prev) => ({ ...prev, searchText: value }));
+    setPagination((prev) => ({ ...prev, currentPage: 1 }));
   };
 
   const changeProgramFilter = (value: string) => {
-    setProgramFilter(value);
-    setCurrentPage(1);
+    setFilters((prev) => ({ ...prev, programFilter: value }));
+    setPagination((prev) => ({ ...prev, currentPage: 1 }));
   };
 
   const changeDateFrom = (value: string) => {
-    setDateFrom(value);
-    setCurrentPage(1);
+    setFilters((prev) => ({ ...prev, dateFrom: value }));
+    setPagination((prev) => ({ ...prev, currentPage: 1 }));
   };
 
   const changeDateTo = (value: string) => {
-    setDateTo(value);
-    setCurrentPage(1);
+    setFilters((prev) => ({ ...prev, dateTo: value }));
+    setPagination((prev) => ({ ...prev, currentPage: 1 }));
   };
 
   const clearFilters = () => {
-    setSearchText("");
-    setProgramFilter("all");
-    setDateFrom("");
-    setDateTo("");
-    setCurrentPage(1);
+    setFilters({
+      searchText: "",
+      programFilter: PROGRAM_FILTER_ALL,
+      dateFrom: "",
+      dateTo: "",
+    });
+    setPagination((prev) => ({ ...prev, currentPage: 1 }));
+  };
+
+  const setCurrentPage = (page: number) => {
+    setPagination((prev) => ({ ...prev, currentPage: page }));
   };
 
   const hasActiveFilters =
-    searchText.trim() !== "" || programFilter !== "all" || dateFrom !== "" || dateTo !== "";
+    filters.searchText.trim() !== "" ||
+    filters.programFilter !== PROGRAM_FILTER_ALL ||
+    filters.dateFrom !== "" ||
+    filters.dateTo !== "";
 
   const personalRecords = useMemo(() => findPersonalRecords(sessions), [sessions]);
 
   const filteredSessions = useMemo(() => {
-    const query = searchText.trim().toLowerCase();
+    const query = filters.searchText.trim().toLowerCase();
 
     return sessions.filter((session) => {
       const matchesProgram =
-        programFilter === "all" ||
-        (programFilter === "freestanding" && session.programId === null) ||
-        session.programId === programFilter;
+        filters.programFilter === PROGRAM_FILTER_ALL ||
+        (filters.programFilter === PROGRAM_FILTER_FREESTANDING && session.programId === null) ||
+        session.programId === filters.programFilter;
 
       const sessionDate = formatSessionDate(session.date);
       const matchesDate =
-        (!dateFrom || sessionDate >= dateFrom) && (!dateTo || sessionDate <= dateTo);
+        (!filters.dateFrom || sessionDate >= filters.dateFrom) &&
+        (!filters.dateTo || sessionDate <= filters.dateTo);
 
       const haystack = [
         session.sessionLabel,
@@ -105,13 +128,13 @@ export const useSessionsFilters = (sessions: WorkoutHistoryEntry[], programs: Pr
       return matchesProgram && matchesDate && matchesSearch;
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [sessions, programFilter, dateFrom, dateTo, searchText, programs]);
+  }, [sessions, filters, programs]);
 
   const orderedSessions = useMemo(() => {
-    const direction = sortDirection === "asc" ? 1 : -1;
+    const direction = sort.direction === "asc" ? 1 : -1;
 
     return [...filteredSessions].sort((a, b) => {
-      switch (sortKey) {
+      switch (sort.key) {
         case "sessionLabel":
           return a.sessionLabel.localeCompare(b.sessionLabel) * direction;
         case "programName":
@@ -126,28 +149,28 @@ export const useSessionsFilters = (sessions: WorkoutHistoryEntry[], programs: Pr
       }
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [filteredSessions, sortKey, sortDirection, programs]);
+  }, [filteredSessions, sort, programs]);
 
-  const totalPages = Math.max(1, Math.ceil(orderedSessions.length / pageSize));
-  const clampedPage = Math.min(currentPage, totalPages);
-  const pageStart = (clampedPage - 1) * pageSize;
-  const paginatedSessions = orderedSessions.slice(pageStart, pageStart + pageSize);
+  const totalPages = Math.max(1, Math.ceil(orderedSessions.length / pagination.pageSize));
+  const clampedPage = Math.min(pagination.currentPage, totalPages);
+  const pageStart = (clampedPage - 1) * pagination.pageSize;
+  const paginatedSessions = orderedSessions.slice(pageStart, pageStart + pagination.pageSize);
 
   return {
-    searchText,
+    searchText: filters.searchText,
     setSearchText: changeSearchText,
-    programFilter,
+    programFilter: filters.programFilter,
     setProgramFilter: changeProgramFilter,
-    dateFrom,
+    dateFrom: filters.dateFrom,
     setDateFrom: changeDateFrom,
-    dateTo,
+    dateTo: filters.dateTo,
     setDateTo: changeDateTo,
     clearFilters,
     hasActiveFilters,
-    sortKey,
-    sortDirection,
+    sortKey: sort.key,
+    sortDirection: sort.direction,
     toggleSort,
-    pageSize,
+    pageSize: pagination.pageSize,
     setPageSize: changePageSize,
     currentPage: clampedPage,
     setCurrentPage,

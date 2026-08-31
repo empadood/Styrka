@@ -30,3 +30,5 @@ export const useWarmupEntries = () => {
 
   return { getEntry, updateEntry };
 };
+
+export type WarmupEntriesApi = ReturnType<typeof useWarmupEntries>;

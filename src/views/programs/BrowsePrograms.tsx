@@ -2,7 +2,7 @@ import "./Programs.scss";
 
 import { useNavigate } from "react-router-dom";
 
-import { Badge, Button, Card, Heading, PageContainer, Row, Span, Stack } from "../../components";
+import { BackHeadingRow, Badge, Button, Card, Heading, PageContainer, Row, Span, Stack } from "../../components";
 import type { WorkoutStore } from "../../data/storage";
 import type { Program } from "../../types";
 
@@ -53,10 +53,7 @@ export const BrowsePrograms = ({ store, update }: Props) => {
 
   return (
     <PageContainer className="programs">
-      <Row justify="start" gap="md">
-        <Button label="Back" variant="secondary" onClick={() => navigate("/")} />
-        <Heading text="Programs" level="1" />
-      </Row>
+      <BackHeadingRow title="Programs" onBack={() => navigate("/")} />
 
       <Card>
         <Row justify="between" align="start" mb="md">

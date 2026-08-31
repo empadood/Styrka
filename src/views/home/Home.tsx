@@ -11,18 +11,18 @@ import {
   PageContainer,
   Row,
   Span,
-  Stack,
   Toolbar,
   WeeklyView,
 } from "../../components";
 import { SingleLineChart } from "../../components/chart/SingleLineChart";
 import { Dialog } from "../../components/dialog/Dialog";
+import { TrendExplanation } from "../../components/hometrends/TrendExplanation";
 import { PreviousSession } from "../../components/session/PreviousSession";
 import { Summary } from "../../components/session/Summary";
 import { UpcomingSession } from "../../components/session/UpcomingSession";
 import { DEFAULT_STORE, type WorkoutStore } from "../../data/storage";
 import { wasTrainedRecently } from "../../helpers/progression.helper";
-import { type TrainingStatus, type TrainingStatusDetails } from "../../helpers/status.helper";
+import { STATUS_LABELS, STATUS_TONES } from "../../helpers/training-status-display.helper";
 import type { ActiveWorkoutState } from "../../hooks/useActiveWorkout";
 import type { DriveSyncState } from "../../hooks/useDriveSync";
 import { useHomeDashboard } from "../../hooks/useHomeDashboard";
@@ -38,100 +38,6 @@ type Props = {
   update: UpdateFn;
   workout: ActiveWorkoutState;
   drive: DriveSyncState;
-};
-
-const STATUS_LABELS: Record<TrainingStatus | "insufficient-data", string> = {
-  comeback: "Comeback",
-  gaining: "Gaining",
-  maintaining: "Maintaining",
-  declining: "Declining",
-  "insufficient-data": "Not enough data yet",
-};
-
-const STATUS_TONES: Record<
-  TrainingStatus | "insufficient-data",
-  "neutral" | "primary" | "success" | "danger"
-> = {
-  comeback: "primary",
-  gaining: "success",
-  maintaining: "neutral",
-  declining: "danger",
-  "insufficient-data": "neutral",
-};
-
-const formatPercent = (value: number): string =>
-  `${value > 0 ? "+" : ""}${value.toFixed(1)}%`;
-
-const TrendExplanation = ({ details }: { details: TrainingStatusDetails }) => {
-  const { format } = useWeightUnit();
-  const formatWeight = (kg: number): string => format(kg);
-
-  if (details.status === "insufficient-data") {
-    return (
-      <Span
-        text={`Not enough completed workouts in the last ${details.windowDays} days — at least 2 are needed to calculate a trend.`}
-        tone="secondary"
-      />
-    );
-  }
-
-  const {
-    windowDays,
-    sessionCount,
-    earlyWeightAvg,
-    lateWeightAvg,
-    weightChangePercent,
-    rpeTrend,
-    earlyRpeAvg,
-    lateRpeAvg,
-    dipDetected,
-    status,
-  } = details;
-
-  const summary: Record<TrainingStatus, string> = {
-    gaining: "Your average working weight increased across your recent workouts.",
-    declining:
-      details.weightTrend === "down"
-        ? "Your average working weight dropped across your recent workouts."
-        : "Your working weight held steady, but your effort (RPE) has been climbing — a sign of declining recovery.",
-    maintaining: "Your average working weight has stayed roughly the same.",
-    comeback:
-      "Your working weight dipped and has since recovered back above where it started.",
-  };
-
-  return (
-    <Stack gap="md">
-      <Span text={summary[status as TrainingStatus]} />
-      <Stack gap="xs">
-        <Span
-          text={`Based on ${sessionCount} workouts in the last ${windowDays} days, compared across the earlier and later half of that window.`}
-          size="small"
-          tone="secondary"
-        />
-        {earlyWeightAvg !== null && lateWeightAvg !== null && weightChangePercent !== null && (
-          <Span
-            text={`Average working weight: ${formatWeight(earlyWeightAvg)} → ${formatWeight(lateWeightAvg)} (${formatPercent(weightChangePercent)}). Changes beyond ±1.5% count as a trend.`}
-            size="small"
-            tone="secondary"
-          />
-        )}
-        {rpeTrend && rpeTrend !== "unknown" && earlyRpeAvg !== null && lateRpeAvg !== null && (
-          <Span
-            text={`Average RPE: ${earlyRpeAvg.toFixed(1)} → ${lateRpeAvg.toFixed(1)}. Changes beyond ±0.5 count as a trend.`}
-            size="small"
-            tone="secondary"
-          />
-        )}
-        {status === "comeback" && dipDetected && (
-          <Span
-            text="A dip below your starting weight was detected before the recovery, which is why this is labeled a comeback rather than a plain gain."
-            size="small"
-            tone="secondary"
-          />
-        )}
-      </Stack>
-    </Stack>
-  );
 };
 
 export const Home = ({ store, update, workout, drive }: Props) => {

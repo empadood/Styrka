@@ -1,8 +1,6 @@
 import { ROUNDING_STEPS, type RoundingStep, type WeightUnit } from "../../helpers/weight-unit.helper";
-import { Button } from "../button/Button";
-import { Card } from "../card/Card";
-import { Row } from "../row/Row";
-import { Heading } from "../text/Heading";
+import { SectionCard } from "../sectioncard/SectionCard";
+import { SegmentedControl } from "../segmentedcontrol/SegmentedControl";
 import { Span } from "../text/Span";
 
 type Props = {
@@ -12,50 +10,34 @@ type Props = {
   onChangeRounding: (unit: WeightUnit, step: RoundingStep) => void;
 };
 
+const UNIT_OPTIONS: { value: WeightUnit; label: string }[] = [
+  { value: "kg", label: "Kilograms (kg)" },
+  { value: "lbs", label: "Pounds (lbs)" },
+];
+
+const ROUNDING_OPTIONS = ROUNDING_STEPS.map((step) => ({ value: step, label: String(step) }));
+
 export const UnitsSection = ({
   weightUnit,
   onChangeWeightUnit,
   weightRounding,
   onChangeRounding,
 }: Props) => (
-  <Card>
-    <Heading text="Units" />
-    <Span text="Choose which unit weights are shown and entered in." size="small" />
-    <Row gap="sm" className="profile__units">
-      <Button
-        label="Kilograms (kg)"
-        variant={weightUnit === "kg" ? "primary" : "secondary"}
-        onClick={() => onChangeWeightUnit("kg")}
-      />
-      <Button
-        label="Pounds (lbs)"
-        variant={weightUnit === "lbs" ? "primary" : "secondary"}
-        onClick={() => onChangeWeightUnit("lbs")}
-      />
-    </Row>
+  <SectionCard title="Units" description="Choose which unit weights are shown and entered in.">
+    <SegmentedControl options={UNIT_OPTIONS} value={weightUnit} onChange={onChangeWeightUnit} />
 
     <Span text="Round kg values to nearest" size="small" />
-    <Row gap="sm" className="profile__units">
-      {ROUNDING_STEPS.map((step) => (
-        <Button
-          key={`kg-${step}`}
-          label={String(step)}
-          variant={weightRounding.kg === step ? "primary" : "secondary"}
-          onClick={() => onChangeRounding("kg", step)}
-        />
-      ))}
-    </Row>
+    <SegmentedControl
+      options={ROUNDING_OPTIONS}
+      value={weightRounding.kg}
+      onChange={(step) => onChangeRounding("kg", step)}
+    />
 
     <Span text="Round lbs values to nearest" size="small" />
-    <Row gap="sm" className="profile__units">
-      {ROUNDING_STEPS.map((step) => (
-        <Button
-          key={`lbs-${step}`}
-          label={String(step)}
-          variant={weightRounding.lbs === step ? "primary" : "secondary"}
-          onClick={() => onChangeRounding("lbs", step)}
-        />
-      ))}
-    </Row>
-  </Card>
+    <SegmentedControl
+      options={ROUNDING_OPTIONS}
+      value={weightRounding.lbs}
+      onChange={(step) => onChangeRounding("lbs", step)}
+    />
+  </SectionCard>
 );

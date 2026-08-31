@@ -2,7 +2,7 @@ import "./Sessions.scss";
 
 import { useNavigate } from "react-router-dom";
 
-import { Button, Card, Heading, PageContainer, Row, Span } from "../../components";
+import { BackHeadingRow, Card, PageContainer, Span } from "../../components";
 import { SessionsFilterBar } from "../../components/sessions/SessionsFilterBar";
 import { SessionsPagination } from "../../components/sessions/SessionsPagination";
 import { SessionsTable } from "../../components/sessions/SessionsTable";
@@ -20,10 +20,7 @@ export const Sessions = ({ sessions, programs }: Props) => {
 
   return (
     <PageContainer className="sessions">
-      <Row justify="start" gap="md">
-        <Button label="Back" variant="secondary" onClick={() => navigate("/")} />
-        <Heading text="Sessions" level="1" />
-      </Row>
+      <BackHeadingRow title="Sessions" onBack={() => navigate("/")} />
 
       <Card padding="sm">
         <SessionsFilterBar

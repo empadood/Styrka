@@ -21,7 +21,9 @@ const toBool = (value: string): boolean => value === "true";
 const toOptionalString = (value: string): string | undefined => (value === "" ? undefined : value);
 const toNullableString = (value: string): string | null => (value === "" ? null : value);
 
-const detectCsvKind = (headers: string[]): "bodyweight" | "workout-history" | "cardio" | null => {
+export type CsvKind = "bodyweight" | "workout-history" | "cardio" | null;
+
+const detectCsvKind = (headers: string[]): CsvKind => {
   if (headers.includes("weight") && headers.includes("bodyFatPercent") && !headers.includes("exerciseId")) {
     return "bodyweight";
   }
@@ -169,17 +171,24 @@ const importCsvFiles = (
     }
     const kind = detectCsvKind(Object.keys(records[0]));
 
-    if (kind === "bodyweight") {
-      const parsed = parseBodyWeightCsv(records);
-      bodyWeightLog = upsertById(bodyWeightLog, parsed);
-      bodyWeightCount += parsed.length;
-    } else if (kind === "workout-history") {
-      const parsed = parseWorkoutHistoryCsv(records);
-      history = upsertById(history, parsed);
-      historyCount += parsed.length;
-    } else if (kind === "cardio") {
-      cardioByEntry = parseCardioCsv(records);
-      cardioCount += records.length;
+    switch (kind) {
+      case "bodyweight": {
+        const parsed = parseBodyWeightCsv(records);
+        bodyWeightLog = upsertById(bodyWeightLog, parsed);
+        bodyWeightCount += parsed.length;
+        break;
+      }
+      case "workout-history": {
+        const parsed = parseWorkoutHistoryCsv(records);
+        history = upsertById(history, parsed);
+        historyCount += parsed.length;
+        break;
+      }
+      case "cardio": {
+        cardioByEntry = parseCardioCsv(records);
+        cardioCount += records.length;
+        break;
+      }
     }
   }
 

@@ -1,10 +1,9 @@
 import type { DriveSyncState } from "../../hooks/useDriveSync";
 import { Button } from "../button/Button";
-import { Card } from "../card/Card";
 import { DriveSyncControls } from "../drivesync/DriveSyncControls";
 import { Row } from "../row/Row";
+import { SectionCard } from "../sectioncard/SectionCard";
 import { Stack } from "../stack/Stack";
-import { Heading } from "../text/Heading";
 import { Span } from "../text/Span";
 
 type Props = {
@@ -12,12 +11,10 @@ type Props = {
 };
 
 export const DriveSyncSection = ({ drive }: Props) => (
-  <Card>
-    <Heading text="Cloud sync" />
-    <Span
-      text="Manually back up or restore your data via a private, app-only file in your Google Drive."
-      size="small"
-    />
+  <SectionCard
+    title="Cloud sync"
+    description="Manually back up or restore your data via a private, app-only file in your Google Drive."
+  >
     <DriveSyncControls drive={drive} className="profile__sync" />
     {drive.status === "conflict" && (
       <Stack gap="xs">
@@ -31,5 +28,5 @@ export const DriveSyncSection = ({ drive }: Props) => (
         </Row>
       </Stack>
     )}
-  </Card>
+  </SectionCard>
 );

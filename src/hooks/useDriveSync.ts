@@ -6,7 +6,7 @@ import type { WorkoutStore } from "../data/storage";
 // Cloud sync UI is hidden for now — flip to true (or gate on env config) to bring it back.
 const DRIVE_SYNC_UI_ENABLED = false;
 
-type SyncStatus = "idle" | "syncing" | "success" | "error" | "conflict";
+export type SyncStatus = "idle" | "syncing" | "success" | "error" | "conflict";
 
 type UpdateFn = (updater: (prev: WorkoutStore) => WorkoutStore) => void;
 

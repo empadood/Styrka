@@ -2,9 +2,11 @@ import "./Badge.scss";
 
 import type { ReactNode } from "react";
 
+export type BadgeTone = "neutral" | "primary" | "success" | "danger";
+
 type Props = {
   children: ReactNode;
-  tone?: "neutral" | "primary" | "success" | "danger";
+  tone?: BadgeTone;
   size?: "sm" | "md";
   className?: string;
   onClick?: () => void;

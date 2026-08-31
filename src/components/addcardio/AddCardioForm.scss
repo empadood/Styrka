@@ -12,19 +12,3 @@
     margin: auto;
   }
 }
-
-.add-cardio-form__field {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-1);
-}
-
-.add-cardio-form__select {
-  padding: var(--space-2) var(--space-3);
-  border: 0.0625rem solid var(--border);
-  border-radius: var(--radius-sm);
-  background: var(--surface);
-  color: var(--text);
-  font: inherit;
-  font-size: var(--font-size-sm);
-}

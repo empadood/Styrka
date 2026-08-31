@@ -1,6 +1,6 @@
 import type { ProgressionResult } from "../../helpers/progression.helper";
+import { Field } from "../field/Field";
 import { Input } from "../input/Input";
-import { Stack } from "../stack/Stack";
 import { ExerciseWithWeight } from "../text/ExerciseWithWeight";
 import { Span } from "../text/Span";
 import { Weight } from "../text/Weight";
@@ -20,14 +20,12 @@ export const ExerciseIncrementRow = ({ result, increment, onIncrementChange }: P
       </div>
     ) : result.completed ? (
       <>
-        <Stack gap="xs" className="postworkout__increment">
-          <Span text="Increment" size="small" />
+        <Field as="div" label="Increment" className="postworkout__increment">
           <Input value={increment ?? 0} size="small" onChange={onIncrementChange} />
-        </Stack>
-        <Stack gap="xs" className="postworkout__next">
-          <Span text="Next session" size="small" />
+        </Field>
+        <Field as="div" label="Next session" className="postworkout__next">
           <Weight weight={Math.round((result.previousWeight + (increment ?? 0)) * 10) / 10} />
-        </Stack>
+        </Field>
       </>
     ) : (
       <div className="postworkout__no-increase">

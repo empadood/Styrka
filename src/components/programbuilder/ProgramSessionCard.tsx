@@ -2,6 +2,7 @@ import type { ExerciseCatalogEntry, ProgramSession } from "../../types";
 import { AddExerciseForm } from "../addexercise/AddExerciseForm";
 import { Button } from "../button/Button";
 import { Card } from "../card/Card";
+import { Field } from "../field/Field";
 import { Row } from "../row/Row";
 import { Span } from "../text/Span";
 import { TextField } from "../textfield/TextField";
@@ -33,10 +34,9 @@ export const ProgramSessionCard = ({
 }: Props) => (
   <Card>
     <Row justify="between" align="end" mb="md">
-      <label className="programs__field">
-        <Span text="Session name" size="small" />
+      <Field label="Session name" className="programs__field">
         <TextField value={session.name} onChange={onNameChange} />
-      </label>
+      </Field>
       <Button
         label="Remove session"
         variant="danger"

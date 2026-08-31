@@ -2,7 +2,7 @@ import "./PostWorkout.scss";
 
 import { useState } from "react";
 
-import { Button, Card, Heading, Span, Stack } from "../../components";
+import { Button, SectionCard, Span, Stack } from "../../components";
 import { DriveSyncControls } from "../../components/drivesync/DriveSyncControls";
 import { ExerciseIncrementRow } from "../../components/postworkout/ExerciseIncrementRow";
 import { RpeScale } from "../../components/rpescale/RpeScale";
@@ -46,8 +46,7 @@ export const PostWorkout = ({ results, onConfirm, onBack, drive }: Props) => {
         />
       ))}
 
-      <Card>
-        <Heading text="How did it feel?" level="3" />
+      <SectionCard title="How did it feel?" level="3">
         <div className="postworkout__rpe">
           <Span text="Rate of perceived exertion" size="small" />
           <RpeScale value={rpe} onChange={setRpe} />
@@ -58,7 +57,7 @@ export const PostWorkout = ({ results, onConfirm, onBack, drive }: Props) => {
           value={notes}
           onChange={(e) => setNotes(e.target.value)}
         />
-      </Card>
+      </SectionCard>
 
       {DRIVE_SYNC_UI_ENABLED && <DriveSyncControls drive={drive} />}
 

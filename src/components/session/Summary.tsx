@@ -2,8 +2,7 @@ import "./Summary.scss";
 
 import { type Overview } from "../../data/workout-session";
 import { Card } from "../card/Card";
-import { Row } from "../row/Row";
-import { Heading } from "../text/Heading";
+import { CardHeader } from "../cardheader/CardHeader";
 import { Span } from "../text/Span";
 
 type Props = {
@@ -12,12 +11,7 @@ type Props = {
 export const Summary = ({ items }: Props) => {
   return (
     <Card>
-      <Row justify="between" align="start" mb="md">
-        <div>
-          <Span text="Working weights" size="small" tone="secondary" />
-          <Heading text="Current strength" level="2" />
-        </div>
-      </Row>
+      <CardHeader eyebrow="Working weights" title="Current strength" />
       <div className="summary__grid">
         {items.map(({ label, unit, value }) => {
           return (

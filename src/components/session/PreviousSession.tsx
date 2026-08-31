@@ -3,9 +3,8 @@ import "./PreviousSession.scss";
 import type { Overview } from "../../data/workout-session";
 import { Button } from "../button/Button";
 import { Card } from "../card/Card";
-import { Row } from "../row/Row";
+import { CardHeader } from "../cardheader/CardHeader";
 import { Stack } from "../stack/Stack";
-import { Heading } from "../text/Heading";
 import { Span } from "../text/Span";
 
 type Props = {
@@ -17,12 +16,7 @@ export const PreviousSession = ({ session, onViewAllSessions }: Props) => {
 
   return (
     <Card>
-      <Row justify="between" align="start" mb="md">
-        <div>
-          <Span text="Your latest results" size="small" tone="secondary" />
-          <Heading text="Previous session" level="2" />
-        </div>
-      </Row>
+      <CardHeader eyebrow="Your latest results" title="Previous session" />
       {exercises.length === 0 ? (
         <Span text="Complete a workout to see your previous performance." size="small" />
       ) : (

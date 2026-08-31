@@ -1,15 +1,13 @@
 import { EXERCISE, EXERCISE_LABELS, type TrackedLiftId } from "../../types";
-import { Card } from "../card/Card";
+import { SectionCard } from "../sectioncard/SectionCard";
 import { ExerciseWithWeight } from "../text/ExerciseWithWeight";
-import { Heading } from "../text/Heading";
 
 type Props = {
   estimatedOneRepMax: Record<TrackedLiftId, number> | null;
 };
 
 export const OneRepMaxSection = ({ estimatedOneRepMax }: Props) => (
-  <Card>
-    <Heading text="Current Estimated One Rep Max" />
+  <SectionCard title="Current Estimated One Rep Max">
     {estimatedOneRepMax && (
       <div className="profile__configure">
         {Object.values(EXERCISE).map((exercise) => (
@@ -21,5 +19,5 @@ export const OneRepMaxSection = ({ estimatedOneRepMax }: Props) => (
         ))}
       </div>
     )}
-  </Card>
+  </SectionCard>
 );

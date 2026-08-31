@@ -2,7 +2,7 @@ import { useState } from "react";
 
 import type { WorkoutStore } from "../data/storage";
 import { getCombinedCatalog } from "../helpers/exercise-catalog.helper";
-import { calculateSessionProgression, getNextProgramSession, type ProgressionResult } from "../helpers/progression.helper";
+import { getNextProgramSession } from "../helpers/progression.helper";
 import { buildInitialExercises } from "../helpers/session.helper";
 import type {
   ExerciseCatalogEntry,
@@ -10,24 +10,14 @@ import type {
   LoggedExercise,
   Program,
   ProgramSession,
-  SessionCheckIn,
-  TrackedLiftId,
+  WorkoutStartMode,
 } from "../types";
-
-type Stage = "workout" | "onerepmax" | "summary";
-
-type PendingSession = { exercises: LoggedExercise[]; cardio: LoggedCardioSession[] };
+import { usePostWorkoutFlow } from "./usePostWorkoutFlow";
 
 type UpdateFn = (updater: (prev: WorkoutStore) => WorkoutStore) => void;
 
 export const useActiveWorkout = (store: WorkoutStore, update: UpdateFn) => {
   const [workoutOpen, setWorkoutOpen] = useState(false);
-  const [pendingSession, setPendingSession] = useState<PendingSession | null>(
-    null,
-  );
-  const [pendingResults, setPendingResults] = useState<
-    ProgressionResult[] | null
-  >(null);
 
   const catalog: ExerciseCatalogEntry[] = getCombinedCatalog(store);
   const activeProgram: Program | null =
@@ -43,15 +33,17 @@ export const useActiveWorkout = (store: WorkoutStore, update: UpdateFn) => {
     ? getNextProgramSession(activeSubProgram, store.lastCompletedSubSessionId)
     : null;
   const workoutActive = store.activeWorkout !== null;
-  const stage: Stage = pendingResults
-    ? "summary"
-    : pendingSession
-      ? "onerepmax"
-      : "workout";
 
-  const startWorkout = (mode: "program" | "freestanding") => {
-    setPendingSession(null);
-    setPendingResults(null);
+  const closeWorkout = () => {
+    setWorkoutOpen(false);
+    postWorkoutFlow.reset();
+    update((prev) => ({ ...prev, activeWorkout: null }));
+  };
+
+  const postWorkoutFlow = usePostWorkoutFlow(store, update, closeWorkout);
+
+  const startWorkout = (mode: WorkoutStartMode) => {
+    postWorkoutFlow.reset();
     update((previousStore) => ({
       ...previousStore,
       activeWorkout:
@@ -92,13 +84,6 @@ export const useActiveWorkout = (store: WorkoutStore, update: UpdateFn) => {
     setWorkoutOpen(true);
   };
 
-  const closeWorkout = () => {
-    setWorkoutOpen(false);
-    setPendingSession(null);
-    setPendingResults(null);
-    update((prev) => ({ ...prev, activeWorkout: null }));
-  };
-
   const minimizeWorkout = () => setWorkoutOpen(false);
   const resumeWorkout = () => setWorkoutOpen(true);
 
@@ -122,105 +107,17 @@ export const useActiveWorkout = (store: WorkoutStore, update: UpdateFn) => {
       customExerciseCatalog: [...prev.customExerciseCatalog, entry],
     }));
 
-  const onFinish = (result: PendingSession) => setPendingSession(result);
-
-  const onBackToWorkout = () => {
-    if (!pendingSession || !store.activeWorkout) {
-      return;
-    }
-
-    update((prev) =>
-      prev.activeWorkout
-        ? {
-            ...prev,
-            activeWorkout: {
-              ...prev.activeWorkout,
-              exercises: pendingSession.exercises,
-              cardio: pendingSession.cardio,
-            },
-          }
-        : prev,
-    );
-    setPendingResults(null);
-    setPendingSession(null);
-  };
-
-  const onContinueFromOneRepMax = () => {
-    if (!pendingSession) {
-      return;
-    }
-    setPendingResults(
-      calculateSessionProgression(pendingSession.exercises, store.increments),
-    );
-  };
-
-  const onConfirmPostWorkout = (
-    finalIncrements: Record<TrackedLiftId, number>,
-    checkIn: SessionCheckIn,
-  ) => {
-    if (!pendingResults || !pendingSession || !store.activeWorkout) {
-      return;
-    }
-
-    update((prev) => {
-      if (!prev.activeWorkout) {
-        return prev;
-      }
-
-      const workingWeights = { ...prev.workingWeights };
-      pendingResults.forEach((result) => {
-        if (result.tracked && result.completed) {
-          workingWeights[result.exerciseId as TrackedLiftId] =
-            result.previousWeight +
-            (finalIncrements[result.exerciseId as TrackedLiftId] ??
-              result.proposedIncrement!);
-        }
-      });
-
-      const isFreestanding = prev.activeWorkout.sessionId === null;
-
-      return {
-        ...prev,
-        workingWeights,
-        increments: { ...prev.increments, ...finalIncrements },
-        lastCompletedSessionId: isFreestanding
-          ? prev.lastCompletedSessionId
-          : (prev.activeWorkout.sessionId ?? prev.lastCompletedSessionId),
-        lastCompletedSubSessionId: isFreestanding
-          ? prev.lastCompletedSubSessionId
-          : (prev.activeWorkout.subSessionId ?? prev.lastCompletedSubSessionId),
-        history: [
-          ...prev.history,
-          {
-            id: crypto.randomUUID(),
-            date: new Date().toISOString(),
-            programId: prev.activeWorkout.programId,
-            sessionId: prev.activeWorkout.sessionId,
-            subProgramId: prev.activeWorkout.subProgramId,
-            subSessionId: prev.activeWorkout.subSessionId,
-            sessionLabel: prev.activeWorkout.sessionLabel,
-            exercises: pendingSession.exercises,
-            cardio: pendingSession.cardio,
-            checkIn,
-          },
-        ],
-        activeWorkout: null,
-      };
-    });
-    closeWorkout();
-  };
-
   return {
     workoutOpen,
     workoutActive,
-    stage,
+    stage: postWorkoutFlow.stage,
     catalog,
     activeProgram,
     nextSession,
     activeSubProgram,
     nextSubSession,
-    pendingSession,
-    pendingResults,
+    pendingSession: postWorkoutFlow.pendingSession,
+    pendingResults: postWorkoutFlow.pendingResults,
     startWorkout,
     closeWorkout,
     minimizeWorkout,
@@ -228,10 +125,10 @@ export const useActiveWorkout = (store: WorkoutStore, update: UpdateFn) => {
     onExercisesChange,
     onCardioChange,
     onRegisterCustomExercise,
-    onFinish,
-    onBackToWorkout,
-    onContinueFromOneRepMax,
-    onConfirmPostWorkout,
+    onFinish: postWorkoutFlow.onFinish,
+    onBackToWorkout: postWorkoutFlow.onBackToWorkout,
+    onContinueFromOneRepMax: postWorkoutFlow.onContinueFromOneRepMax,
+    onConfirmPostWorkout: postWorkoutFlow.onConfirmPostWorkout,
   };
 };
 

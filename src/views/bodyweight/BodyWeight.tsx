@@ -5,10 +5,10 @@ import { useState } from "react";
 import {
   Button,
   Card,
+  Field,
   Heading,
   Input,
   Row,
-  Span,
   Stack,
 } from "../../components";
 import { SingleLineChart } from "../../components/chart/SingleLineChart";
@@ -44,14 +44,12 @@ export const BodyWeight = ({ log, onLog }: Props) => {
       <Card>
         <Heading text="Log today's weight" level="3" />
         <Row gap="sm" align="end" className="bodyweight__form">
-          <label className="bodyweight__field">
-            <Span text={`Weight (${unit})`} size="small" tone="secondary" />
+          <Field label={`Weight (${unit})`} tone="secondary">
             <Input value={draft} size="medium" onChange={setDraft} />
-          </label>
-          <label className="bodyweight__field">
-            <Span text="Body fat % (optional)" size="small" tone="secondary" />
+          </Field>
+          <Field label="Body fat % (optional)" tone="secondary">
             <Input value={fatDraft} size="medium" onChange={setFatDraft} />
-          </label>
+          </Field>
           <Button
             label="Log weight"
             onClick={() =>

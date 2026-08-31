@@ -1,4 +1,4 @@
-import { ChevronDown, Plus, Trash2 } from "lucide-react";
+import { Plus } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 
 import { isExerciseCompleted } from "../../helpers/progression.helper";
@@ -6,6 +6,8 @@ import { generateWarmupSets } from "../../helpers/warmup.helper";
 import type { LoggedExercise } from "../../types";
 import { Badge } from "../badge/Badge";
 import { Button } from "../button/Button";
+import { ExpandToggleButton } from "../cardactions/ExpandToggleButton";
+import { RemoveButton } from "../cardactions/RemoveButton";
 import { Row } from "../row/Row";
 import { ExerciseWithWeight } from "../text/ExerciseWithWeight";
 import { Span } from "../text/Span";
@@ -110,21 +112,10 @@ export const ExerciseCard = ({
             text={`${exercise.sets.length} ${exercise.sets.length < 2 ? "set" : "sets"}`}
             size="small"
           />
-          {exercise.isAdHoc && (
-            <Button
-              icon={Trash2}
-              variant="danger"
-              size="icon"
-              ariaLabel={`Remove ${exercise.label}`}
-              onClick={onRemove}
-            />
-          )}
-          <Button
-            icon={ChevronDown}
-            variant="secondary"
-            size="icon"
-            ariaLabel={open ? `Collapse ${exercise.label}` : `Expand ${exercise.label}`}
-            ariaExpanded={open}
+          {exercise.isAdHoc && <RemoveButton label={exercise.label} onClick={onRemove} />}
+          <ExpandToggleButton
+            open={open}
+            label={exercise.label}
             onClick={() => setOpen((value) => !value)}
           />
         </Row>

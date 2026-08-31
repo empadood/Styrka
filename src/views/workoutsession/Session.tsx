@@ -1,18 +1,12 @@
 import "./Session.scss";
 
-import { Plus } from "lucide-react";
-import { Fragment, type MutableRefObject, useEffect, useState } from "react";
+import { type MutableRefObject, useEffect, useState } from "react";
 
-import {
-  AddCardioForm,
-  Dialog,
-  Expandable,
-  PlateBreakdown,
-  Stack,
-} from "../../components";
-import { AddExerciseForm } from "../../components/addexercise/AddExerciseForm";
-import { CardioEntryCard } from "../../components/workoutsession/CardioEntryCard";
-import { ExerciseCard } from "../../components/workoutsession/ExerciseCard";
+import { Dialog, PlateBreakdown, Stack } from "../../components";
+import { type ExerciseFormSubmitInput } from "../../components/addexercise/AddExerciseForm";
+import { AddToWorkoutSection } from "../../components/workoutsession/AddToWorkoutSection";
+import { CardioList } from "../../components/workoutsession/CardioList";
+import { ExerciseList } from "../../components/workoutsession/ExerciseList";
 import { resolveExerciseSelection } from "../../helpers/exercise-catalog.helper";
 import { isExerciseCompleted } from "../../helpers/progression.helper";
 import { buildAdHocLoggedExercise } from "../../helpers/session.helper";
@@ -145,16 +139,7 @@ export const WorkoutSession = ({
     onExercisesChange(exercises.filter((_, index) => index !== exerciseIndex));
   };
 
-  const handleAddExercise = (input: {
-    exerciseId?: string;
-    customName?: string;
-    sets: number;
-    reps: number;
-    startingWeight?: number;
-    showWeightIndicator: boolean;
-    showWarmupSets: boolean;
-    isBodyweight: boolean;
-  }) => {
+  const handleAddExercise = (input: ExerciseFormSubmitInput) => {
     const entry = resolveExerciseSelection(catalog, input, onRegisterCustomExercise);
 
     if (!entry) {
@@ -179,62 +164,25 @@ export const WorkoutSession = ({
 
   return (
     <Stack gap="lg" className="session__container">
-      {exercises.map((exercise, exerciseIndex) => (
-        <Fragment key={exerciseIndex}>
-          {exerciseIndex === subProgramStartIndex && (
-            <div className="session__divider">
-              <span className="session__divider-label">{exercise.sourceLabel}</span>
-            </div>
-          )}
-          <ExerciseCard
-            exercise={exercise}
-            getWarmupEntry={(warmupIndex, defaultWeight) =>
-              warmupEntries.getEntry(exerciseIndex, warmupIndex, defaultWeight)
-            }
-            onWarmupChange={(warmupIndex, field, value, defaultWeight) =>
-              warmupEntries.updateEntry(exerciseIndex, warmupIndex, field, value, defaultWeight)
-            }
-            onSetChange={(setIndex, field, value) => updateSet(exerciseIndex, setIndex, field, value)}
-            onShowPlates={setPlateDialogWeight}
-            onRemove={() => handleRemoveExercise(exerciseIndex)}
-            onAddSet={() => handleAddSet(exerciseIndex)}
-          />
-        </Fragment>
-      ))}
-      {cardio.length > 0 && (
-        <div className="session__divider">
-          <span className="session__divider-label">Cardio</span>
-        </div>
-      )}
-      {cardio.map((entry) => (
-        <CardioEntryCard
-          key={entry.id}
-          entry={entry}
-          onStart={() => cardioTimer.start(entry.id)}
-          onPause={() => cardioTimer.pause(entry.id)}
-          onStop={() => cardioTimer.stop(entry.id)}
-          onSave={() => cardioTimer.save(entry.id)}
-          onKcalChange={(value) => cardioTimer.setKcal(entry.id, value)}
-          onRemove={() => cardioTimer.remove(entry.id)}
-        />
-      ))}
+      <ExerciseList
+        exercises={exercises}
+        subProgramStartIndex={subProgramStartIndex}
+        warmupEntries={warmupEntries}
+        onSetChange={updateSet}
+        onShowPlates={setPlateDialogWeight}
+        onRemoveExercise={handleRemoveExercise}
+        onAddSet={handleAddSet}
+      />
+      <CardioList cardio={cardio} cardioTimer={cardioTimer} />
       <div className="session__divider">
         <span className="session__divider-label">Add to workout</span>
       </div>
-      <Stack gap="sm" className="session__add-section">
-        <Expandable icon={Plus} label="Add cardio">
-          <AddCardioForm onSubmit={handleAddCardio} />
-        </Expandable>
-        <Expandable icon={Plus} label="Add exercise">
-          <AddExerciseForm
-            catalog={catalog}
-            history={history}
-            onSubmit={handleAddExercise}
-            showStartingWeight
-            submitLabel="Add exercise to this workout"
-          />
-        </Expandable>
-      </Stack>
+      <AddToWorkoutSection
+        catalog={catalog}
+        history={history}
+        onAddCardio={handleAddCardio}
+        onAddExercise={handleAddExercise}
+      />
       <Dialog
         isOpen={plateDialogWeight !== null}
         onClose={() => setPlateDialogWeight(null)}

@@ -2,7 +2,7 @@ import "./SetupOneRepMax.scss";
 
 import { useState } from "react";
 
-import { Button, Heading, Input, Span } from "../../components";
+import { Button, Field, Heading, Input, Row, Span } from "../../components";
 import { useWeightUnit } from "../../hooks/useWeightUnit";
 import { EXERCISE, EXERCISE_LABELS, type TrackedLiftId } from "../../types";
 
@@ -54,17 +54,22 @@ export const SetupOneRepMax = ({ onComplete }: Props) => {
       </div>
       <div className="setup-one-rep-max__lifts">
         {EXERCISES.map((exercise) => (
-          <label className="setup-one-rep-max__lift" key={exercise}>
-            <Span text={EXERCISE_LABELS[exercise]} />
-            <div>
+          <Field
+            label={EXERCISE_LABELS[exercise]}
+            size="normal"
+            orientation="row"
+            className="setup-one-rep-max__lift"
+            key={exercise}
+          >
+            <Row gap="sm" align="center">
               <Input
                 value={toDisplay(estimatedOneRepMax[exercise])}
                 onChange={(value) => updateOneRepMax(exercise, value)}
                 size="large"
               />
               <Span text={unit} size="small" />
-            </div>
-          </label>
+            </Row>
+          </Field>
         ))}
       </div>
       {error && <p className="setup-one-rep-max__error">{error}</p>}

@@ -3,11 +3,9 @@ import { useRef } from "react";
 import type { WorkoutStore } from "../../data/storage";
 import { useExportImport } from "../../hooks/useExportImport";
 import { Button } from "../button/Button";
-import { Card } from "../card/Card";
 import { Dialog } from "../dialog/Dialog";
 import { Row } from "../row/Row";
-import { Stack } from "../stack/Stack";
-import { Heading } from "../text/Heading";
+import { SectionCard } from "../sectioncard/SectionCard";
 import { Span } from "../text/Span";
 
 type UpdateFn = (updater: (prev: WorkoutStore) => WorkoutStore) => void;
@@ -25,39 +23,36 @@ export const ExportImportSection = ({ store, update }: Props) => {
   );
 
   return (
-    <Card>
-      <Stack gap="sm">
-        <Heading text="Export & import data" />
+    <SectionCard
+      title="Export & import data"
+      description="Save your programs, workout history, and weigh-ins to a file, or restore them on another device."
+      gap="sm"
+    >
+      <Row justify="start" gap="sm">
+        <Button label="Export as JSON" variant="secondary" onClick={exportJson} />
+        <Button label="Export as CSV" variant="secondary" onClick={exportCsv} />
+      </Row>
+      <Row justify="start" gap="sm">
+        <Button label="Import file" variant="secondary" onClick={() => fileInputRef.current?.click()} />
+        <input
+          ref={fileInputRef}
+          type="file"
+          accept=".json,.csv"
+          multiple
+          hidden
+          onChange={(event) => {
+            void handleFiles(event.target.files);
+            event.target.value = "";
+          }}
+        />
+      </Row>
+      {status.kind === "error" && <Span text={status.message} size="small" />}
+      {status.kind === "csv-done" && (
         <Span
-          text="Save your programs, workout history, and weigh-ins to a file, or restore them on another device."
+          text={`Imported ${status.summary.bodyWeightCount} weigh-ins, ${status.summary.historyCount} workouts, and ${status.summary.cardioCount} cardio sessions.`}
           size="small"
         />
-        <Row justify="start" gap="sm">
-          <Button label="Export as JSON" variant="secondary" onClick={exportJson} />
-          <Button label="Export as CSV" variant="secondary" onClick={exportCsv} />
-        </Row>
-        <Row justify="start" gap="sm">
-          <Button label="Import file" variant="secondary" onClick={() => fileInputRef.current?.click()} />
-          <input
-            ref={fileInputRef}
-            type="file"
-            accept=".json,.csv"
-            multiple
-            hidden
-            onChange={(event) => {
-              void handleFiles(event.target.files);
-              event.target.value = "";
-            }}
-          />
-        </Row>
-        {status.kind === "error" && <Span text={status.message} size="small" />}
-        {status.kind === "csv-done" && (
-          <Span
-            text={`Imported ${status.summary.bodyWeightCount} weigh-ins, ${status.summary.historyCount} workouts, and ${status.summary.cardioCount} cardio sessions.`}
-            size="small"
-          />
-        )}
-      </Stack>
+      )}
       <Dialog
         title="Import JSON backup?"
         isOpen={status.kind === "json-ready"}
@@ -71,6 +66,6 @@ export const ExportImportSection = ({ store, update }: Props) => {
       >
         <Span text="This replaces all current programs, history, and weigh-ins with the contents of the imported file. This can't be undone." />
       </Dialog>
-    </Card>
+    </SectionCard>
   );
 };

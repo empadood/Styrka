@@ -1,10 +1,13 @@
-import { ChevronDown, Pause, Play, Square, Trash2 } from "lucide-react";
+import { Pause, Play, Square } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 
 import { getElapsedSeconds } from "../../helpers/cardio.helper";
 import type { LoggedCardioSession } from "../../types";
 import { Button } from "../button/Button";
+import { ExpandToggleButton } from "../cardactions/ExpandToggleButton";
+import { RemoveButton } from "../cardactions/RemoveButton";
 import { CardioTimerDisplay } from "../cardiotimer/CardioTimerDisplay";
+import { Field } from "../field/Field";
 import { Input } from "../input/Input";
 import { Row } from "../row/Row";
 import { Heading } from "../text/Heading";
@@ -51,21 +54,8 @@ export const CardioEntryCard = ({
           )}
         </Row>
         <Row gap="sm" align="center">
-          <Button
-            icon={Trash2}
-            variant="danger"
-            size="icon"
-            ariaLabel={`Remove ${entry.label}`}
-            onClick={onRemove}
-          />
-          <Button
-            icon={ChevronDown}
-            variant="secondary"
-            size="icon"
-            ariaLabel={open ? `Collapse ${entry.label}` : `Expand ${entry.label}`}
-            ariaExpanded={open}
-            onClick={() => setOpen((value) => !value)}
-          />
+          <RemoveButton label={entry.label} onClick={onRemove} />
+          <ExpandToggleButton open={open} label={entry.label} onClick={() => setOpen((value) => !value)} />
         </Row>
       </Row>
       {open && (
@@ -92,12 +82,9 @@ export const CardioEntryCard = ({
             )}
             {entry.isFinished && !entry.isSaved && (
               <Row gap="md" justify="start" align="end" className="session__cardio-controls">
-                <div className="session__input-group">
-                  <div className="session__input-label">
-                    <Span text="Kcal burned" size="small" />
-                  </div>
+                <Field as="div" label="Kcal burned">
                   <Input size="medium" value={entry.kcal} onChange={onKcalChange} />
-                </div>
+                </Field>
                 <Button label="Save" onClick={onSave} />
               </Row>
             )}

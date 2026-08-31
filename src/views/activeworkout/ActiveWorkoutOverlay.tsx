@@ -6,13 +6,12 @@ import type { WorkoutStore } from "../../data/storage";
 import { calculateSessionOneRepMax } from "../../helpers/one-rep-max.helper";
 import type { ActiveWorkoutState } from "../../hooks/useActiveWorkout";
 import type { DriveSyncState } from "../../hooks/useDriveSync";
+import type { ActiveWorkoutStage } from "../../types";
 import { OneRepMax } from "../onerepmax/OneRepMax";
 import { PostWorkout } from "../postworkout/PostWorkout";
 import { WorkoutSession } from "../workoutsession/Session";
 
-type Stage = "workout" | "onerepmax" | "summary";
-
-const DIALOG_TITLES: Record<Exclude<Stage, "workout">, string> = {
+const DIALOG_TITLES: Record<Exclude<ActiveWorkoutStage, "workout">, string> = {
   onerepmax: "Estimated 1RM",
   summary: "Workout Summary",
 };

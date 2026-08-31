@@ -1,6 +1,6 @@
 import "./Profile.scss";
 
-import { Card, Heading, Span, Stack } from "../../components";
+import { SectionCard, Stack } from "../../components";
 import { DangerZoneSection } from "../../components/profile/DangerZoneSection";
 import { DriveSyncSection } from "../../components/profile/DriveSyncSection";
 import { ExportImportSection } from "../../components/profile/ExportImportSection";
@@ -53,13 +53,10 @@ export const Profile = ({
     <IncrementsSection increments={increments} />
     {DRIVE_SYNC_UI_ENABLED && <DriveSyncSection drive={drive} />}
     <ExportImportSection store={store} update={update} />
-    <Card>
-      <Heading text="Privacy" />
-      <Span
-        text="We use cookie-free, aggregate analytics to understand app usage. Workout data and personal identifiers are never collected."
-        size="small"
-      />
-    </Card>
+    <SectionCard
+      title="Privacy"
+      description="We use cookie-free, aggregate analytics to understand app usage. Workout data and personal identifiers are never collected."
+    />
     <DangerZoneSection onClearHistory={onClearHistory} />
   </Stack>
 );

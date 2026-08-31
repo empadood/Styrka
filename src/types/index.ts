@@ -1,3 +1,4 @@
+export * from "./active-workout.type";
 export * from "./bodyweight.type";
 export * from "./cardio.type";
 export * from "./exercise.interface";

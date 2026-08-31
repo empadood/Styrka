@@ -71,3 +71,5 @@ export const useCardioTimer = (cardio: LoggedCardioSession[], onChange: OnChange
     remove,
   };
 };
+
+export type CardioTimerApi = ReturnType<typeof useCardioTimer>;

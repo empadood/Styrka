@@ -5,8 +5,8 @@ import type { ProgramSession } from "../../types";
 import { Badge } from "../badge/Badge";
 import { Button } from "../button/Button";
 import { Card } from "../card/Card";
+import { CardHeader } from "../cardheader/CardHeader";
 import { Row } from "../row/Row";
-import { Heading } from "../text/Heading";
 import { Span } from "../text/Span";
 
 type Props = {
@@ -42,24 +42,11 @@ export const UpcomingSession = ({
 
   return (
     <Card tone="primary" className="upcoming-session">
-      <Row justify="between" align="start" mb="md">
-        <div>
-          <Span text="Ready when you are" size="small" tone="secondary" />
-          <Heading
-            text={
-              isUpcoming && !isWorkoutActive
-                ? "Upcoming workout"
-                : "Today's workout"
-            }
-            level="2"
-          />
-        </div>
-        <Span
-          text={`${totalExerciseCount} exercises`}
-          size="small"
-          tone="secondary"
-        />
-      </Row>
+      <CardHeader
+        eyebrow="Ready when you are"
+        title={isUpcoming && !isWorkoutActive ? "Upcoming workout" : "Today's workout"}
+        trailing={<Span text={`${totalExerciseCount} exercises`} size="small" tone="secondary" />}
+      />
       {nextSession ? (
         <div className="upcoming-session__exercises">
           {exercises.map(({ definition, overview }) => (

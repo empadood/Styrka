@@ -2,7 +2,9 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
 
 import { PAGE_SIZE_OPTIONS } from "../../hooks/useSessionsFilters";
 import { Button } from "../button/Button";
+import { Field } from "../field/Field";
 import { Row } from "../row/Row";
+import { Select } from "../select/Select";
 import { Span } from "../text/Span";
 
 type Props = {
@@ -26,18 +28,19 @@ export const SessionsPagination = ({
 }: Props) => (
   <Row justify="between" className="sessions__footer">
     <div className="sessions__page-size">
-      <label htmlFor="sessions-page-size">Rows per page</label>
-      <select
+      <Field as="label" htmlFor="sessions-page-size" wrap={false} label="Rows per page" tone="secondary" />
+      <Select
         id="sessions-page-size"
-        value={pageSize}
-        onChange={(e) => onPageSizeChange(Number(e.target.value))}
+        size="small"
+        value={String(pageSize)}
+        onChange={(value) => onPageSizeChange(Number(value))}
       >
         {PAGE_SIZE_OPTIONS.map((size) => (
           <option key={size} value={size}>
             {size}
           </option>
         ))}
-      </select>
+      </Select>
     </div>
     <Span
       text={`${pageStart + 1}–${Math.min(pageStart + pageSize, totalItems)} of ${totalItems}`}

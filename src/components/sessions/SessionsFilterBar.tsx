@@ -1,6 +1,9 @@
+import { PROGRAM_FILTER_ALL, PROGRAM_FILTER_FREESTANDING } from "../../hooks/useSessionsFilters";
 import type { Program } from "../../types";
 import { Button } from "../button/Button";
+import { Field } from "../field/Field";
 import { Row } from "../row/Row";
+import { Select } from "../select/Select";
 import { TextField } from "../textfield/TextField";
 
 type Props = {
@@ -36,27 +39,26 @@ export const SessionsFilterBar = ({
       onChange={onSearchTextChange}
       placeholder="Search sessions or exercises…"
     />
-    <select
-      aria-label="Filter by program"
+    <Select
+      ariaLabel="Filter by program"
+      size="small"
       value={programFilter}
-      onChange={(e) => onProgramFilterChange(e.target.value)}
+      onChange={onProgramFilterChange}
     >
-      <option value="all">All programs</option>
-      <option value="freestanding">Freestanding</option>
+      <option value={PROGRAM_FILTER_ALL}>All programs</option>
+      <option value={PROGRAM_FILTER_FREESTANDING}>Freestanding</option>
       {programs.map((program) => (
         <option key={program.id} value={program.id}>
           {program.name}
         </option>
       ))}
-    </select>
-    <label>
-      From
+    </Select>
+    <Field as="label" orientation="row" label="From" tone="secondary" className="sessions__filters-date">
       <input type="date" value={dateFrom} onChange={(e) => onDateFromChange(e.target.value)} />
-    </label>
-    <label>
-      To
+    </Field>
+    <Field as="label" orientation="row" label="To" tone="secondary" className="sessions__filters-date">
       <input type="date" value={dateTo} onChange={(e) => onDateToChange(e.target.value)} />
-    </label>
+    </Field>
     {hasActiveFilters && <Button label="Clear filters" variant="secondary" onClick={onClearFilters} />}
   </Row>
 );

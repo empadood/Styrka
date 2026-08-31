@@ -2,7 +2,7 @@ import "./Programs.scss";
 
 import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 
-import { Button, Card, Heading, PageContainer, Row, Span } from "../../components";
+import { BackHeadingRow, Button, Card, Field, PageContainer } from "../../components";
 import { ProgramSessionCard } from "../../components/programbuilder/ProgramSessionCard";
 import { TextField } from "../../components/textfield/TextField";
 import type { WorkoutStore } from "../../data/storage";
@@ -42,31 +42,27 @@ export const ProgramBuilder = ({ store, update }: Props) => {
 
   return (
     <PageContainer className="programs">
-      <Row justify="start" gap="md">
-        <Button label="Back" variant="secondary" onClick={() => navigate("/programs")} />
-        <Heading
-          text={
-            programId
-              ? isSubProgram
-                ? "Edit sub-program"
-                : "Edit program"
-              : isSubProgram
-                ? "New sub-program"
-                : "New program"
-          }
-          level="1"
-        />
-      </Row>
+      <BackHeadingRow
+        title={
+          programId
+            ? isSubProgram
+              ? "Edit sub-program"
+              : "Edit program"
+            : isSubProgram
+              ? "New sub-program"
+              : "New program"
+        }
+        onBack={() => navigate("/programs")}
+      />
 
       <Card>
-        <label className="programs__field">
-          <Span text="Program name" size="small" />
+        <Field label="Program name" className="programs__field">
           <TextField
             value={draft.name}
             onChange={setName}
             placeholder="e.g. Upper/Lower split"
           />
-        </label>
+        </Field>
       </Card>
 
       {draft.sessions.map((session) => (

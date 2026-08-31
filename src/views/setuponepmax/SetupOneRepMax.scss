@@ -28,22 +28,10 @@
   gap: var(--space-3);
 }
 
-.setup-one-rep-max__lift,
-.setup-one-rep-max__lift > div {
-  display: flex;
-  align-items: center;
-}
-
 .setup-one-rep-max__lift {
-  justify-content: space-between;
-  gap: var(--space-4);
   padding: var(--space-3);
   border: 0.0625rem solid var(--border);
   border-radius: var(--radius-md);
-}
-
-.setup-one-rep-max__lift > div {
-  gap: var(--space-2);
 }
 
 .setup-one-rep-max__error {

@@ -1,10 +1,8 @@
 import { useState } from "react";
 
 import { Button } from "../button/Button";
-import { Card } from "../card/Card";
 import { Dialog } from "../dialog/Dialog";
-import { Stack } from "../stack/Stack";
-import { Heading } from "../text/Heading";
+import { SectionCard } from "../sectioncard/SectionCard";
 import { Span } from "../text/Span";
 
 type Props = {
@@ -15,20 +13,17 @@ export const DangerZoneSection = ({ onClearHistory }: Props) => {
   const [showConfirm, setShowConfirm] = useState(false);
 
   return (
-    <Card>
-      <Stack gap="sm">
-        <Heading text="Danger zone" />
-        <Span
-          text="Permanently erase your workout history, working weights, increments, and estimated 1RM, then start over from the beginning."
-          size="small"
-        />
-        <Button
-          onClick={() => setShowConfirm(true)}
-          label="Clear history"
-          variant="danger"
-          ariaLabel="Clear all workout history and progress"
-        />
-      </Stack>
+    <SectionCard
+      title="Danger zone"
+      description="Permanently erase your workout history, working weights, increments, and estimated 1RM, then start over from the beginning."
+      gap="sm"
+    >
+      <Button
+        onClick={() => setShowConfirm(true)}
+        label="Clear history"
+        variant="danger"
+        ariaLabel="Clear all workout history and progress"
+      />
       <Dialog
         title="Clear history?"
         isOpen={showConfirm}
@@ -45,6 +40,6 @@ export const DangerZoneSection = ({ onClearHistory }: Props) => {
       >
         <Span text="This can't be undone. All progress will be reset and you'll start from the beginning." />
       </Dialog>
-    </Card>
+    </SectionCard>
   );
 };
